@@ -6,7 +6,11 @@ import org.biojava3.auto.uniprot.Uniprot;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * Created by ap3 on 13/08/2014.
@@ -25,14 +29,27 @@ public class TestUniprotLoading extends TestCase{
             assertNotNull(up);
 
             assertTrue(up.getEntry().get(0).getAccession().size()>1);
-            HibernateUtilsUniprot hibernate = new HibernateUtilsUniprot();
-            Session sess = hibernate.getSession();
 
-            sess.save(up);
 
-            sess.close();
+//            HibernateUtilsUniprot hibernate = new HibernateUtilsUniprot();
+//            Session sess = hibernate.getSession();
 
-            hibernate.close();
+            Properties dbproperties = new Properties();
+            InputStream propstream = loader.getResourceAsStream("database.properties");
+            dbproperties.load(propstream);
+
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("org.biojava3.auto.uniprot",dbproperties);
+
+
+            EntityManager em = emf.createEntityManager();
+
+            em.getTransaction().begin();
+
+            em.persist(up);
+
+            em.getTransaction().commit();
+
+            em.close();
 
             assertTrue(true);
         } catch (Exception e){
