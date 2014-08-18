@@ -2,7 +2,11 @@
 <jxb:bindings version="1.0"
               xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
               xmlns:xs="http://www.w3.org/2001/XMLSchema"
-              xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc">
+              xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+              xmlns:hj="http://hyperjaxb3.jvnet.org/ejb/schemas/customizations"
+              xmlns:orm="http://java.sun.com/xml/ns/persistence/orm"
+              jxb:extensionBindingPrefixes="hj orm"
+             >
 
 <!-- cheat sheet http://pride-converter-2.googlecode.com/svn/trunk/report-api/src/main/resources/report-bindings.xjb  -->
 
@@ -37,22 +41,63 @@ nodename	Selects all nodes with the name "nodename"
             <jxb:package name="org.biojava3.auto.uniprot"></jxb:package>
         </jxb:schemaBindings>
 
+        <!-- all strings are BLOBs! -->
+        <hj:persistence>
+            <hj:default-single-property type="xsd:string">
+                <hj:basic>
+                    <orm:column length="1000" />
+                </hj:basic>
+            </hj:default-single-property>
+        </hj:persistence>
 
-        <!-- this resolves a naming conflict -->
+
+
+
+        <!-- this refers to the SequenceType class in general  and renames it to Sequence-->
+        <jxb:bindings node="//xs:complexType[@name='sequenceType']">
+            <!-- rename SequenceType object to Sequence (shall we keep this?)-->
+            <hj:entity name="Sequence">
+                <orm:table name="Sequence"/>
+            </hj:entity>
+
+            <jxb:class name="Sequence"></jxb:class>
+
+            <!--<xsd:annotation>-->
+                <!--<xsd:appinfo>-->
+                    <!--<hj:basic>-->
+                        <!--<orm:column length="1000" />-->
+                    <!--</hj:basic>-->
+                <!--</xsd:appinfo>-->
+            <!--</xsd:annotation>-->
+        </jxb:bindings>
+
+
+
+        <!-- this refers to the instance of the SequenceType object in the entry class -->
+        <jxb:bindings node="//xs:element[@name='entry']/xs:complexType/xs:sequence/xs:element[@name='sequence']">
+
+
+        </jxb:bindings>
+
+
+        <!--<jxb:bindings node="//xs:complexType[@name='sequenceType']/xs:simpleContent/xs:extension">-->
+            <!--<hj:column column-definition="BLOB"/>-->
+            <!--<hj:basic>-->
+                <!--<orm:column column-definition="BLOB"/>-->
+            <!--</hj:basic>-->
+        <!--</jxb:bindings>-->
+
+
+        <!-- this resolves a naming conflict related to the use of name="Sequence" in complex Attributes-->
 
         <jxb:bindings node="//xs:complexType[@name='isoformType']/xs:sequence/xs:element[@name='sequence']/xs:complexType">
             <jxb:class name="IsoformTypeSequence"></jxb:class>
-
         </jxb:bindings>
 
         <jxb:bindings
                 node="//xs:complexType[@name='commentType']/xs:sequence/xs:choice/xs:element[@name='conflict']/xs:complexType/xs:sequence/xs:element[@name='sequence']/xs:complexType">
             <jxb:class name="CommentConflictSequence"></jxb:class>
         </jxb:bindings>
-
-
-
-
 
     </jxb:bindings>
 
