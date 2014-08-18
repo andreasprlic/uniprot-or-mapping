@@ -1,0 +1,9 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="notice" value="/* &#10; *                    BioJava development code&#10; *&#10; * This code may be freely distributed and modified under the&#10; * terms of the GNU Lesser General Public Licence.  This should&#10; * be distributed with the code.  If you do not have a copy,&#10; * see:&#10; *&#10; *      http://www.gnu.org/copyleft/lesser.html&#10; *&#10; * Copyright for this code is held jointly by the individual&#10; * authors.  These should be listed in @author doc comments.&#10; *&#10; * For more information on the BioJava project and its aims,&#10; * or to join the biojava-l mailing list, visit the home page&#10; * at:&#10; *&#10; *      http://www.biojava.org/&#10; *&#10; * Created on &amp;#36;{date}&#10; * Author: &amp;#36;{user} &#10; *&#10; */&#10; &#10;&amp;#36;{filecomment}&#10;&amp;#36;{package_declaration}&#10; &#10;&amp;#36;{typecomment}&#10;&amp;#36;{type_declaration}" />
+    <option name="keyword" value="Copyright" />
+    <option name="allowReplaceKeyword" value="" />
+    <option name="myName" value="BioJava" />
+    <option name="myLocal" value="true" />
+  </copyright>
+</component>
