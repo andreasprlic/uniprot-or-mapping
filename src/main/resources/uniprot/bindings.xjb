@@ -35,10 +35,13 @@ nodename	Selects all nodes with the name "nodename"
             <!-- this interface will be used to ensure type safety in generified methods -->
             <xjc:superInterface name="org.biojava3.auto.tools.UpObject"/>
 
+
+
         </jxb:globalBindings>
 
         <jxb:schemaBindings>
             <jxb:package name="org.biojava3.auto.uniprot"></jxb:package>
+
         </jxb:schemaBindings>
 
         <!-- all strings are BLOBs! -->
@@ -55,20 +58,61 @@ nodename	Selects all nodes with the name "nodename"
 
         <!-- this refers to the SequenceType class in general  and renames it to Sequence-->
         <jxb:bindings node="//xs:complexType[@name='sequenceType']">
+
+            <jxb:class>
+                <jxb:javadoc><![CDATA[The Sequence object provides access to the actual sequence string as well as versioning and checksum information .]]></jxb:javadoc>
+            </jxb:class>
+
+            <jxb:property>
+                <jxb:baseType >
+
+                    <jxb:javaType name="byte[]"
+                        parseMethod="javax.xml.bind.DatatypeConverter.parseHexBinary"
+                        printMethod="javax.xml.bind.DatatypeConverter.printHexBinary"
+                        >
+                    </jxb:javaType>
+                </jxb:baseType>
+
+            </jxb:property>
+
+            <!--<jxb:bindings node="./node()">-->
+                <!--<hj:basic>-->
+                    <!--<orm:column length="1000"/>-->
+                <!--</hj:basic>-->
+                <!-- prob that should be in an XML schema?-->
+                <!--<xs:annotation>-->
+                <!--<xs:appinfo>-->
+                <!--<hj:basic>-->
+                <!--<orm:column length="1000" />-->
+                <!--</hj:basic>-->
+                <!--</xs:appinfo>-->
+                <!--</xs:annotation>-->
+
+            <!--</jxb:bindings>-->
+
+
+            <!-- resolve name collision between attribute and element "zip" -->
+            <!--<jxb:bindings node=".//xs:attribute[@name='checksum']">-->
+                <!--<jxb:property name="checksumme"/>-->
+            <!--</jxb:bindings>-->
+
+            <!--//<jxb:bindings node="//xs:complexType[@name='sequenceType']/xs:simpleContent">-->
+
+                <!--<hj:basic>-->
+                    <!--<orm:column type="xsd:hexBinary"/>-->
+                <!--</hj:basic>-->
+
+
+           <!--// </jxb:bindings>-->
+
             <!-- rename SequenceType object to Sequence (shall we keep this?)-->
-            <hj:entity name="Sequence">
-                <orm:table name="Sequence"/>
-            </hj:entity>
+            <!--<hj:entity name="Sequence">-->
+                <!--<orm:table name="Sequence"/>-->
+            <!--</hj:entity>-->
 
-            <jxb:class name="Sequence"></jxb:class>
+            <!--<jxb:class name="Sequence"></jxb:class>-->
 
-            <!--<xsd:annotation>-->
-                <!--<xsd:appinfo>-->
-                    <!--<hj:basic>-->
-                        <!--<orm:column length="1000" />-->
-                    <!--</hj:basic>-->
-                <!--</xsd:appinfo>-->
-            <!--</xsd:annotation>-->
+
         </jxb:bindings>
 
 
@@ -98,6 +142,8 @@ nodename	Selects all nodes with the name "nodename"
                 node="//xs:complexType[@name='commentType']/xs:sequence/xs:choice/xs:element[@name='conflict']/xs:complexType/xs:sequence/xs:element[@name='sequence']/xs:complexType">
             <jxb:class name="CommentConflictSequence"></jxb:class>
         </jxb:bindings>
+
+
 
     </jxb:bindings>
 

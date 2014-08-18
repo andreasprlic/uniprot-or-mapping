@@ -216,6 +216,7 @@
                             <schemaDirectory>src/main/resources/uniprot</schemaDirectory>
                             <forceRegenerate>true</forceRegenerate>
                             <verbose>true</verbose>
+
                         </configuration>
                     </execution>
                 </executions>

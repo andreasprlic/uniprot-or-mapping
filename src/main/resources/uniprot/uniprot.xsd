@@ -953,7 +953,7 @@
     <!-- Sequence definition begins -->
     <xs:complexType name="sequenceType">
         <xs:simpleContent>
-            <xs:extension base="xs:string" >
+            <xs:extension base="xs:string">
                 <xs:attribute name="length" type="xs:int" use="required"/>
                 <xs:attribute name="mass" type="xs:int" use="required"/>
                 <xs:attribute name="checksum" type="xs:string" use="required"/>
