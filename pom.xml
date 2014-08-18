@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.biojava3</groupId>
+    <artifactId>auto</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <jdk.version>1.7</jdk.version>
+
+        <!-- sets the default encoding -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.targetEncoding>UTF-8</project.build.targetEncoding>
+
+        <!-- maven-compiler-plugin configuration -->
+        <maven.compiler.source>${jdk.version}</maven.compiler.source>
+        <maven.compiler.target>${jdk.version}</maven.compiler.target>
+
+    </properties>
+
+    <dependencies>
+        <!-- for the auto-generated code -->
+        <!--<dependency>-->
+            <!--<groupId>javax.xml.bind</groupId>-->
+            <!--<artifactId>jaxb-api</artifactId>-->
+            <!--<version>2.2.5</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.sun.xml.bind</groupId>-->
+            <!--<artifactId>jaxb-impl</artifactId>-->
+            <!--<version>2.2.5</version>-->
+        <!--</dependency>-->
+
+
+        <!-- junit testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- MySQL database driver -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.31</version>
+        </dependency>
+
+
+        <!-- Hibernate -->
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>4.3.6.Final</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-search-orm</artifactId>
+            <version>4.5.1.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>4.3.6.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-search-analyzers</artifactId>
+            <version>4.5.1.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-tools</artifactId>
+            <version>4.3.1.CR1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-c3p0</artifactId>
+            <version>4.3.5.Final</version>
+        </dependency>
+
+
+
+
+
+        <!-- the Hits class is missing in lucene core 3.3.X. see LoadLearMore -->
+        <!-- note: the lucene version needs to match the hibernate-search version. -->
+        <!-- there are newer versions available, but there will be error message. -->
+        <!-- please update in sync with hibernate -->
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>3.6.2</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-highlighter</artifactId>
+            <version>3.6.2</version>
+            <type>jar</type>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>persistence-api</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jvnet.jaxb2_commons</groupId>
+            <artifactId>jaxb2-basics-runtime</artifactId>
+            <version>0.6.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jvnet.hyperjaxb3</groupId>
+            <artifactId>maven-hyperjaxb3-plugin</artifactId>
+            <version>0.5.6</version>
+        </dependency>
+
+<!-- for the JpaStore class -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>12.0.1</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+
+        <!--will be added as Source folder-->
+        <sourceDirectory>src/main/java</sourceDirectory>
+
+        <resources>
+
+                <resource>
+                    <directory>src/main/resources</directory>
+                </resource>
+            <resource>
+                <!--will be added as a Source folder-->
+                <directory>target/generated-sources/xjc/</directory>
+            </resource>
+            <!-- this is where the hibernate.cfg.xml is -->
+            <resource>
+                <directory>target/hibernate3/generated-sources/xjc/META-INF/</directory>
+            </resource>
+        </resources>
+
+        <!--will be added as Test Source folder-->
+        <!--<testSourceDirectory>src/test/java</testSourceDirectory>-->
+
+        <!--<testResources>-->
+            <!--<testResource>-->
+                <!--&lt;!&ndash;will be added as Test Source folder&ndash;&gt;-->
+                <!--<directory>src/test/resources</directory>-->
+            <!--</testResource>-->
+        <!--</testResources>-->
+
+
+
+        <plugins>
+
+            <!-- we want all dependencies on the classpath -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                    </archive>
+                </configuration>
+
+            </plugin>
+
+
+
+
+
+            <!-- build helper for auto-generated code to show up in the IDE -->
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/xjc</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- now to the Hibernate part -->
+
+            <!-- Generates classes from .xsd file and annotates them as persistent
+                entities: -->
+            <plugin>
+                <groupId>org.jvnet.hyperjaxb3</groupId>
+                <artifactId>maven-hyperjaxb3-plugin</artifactId>
+                <version>0.5.6</version>
+                <executions>
+                    <execution>
+                        <!-- for the generate goal of hyperjaxb3, use the following config: -->
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <variant>jpa2</variant>
+                            <!-- allows superclass to be defined for the classes generated from
+                                xsd: -->
+                            <extension>true</extension>
+                            <removeOldOutput>true</removeOldOutput>
+
+                            <schemaDirectory>src/main/resources/uniprot</schemaDirectory>
+                            <forceRegenerate>true</forceRegenerate>
+                            <verbose>true</verbose>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+        </plugins>
+
+    </build>
+
+
+</project>
+

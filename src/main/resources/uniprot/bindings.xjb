@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jxb:bindings version="1.0"
+              xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+              xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc">
+
+<!-- cheat sheet http://pride-converter-2.googlecode.com/svn/trunk/report-api/src/main/resources/report-bindings.xjb  -->
+
+    <!--
+
+XPATH cheat chart
+
+Expression	Description
+nodename	Selects all nodes with the name "nodename"
+/	Selects from the root node
+//	Selects nodes in the document from the current node that match the selection no matter where they are
+.	Selects the current node
+..	Selects the parent of the current node
+@	Selects attributes
+
+
+-->
+
+
+    <jxb:bindings schemaLocation="uniprot.xsd" node="/xs:schema">
+
+        <jxb:globalBindings localScoping="toplevel" enableJavaNamingConventions="true">
+            <!-- the serializable uid should reflect the version number 1.0.0 -->
+            <jxb:serializable uid="100"/>
+
+            <!-- this interface will be used to ensure type safety in generified methods -->
+            <xjc:superInterface name="org.biojava3.auto.tools.UpObject"/>
+
+        </jxb:globalBindings>
+
+        <jxb:schemaBindings>
+            <jxb:package name="org.biojava3.auto.uniprot"></jxb:package>
+        </jxb:schemaBindings>
+
+
+        <!-- this resolves a naming conflict -->
+
+        <jxb:bindings node="//xs:complexType[@name='isoformType']/xs:sequence/xs:element[@name='sequence']/xs:complexType">
+            <jxb:class name="IsoformTypeSequence"></jxb:class>
+
+        </jxb:bindings>
+
+        <jxb:bindings
+                node="//xs:complexType[@name='commentType']/xs:sequence/xs:choice/xs:element[@name='conflict']/xs:complexType/xs:sequence/xs:element[@name='sequence']/xs:complexType">
+            <jxb:class name="CommentConflictSequence"></jxb:class>
+        </jxb:bindings>
+
+
+
+
+
+    </jxb:bindings>
+
+</jxb:bindings>

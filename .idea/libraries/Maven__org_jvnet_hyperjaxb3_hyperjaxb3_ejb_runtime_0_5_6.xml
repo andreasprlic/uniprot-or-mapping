@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.jvnet.hyperjaxb3:hyperjaxb3-ejb-runtime:0.5.6">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jvnet/hyperjaxb3/hyperjaxb3-ejb-runtime/0.5.6/hyperjaxb3-ejb-runtime-0.5.6.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jvnet/hyperjaxb3/hyperjaxb3-ejb-runtime/0.5.6/hyperjaxb3-ejb-runtime-0.5.6-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jvnet/hyperjaxb3/hyperjaxb3-ejb-runtime/0.5.6/hyperjaxb3-ejb-runtime-0.5.6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
