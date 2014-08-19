@@ -59,78 +59,55 @@ nodename	Selects all nodes with the name "nodename"
         <!-- this refers to the SequenceType class in general  and renames it to Sequence-->
         <jxb:bindings node="//xs:complexType[@name='sequenceType']">
 
-            <jxb:class>
-                <jxb:javadoc><![CDATA[The Sequence object provides access to the actual sequence string as well as versioning and checksum information .]]></jxb:javadoc>
-            </jxb:class>
 
-            <jxb:property>
-                <jxb:baseType >
+                <jxb:class>
+                    <jxb:javadoc><![CDATA[The Sequence object provides access to the actual sequence string as well as versioning and checksum information .]]></jxb:javadoc>
+                </jxb:class>
 
-                    <jxb:javaType name="byte[]"
-                        parseMethod="javax.xml.bind.DatatypeConverter.parseHexBinary"
-                        printMethod="javax.xml.bind.DatatypeConverter.printHexBinary"
-                        >
-                    </jxb:javaType>
-                </jxb:baseType>
+                <jxb:property>
+                    <jxb:baseType >
 
-            </jxb:property>
+                        <jxb:javaType name="byte[]"
+                                      parseMethod="javax.xml.bind.DatatypeConverter.parseHexBinary"
+                                      printMethod="javax.xml.bind.DatatypeConverter.printHexBinary"
+                                >
+                        </jxb:javaType>
+                    </jxb:baseType>
 
-            <!--<jxb:bindings node="./node()">-->
-                <!--<hj:basic>-->
-                    <!--<orm:column length="1000"/>-->
-                <!--</hj:basic>-->
-                <!-- prob that should be in an XML schema?-->
-                <!--<xs:annotation>-->
-                <!--<xs:appinfo>-->
-                <!--<hj:basic>-->
-                <!--<orm:column length="1000" />-->
-                <!--</hj:basic>-->
-                <!--</xs:appinfo>-->
-                <!--</xs:annotation>-->
-
-            <!--</jxb:bindings>-->
+                </jxb:property>
 
 
-            <!-- resolve name collision between attribute and element "zip" -->
-            <!--<jxb:bindings node=".//xs:attribute[@name='checksum']">-->
-                <!--<jxb:property name="checksumme"/>-->
-            <!--</jxb:bindings>-->
 
-            <!--//<jxb:bindings node="//xs:complexType[@name='sequenceType']/xs:simpleContent">-->
+        </jxb:bindings>
 
-                <!--<hj:basic>-->
-                    <!--<orm:column type="xsd:hexBinary"/>-->
-                <!--</hj:basic>-->
-
-
-           <!--// </jxb:bindings>-->
-
-            <!-- rename SequenceType object to Sequence (shall we keep this?)-->
+        <!--<jxb:bindings>-->
+            <!--&lt;!&ndash;rename SequenceType object to Sequence (shall we keep this?)&ndash;&gt;-->
             <!--<hj:entity name="Sequence">-->
                 <!--<orm:table name="Sequence"/>-->
             <!--</hj:entity>-->
 
             <!--<jxb:class name="Sequence"></jxb:class>-->
 
-
-        </jxb:bindings>
-
-
-
-        <!-- this refers to the instance of the SequenceType object in the entry class -->
-        <jxb:bindings node="//xs:element[@name='entry']/xs:complexType/xs:sequence/xs:element[@name='sequence']">
-
-
-        </jxb:bindings>
-
-
-        <!--<jxb:bindings node="//xs:complexType[@name='sequenceType']/xs:simpleContent/xs:extension">-->
-            <!--<hj:column column-definition="BLOB"/>-->
-            <!--<hj:basic>-->
-                <!--<orm:column column-definition="BLOB"/>-->
-            <!--</hj:basic>-->
         <!--</jxb:bindings>-->
 
+        <!--<jxb:bindings >-->
+        <!--</jxb:bindings>-->
+
+        <jxb:bindings node="//xs:complexType[@name='evidencedStringType']">
+
+
+            <jxb:property>
+                <jxb:baseType >
+
+                    <jxb:javaType name="byte[]"
+                                  parseMethod="javax.xml.bind.DatatypeConverter.parseHexBinary"
+                                  printMethod="javax.xml.bind.DatatypeConverter.printHexBinary"
+                            >
+                    </jxb:javaType>
+                </jxb:baseType>
+
+            </jxb:property>
+        </jxb:bindings>
 
         <!-- this resolves a naming conflict related to the use of name="Sequence" in complex Attributes-->
 

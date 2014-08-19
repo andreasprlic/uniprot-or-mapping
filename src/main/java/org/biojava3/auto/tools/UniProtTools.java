@@ -12,7 +12,7 @@ import java.io.InputStream;
  */
 public class UniProtTools {
 
-    public static Uniprot loadUniProt(InputStream inputStream) throws JAXBException {
+    public static Uniprot readUniProtFromInputStream(InputStream inputStream) throws JAXBException {
         JAXBContext ctx = JAXBContext.newInstance(new Class[] {Uniprot.class});
 
         Unmarshaller um = ctx.createUnmarshaller();

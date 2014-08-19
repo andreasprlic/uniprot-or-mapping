@@ -1,7 +1,11 @@
 import junit.framework.TestCase;
+import org.biojava3.auto.dao.UniprotDAO;
+import org.biojava3.auto.dao.UniprotDAOImpl;
 import org.biojava3.auto.tools.HibernateUtilsUniprot;
+import org.biojava3.auto.tools.JpaUtilsUniProt;
 import org.biojava3.auto.tools.UniProtTools;
 
+import org.biojava3.auto.uniprot.Entry;
 import org.biojava3.auto.uniprot.Uniprot;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -17,39 +21,83 @@ import java.util.Properties;
  */
 public class TestUniprotLoading extends TestCase{
 
-    public void testLoadingP50225(){
-    ClassLoader loader = Thread.currentThread().getContextClassLoader();
-    InputStream inStream = loader.getResourceAsStream("P50225.xml");
+    public void testReadingP50225(){
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        InputStream inStream = loader.getResourceAsStream("P50225.xml");
 
-    assertNotNull(inStream);
+
 
         try {
-            Uniprot up = UniProtTools.loadUniProt(inStream);
+
+
+        assertNotNull(inStream);
+        Uniprot up = UniProtTools.readUniProtFromInputStream(inStream);
+
+        assertNotNull(up);
+
+        assertTrue(up.getEntry().get(0).getAccession().size()>1);
+
+        assertNotNull(up.getEntry());
+        assertNotNull(up.getEntry().get(0));
+        assertNotNull(up.getEntry().get(0).getSequence());
+
+        System.out.println(up.getEntry().get(0).getSequence().getValue());
+
+        assertNotNull(up.getEntry().get(0).getSequence().getValue());
+        String seq1 = up.getEntry().get(0).getSequence().getValue().toString();
+
+            assertNotNull(seq1);
+            assertTrue(seq1.length() == up.getEntry().get(0).getSequence().getLength());
+
+        } catch (Exception e){
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+
+
+    public void testWritingAndLoadingP50225(){
+
+
+        try {
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            InputStream inStream = loader.getResourceAsStream("P50225.xml");
+            Uniprot up = UniProtTools.readUniProtFromInputStream(inStream);
 
             assertNotNull(up);
-
-            assertTrue(up.getEntry().get(0).getAccession().size()>1);
-
-
-//            HibernateUtilsUniprot hibernate = new HibernateUtilsUniprot();
-//            Session sess = hibernate.getSession();
 
             Properties dbproperties = new Properties();
             InputStream propstream = loader.getResourceAsStream("database.properties");
             dbproperties.load(propstream);
 
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("org.biojava3.auto.uniprot",dbproperties);
+            UniprotDAO dao = new UniprotDAOImpl();
+
+            Uniprot up2 = dao.getUniProt("P50225");
+
+            if ( up2 == null) {
+
+                // not in DB yet...
+                System.out.println("UP entry not found, loading into DB");
+                EntityManager em = JpaUtilsUniProt.getEntityManager();
+
+                em.getTransaction().begin();
 
 
-            EntityManager em = emf.createEntityManager();
+                em.persist(up);
 
-            em.getTransaction().begin();
+                em.getTransaction().commit();
 
-            em.persist(up);
+                up2 = dao.getUniProt("P50225");
+            }
 
-            em.getTransaction().commit();
 
-            em.close();
+            String seq2 = up2.getEntry().get(0).getSequence().getValue().toString();
+            assertTrue(seq2.length() == up2.getEntry().get(0).getSequence().getLength());
+
+            String seq1 = up.getEntry().get(0).getSequence().getValue().toString();
+            assertTrue(seq1.equals(seq2));
+
+
 
             assertTrue(true);
         } catch (Exception e){
