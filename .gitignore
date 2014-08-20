@@ -18,4 +18,5 @@ hs_err_pid*
 .idea/libraries/*
 .idea/artifacts/*
 .idea/modules.xml
+.idea/*
 *.iml
