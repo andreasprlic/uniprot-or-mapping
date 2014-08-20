@@ -1,6 +1,7 @@
 package org.biojava3.auto.dao;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -326,6 +327,13 @@ public class UniprotDAOImpl implements UniprotDAO {
     }
 
 
+    public  String cleanSequence(String sequence) {
+        sequence = sequence.trim();
+        sequence = sequence.replaceAll("\\s+", "");
+        sequence = sequence.replaceAll("\\r\\n|\\r|\\n", "");
+        return sequence;
+    }
+
     public  synchronized Uniprot getUniProt(String uniprotID) {
 
         long timeS = System.currentTimeMillis();
@@ -336,6 +344,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         try {
             EntityManager em = JpaUtilsUniProt.getEntityManager();
 
+           @SuppressWarnings("JpaQlInspection")
            Query q = em.createQuery("from org.biojava3.auto.uniprot.Uniprot up where :val in elements  (up.entry.accession)  ");
             q.setParameter("val", uniprotID);
 
@@ -431,5 +440,40 @@ public class UniprotDAOImpl implements UniprotDAO {
             }
         }
         return desc;
+    }
+
+    public SortedMap<String, String> getDbVersions() {
+        SortedMap<String, String> ans = new TreeMap<String, String>();
+        // String sql = "select element, CEILING(version) from up_entry_accession ea inner join up_entry e on e.objid =
+        // ea.up_entry_objid";
+
+
+        Integer version = null;
+        List<String> accList = null;
+        Iterator<String> it2 = null;
+        try {
+            EntityManager em = JpaUtilsUniProt.getEntityManager();
+
+            @SuppressWarnings("JpaQlInspection")
+            Query q = em.createQuery("from org.rcsb.external.uniprot.Entry");
+
+            ListIterator li = q.getResultList().listIterator();
+            while (li.hasNext()) {
+                Entry anEnt = (Entry) li.next();
+                accList = anEnt.getAccession();
+                version = anEnt.getVersion();
+                if (accList != null && version != null) {
+                    it2 = accList.iterator();
+                    while (it2.hasNext()) {
+                        String anAcc = (String) it2.next();
+                        ans.put(anAcc, version.toString());
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ans;
     }
 }

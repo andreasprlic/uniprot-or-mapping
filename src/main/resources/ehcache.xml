@@ -203,7 +203,7 @@ Here is an example of CacheManager level resource tuning, which will use up to 4
 
     For more information on the Terracotta configuration, see the Terracotta documentation.
     -->
-    <terracottaConfig url="localhost:9510"/>
+    <!--<terracottaConfig url="localhost:9510"/>-->
 
     <!--
     Cache configuration
@@ -694,11 +694,12 @@ Here is an example of CacheManager level resource tuning, which will use up to 4
     The defaultCache has an implicit name "default" which is a reserved cache name.
     -->
     <defaultCache
-            maxEntriesLocalHeap="0"
+            maxElementsInMemory="500"
             eternal="false"
             timeToIdleSeconds="1200"
             timeToLiveSeconds="1200">
-        <terracotta/>
+
+
     </defaultCache>
 
     <!--
@@ -716,15 +717,12 @@ Here is an example of CacheManager level resource tuning, which will use up to 4
     defined on your system. On a standard Linux system this will be /tmp"
     -->
     <cache name="sampleCache1"
-           maxEntriesLocalHeap="10000"
-           maxEntriesLocalDisk="1000"
            eternal="false"
            diskSpoolBufferSizeMB="20"
            timeToIdleSeconds="300"
            timeToLiveSeconds="600"
            memoryStoreEvictionPolicy="LFU"
            transactionalMode="off">
-        <persistence strategy="localTempSwap"/>
     </cache>
 
 
@@ -735,7 +733,6 @@ Here is an example of CacheManager level resource tuning, which will use up to 4
     timeToIdle are not used and do not need to be specified.
     -->
     <cache name="sampleCache2"
-           maxEntriesLocalHeap="1000"
            eternal="true"
            memoryStoreEvictionPolicy="FIFO"/>
 
@@ -746,7 +743,7 @@ Here is an example of CacheManager level resource tuning, which will use up to 4
     minutes, overriding the default of 2 minutes.
     -->
     <cache name="sampleCache3"
-           maxEntriesLocalHeap="500"
+
            eternal="false"
            overflowToDisk="true"
            diskPersistent="true"
@@ -756,17 +753,7 @@ Here is an example of CacheManager level resource tuning, which will use up to 4
            memoryStoreEvictionPolicy="LFU">
     </cache>
 
-    <!--
-    Sample Terracotta clustered cache named sampleTerracottaCache.
-    This cache uses Terracotta to cluster the contents of the cache.
-    -->
-    <cache name="sampleTerracottaCache"
-           maxBytesLocalHeap="10m"
-           eternal="false"
-           timeToIdleSeconds="3600"
-           timeToLiveSeconds="1800">
-        <terracotta/>
-    </cache>
+
 
     <!--
       Sample xa enabled cache named xaCache

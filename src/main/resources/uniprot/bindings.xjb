@@ -6,9 +6,9 @@
               xmlns:hj="http://hyperjaxb3.jvnet.org/ejb/schemas/customizations"
               xmlns:orm="http://java.sun.com/xml/ns/persistence/orm"
               jxb:extensionBindingPrefixes="hj orm"
-             >
+        >
 
-<!-- cheat sheet http://pride-converter-2.googlecode.com/svn/trunk/report-api/src/main/resources/report-bindings.xjb  -->
+    <!-- cheat sheet http://pride-converter-2.googlecode.com/svn/trunk/report-api/src/main/resources/report-bindings.xjb  -->
 
     <!--
 
@@ -35,8 +35,6 @@ nodename	Selects all nodes with the name "nodename"
             <!-- this interface will be used to ensure type safety in generified methods -->
             <xjc:superInterface name="org.biojava3.auto.tools.UpObject"/>
 
-
-
         </jxb:globalBindings>
 
         <jxb:schemaBindings>
@@ -44,74 +42,37 @@ nodename	Selects all nodes with the name "nodename"
 
         </jxb:schemaBindings>
 
-        <!-- all strings are BLOBs! -->
-        <hj:persistence>
-            <hj:default-single-property type="xsd:string">
-                <hj:basic>
-                    <orm:column length="1000" />
-                </hj:basic>
-            </hj:default-single-property>
-        </hj:persistence>
+        <!-- this changes the varchar length for all strings -->
+        <!--<hj:persistence>-->
+        <!--<hj:default-single-property type="xs:string">-->
+        <!--<hj:basic>-->
+        <!--<orm:column length="5000" />-->
+        <!--</hj:basic>-->
+        <!--</hj:default-single-property>-->
+        <!--</hj:persistence>-->
 
 
+        <!--<jxb:bindings node="//xs:complexType[@name='sequenceType']//xs:extension[@base='xs:string']">-->
+        <!--<jxb:bindings node="//xs:complexType[@name='sequenceType'][xs:simpleContent/xs:extension[@base='xs:string']]">-->
+        <!--<jxb:bindings node="//xs:complexType[@name='sequenceType'][xs:simpleContent]">-->
 
-
-        <!-- this refers to the SequenceType class in general  and renames it to Sequence-->
-        <jxb:bindings node="//xs:complexType[@name='sequenceType']">
-
-
-                <jxb:class>
-                    <jxb:javadoc><![CDATA[The Sequence object provides access to the actual sequence string as well as versioning and checksum information .]]></jxb:javadoc>
-                </jxb:class>
-
-                <jxb:property>
-                    <jxb:baseType >
-
-                        <jxb:javaType name="byte[]"
-                                      parseMethod="javax.xml.bind.DatatypeConverter.parseHexBinary"
-                                      printMethod="javax.xml.bind.DatatypeConverter.printHexBinary"
-                                >
-                        </jxb:javaType>
-                    </jxb:baseType>
-
-                </jxb:property>
-
-
-
-        </jxb:bindings>
-
-        <!--<jxb:bindings>-->
-            <!--&lt;!&ndash;rename SequenceType object to Sequence (shall we keep this?)&ndash;&gt;-->
-            <!--<hj:entity name="Sequence">-->
-                <!--<orm:table name="Sequence"/>-->
-            <!--</hj:entity>-->
-
+            <!---<hj:basic>-->
+            <!--<orm:column column-definition="VARCHAR(1000) "/>-->
+            <!--</hj:basic>-->
+            <!--<hj:table-->
             <!--<jxb:class name="Sequence"></jxb:class>-->
+            <!--<jxb:bindings >-->
+                <!--<hj:basic>-->
+                <!--<orm:column length="1000"/>-->
+                <!--</hj:basic>-->
 
+            <!--</jxb:bindings>-->
         <!--</jxb:bindings>-->
-
-        <!--<jxb:bindings >-->
-        <!--</jxb:bindings>-->
-
-        <jxb:bindings node="//xs:complexType[@name='evidencedStringType']">
-
-
-            <jxb:property>
-                <jxb:baseType >
-
-                    <jxb:javaType name="byte[]"
-                                  parseMethod="javax.xml.bind.DatatypeConverter.parseHexBinary"
-                                  printMethod="javax.xml.bind.DatatypeConverter.printHexBinary"
-                            >
-                    </jxb:javaType>
-                </jxb:baseType>
-
-            </jxb:property>
-        </jxb:bindings>
 
         <!-- this resolves a naming conflict related to the use of name="Sequence" in complex Attributes-->
 
-        <jxb:bindings node="//xs:complexType[@name='isoformType']/xs:sequence/xs:element[@name='sequence']/xs:complexType">
+        <jxb:bindings
+                node="//xs:complexType[@name='isoformType']/xs:sequence/xs:element[@name='sequence']/xs:complexType">
             <jxb:class name="IsoformTypeSequence"></jxb:class>
         </jxb:bindings>
 
@@ -119,7 +80,6 @@ nodename	Selects all nodes with the name "nodename"
                 node="//xs:complexType[@name='commentType']/xs:sequence/xs:choice/xs:element[@name='conflict']/xs:complexType/xs:sequence/xs:element[@name='sequence']/xs:complexType">
             <jxb:class name="CommentConflictSequence"></jxb:class>
         </jxb:bindings>
-
 
 
     </jxb:bindings>
