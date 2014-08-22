@@ -99,6 +99,12 @@ nodename	Selects all nodes with the name "nodename"
                 <orm:column column-definition="TEXT"/>
             </hj:basic>
         </jxb:bindings>
+        <jxb:bindings
+                node="//xs:complexType[@name='featureType']/xs:attribute[@name='description']">
+            <hj:basic>
+                <orm:column column-definition="TEXT"/>
+            </hj:basic>
+        </jxb:bindings>
 
 
         <!-- citation title -->

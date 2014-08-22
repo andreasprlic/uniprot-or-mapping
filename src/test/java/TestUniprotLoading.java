@@ -406,4 +406,13 @@ public class TestUniprotLoading extends TestCase {
     }
 
     // A8WGB1 A2AL36 A4UHT7
+
+    public void testReadingC5YHH7(){
+        testReading("C5YHH7");
+    }
+
+    public void testWritingAndLoadingC5YHH7(){
+        testWritingAndLoading("C5YHH7");
+    }
+
 }
