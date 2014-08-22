@@ -1,4 +1,4 @@
- Mac Specific ignores
+# Mac Specific ignores
 .DS_Store
 
 # Partial files or compiled files are excluded
