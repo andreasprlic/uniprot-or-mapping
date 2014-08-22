@@ -56,18 +56,28 @@ nodename	Selects all nodes with the name "nodename"
         <!--<jxb:bindings node="//xs:complexType[@name='sequenceType'][xs:simpleContent/xs:extension[@base='xs:string']]">-->
         <!--<jxb:bindings node="//xs:complexType[@name='sequenceType'][xs:simpleContent]">-->
 
-            <!---<hj:basic>-->
-            <!--<orm:column column-definition="VARCHAR(1000) "/>-->
-            <!--</hj:basic>-->
-            <!--<hj:table-->
-            <!--<jxb:class name="Sequence"></jxb:class>-->
-            <!--<jxb:bindings >-->
-                <!--<hj:basic>-->
-                <!--<orm:column length="1000"/>-->
-                <!--</hj:basic>-->
+        <!---<hj:basic>-->
+        <!--<orm:column column-definition="VARCHAR(1000) "/>-->
+        <!--</hj:basic>-->
+        <!--<hj:table-->
+        <!--<jxb:class name="Sequence"></jxb:class>-->
+        <!--<jxb:bindings >-->
+        <!--<hj:basic>-->
+        <!--<orm:column length="1000"/>-->
+        <!--</hj:basic>-->
 
-            <!--</jxb:bindings>-->
         <!--</jxb:bindings>-->
+        <!--</jxb:bindings>-->
+
+        <!-- some descriptions are longer than varchar 255 -->
+        <jxb:bindings
+                node="//xs:element[@name='disease']/xs:complexType/xs:sequence/xs:element[@name='description']">
+            <hj:basic>
+                <orm:column column-definition="TEXT"/>
+            </hj:basic>
+
+        </jxb:bindings>
+
 
         <!-- this resolves a naming conflict related to the use of name="Sequence" in complex Attributes-->
 
@@ -81,6 +91,22 @@ nodename	Selects all nodes with the name "nodename"
             <jxb:class name="CommentConflictSequence"></jxb:class>
         </jxb:bindings>
 
+
+        <!-- another place where sequence is used -->
+        <jxb:bindings
+                node="//xs:complexType[@name='featureType']/xs:sequence/xs:element[@name='original']">
+            <hj:basic>
+                <orm:column column-definition="TEXT"/>
+            </hj:basic>
+        </jxb:bindings>
+
+
+        <!-- citation title -->
+        <jxb:bindings node="//xs:complexType[@name='citationType']/xs:sequence/xs:element[@name='title']">
+            <hj:basic>
+                <orm:column column-definition="TEXT"/>
+            </hj:basic>
+        </jxb:bindings>
 
     </jxb:bindings>
 
