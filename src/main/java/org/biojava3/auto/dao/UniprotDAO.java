@@ -42,5 +42,5 @@ public interface UniprotDAO {
      *
      * @return
      */
-    public SortedMap<String, String> getDbVersions();
+    public SortedMap<String, Integer> getDbVersions();
 }

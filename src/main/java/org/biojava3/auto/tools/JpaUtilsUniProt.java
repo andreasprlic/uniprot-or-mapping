@@ -16,21 +16,38 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class JpaUtilsUniProt {
 
 
-    private static EntityManager entityManager;
-
+    private static EntityManagerFactory entityManagerFactory;
 
     private static AtomicBoolean busy = new AtomicBoolean(false);
+
     private static void init() {
 
-        if (entityManager != null)
+        if (entityManagerFactory != null)
             return;
 
-        if ( busy.get()) {
+        if (busy.get()) {
             System.err.println("Already initializing uniprot persistence in other thread");
-            return ;
+            return;
         }
 
         busy.set(true);
+
+
+        EntityManagerFactory emf = getEntityManagerFactory();
+
+        EntityManager entityManager = emf.createEntityManager();
+
+        validateSQLSchema(entityManager);
+
+        entityManager.close();
+        busy.set(false);
+
+    }
+
+    private static EntityManagerFactory getEntityManagerFactory() {
+
+        if (entityManagerFactory != null)
+            return entityManagerFactory;
 
         Properties dbproperties = new Properties();
 
@@ -42,17 +59,13 @@ public class JpaUtilsUniProt {
             e.printStackTrace();
             // use log4j for logging
         }
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("org.biojava3.auto.uniprot", dbproperties);
 
-        entityManager = emf.createEntityManager();
+        entityManagerFactory = Persistence.createEntityManagerFactory("org.biojava3.auto.uniprot", dbproperties);
 
-        validateSQLSchema(entityManager);
-
-        busy.set(false);
-
+        return entityManagerFactory;
     }
 
-    private static void validateSQLSchema(EntityManager entityManager){
+    private static void validateSQLSchema(EntityManager entityManager) {
 
         // STEP 1 check if we need to modify the column definitions of a few tables
 
@@ -68,11 +81,11 @@ public class JpaUtilsUniProt {
     }
 
     /**
-     *  make sure the sequence table is correct
-        UGLY HACK, BECAUSE HYPERJAXB3 does not seem to support resolving inherited definitions !!!
-        ARGH
+     * make sure the sequence table is correct
+     * UGLY HACK, BECAUSE HYPERJAXB3 does not seem to support resolving inherited definitions !!!
+     * ARGH
      */
-    private static void fixSQLSchema(EntityManager entityManager){
+    private static void fixSQLSchema(EntityManager entityManager) {
 
         entityManager.getTransaction().begin();
         String sql1 = "alter table sequencetype change column value_ value_ TEXT";
@@ -82,19 +95,27 @@ public class JpaUtilsUniProt {
         entityManager.createNativeQuery(sql2).executeUpdate();
 
         // this is another place that stores sequences!
-        String sql3 = "alter table FEATURETYPE change column ORIGINAL ORIGINAL TEXT";
-        entityManager.createNativeQuery(sql3).executeUpdate();
+        // fixed: now in bindings.xjb
+//        String sql3 = "alter table FEATURETYPE change column ORIGINAL ORIGINAL TEXT";
+//        entityManager.createNativeQuery(sql3).executeUpdate();
 
         entityManager.getTransaction().commit();
 
     }
 
     public static EntityManager getEntityManager() {
-        if (entityManager == null) {
+        if (entityManagerFactory == null) {
             init();
         }
 
-        return entityManager;
+
+        // we need to recreate the entity manager, it has been closed
+
+        EntityManagerFactory emf = getEntityManagerFactory();
+
+        return (emf.createEntityManager());
+
+
     }
 
 //    public static Session getSession() {
