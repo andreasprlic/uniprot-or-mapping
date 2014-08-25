@@ -1,45 +1,50 @@
-package org.biojava3.auto.org.biojava3.auto.load;
+package org.biojava3.auto.load;
 
-import org.biojava3.auto.tools.HttpResource;
+import org.biojava3.auto.dao.UniprotDAO;
+import org.biojava3.auto.dao.UniprotDAOImpl;
 import org.biojava3.auto.tools.JpaUtilsUniProt;
 import org.biojava3.auto.tools.UniProtTools;
-import org.biojava3.auto.uniprot.Uniprot;
 
-import javax.persistence.EntityManager;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-
 /**
- *  Loads ALL of UniProt into the local database;
- *
- * Created by ap3 on 19/08/2014.
+ * Created by ap3 on 21/08/2014.
  */
-public class LoadAllUniProt {
+public class LoadMissing {
 
     static int availableProcs = Runtime.getRuntime().availableProcessors();
     static int threadPoolSize = availableProcs - 1;
     static {
         if ( threadPoolSize < 1)
             threadPoolSize = 1;
+        if ( threadPoolSize > 4)
+            threadPoolSize =4;
     }
     static ExecutorService pool = Executors.newFixedThreadPool(threadPoolSize);
 
 
     public static void main(String[] args) {
 
+        System.out.println("Using a thread pool size of " +threadPoolSize);
+
         SortedSet<String> upVersions = UniProtTools.getAllCurrentUniProtACs();
 
-        System.out.println("Loading " + upVersions.size() + " UniProt entries into DB.");
+        System.out.println("UniProt currently contains " + upVersions.size() + " entries.");
+
+        UniprotDAO dao = new UniprotDAOImpl();
+        SortedSet<String> dbVersions = new TreeSet<String>(dao.getDbVersions().keySet());
+
+        System.out.println("DB contains " + dbVersions.size() + " entries.");
+
+        upVersions.removeAll(dbVersions);
+
+        System.out.println("Loading missing " + upVersions.size() + " UniProt entries into DB.");
 
         try {
 
@@ -54,9 +59,7 @@ public class LoadAllUniProt {
 
                 if (accessions.size() == chunkSize) {
                     // submit job
-
                     CallableLoader loader = new CallableLoader(accessions);
-
                     Future<List<String>> badResult = pool.submit(loader);
                     futureResults.add(badResult);
 
@@ -65,6 +68,12 @@ public class LoadAllUniProt {
                 }
 
             }
+
+            // wrap up the remaining  accessions
+            CallableLoader loader = new CallableLoader(accessions);
+            Future<List<String>> badResult = pool.submit(loader);
+            futureResults.add(badResult);
+
 
             System.out.println("Broke up calculations into " + futureResults.size() + " jobs...");
 
@@ -80,5 +89,4 @@ public class LoadAllUniProt {
         }
 
     }
-
 }
