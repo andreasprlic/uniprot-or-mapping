@@ -41,6 +41,8 @@ public class CallableLoader implements Callable<List<String>> {
 
 
     Integer jobNr;
+
+    StartupParameters params = new StartupParameters();
     /**
      * Send a list of uniprot accessions to be loader
      *
@@ -58,7 +60,7 @@ public class CallableLoader implements Callable<List<String>> {
 
     public List<String> call() {
 
-        System.out.println("# " + jobNr +" starting calculations");
+        System.out.println("# " + jobNr +" starting to load " + accessions2load.size() + " UP entries");
 
         long timeS = System.currentTimeMillis();
         List<String> badAccessions = new ArrayList<String>();
@@ -70,10 +72,12 @@ public class CallableLoader implements Callable<List<String>> {
 
         em.getTransaction().begin();
 
+
+
         for (String accession : accessions2load){
 
-
             count++;
+
             try {
 
                 String xmlDir = PATH_UNIPROT + accession.substring(0, 1) + "/" + accession.substring(1, 2) + "/" + accession.substring(2, 3) + "/" + accession.substring(3, 4) + "/";
@@ -102,14 +106,15 @@ public class CallableLoader implements Callable<List<String>> {
 
                 em.persist(up);
 
-                if (count %500 == 0 && count >0) {
+                if (count % params.getCommitSize() == 0 && count >0) {
                     System.out.println("# " + jobNr +" Committing transaction. pos #" + count);
                     if ( em.getTransaction().isActive())
                         em.getTransaction().commit();
                     em.close();
                     em = JpaUtilsUniProt.getEntityManager();
                     em.getTransaction().begin();
-                    System.out.println("# " + jobNr + " badlist size:" + badAccessions.size());
+                    long timeN = System.currentTimeMillis();
+                    System.out.println("# " + jobNr + " badlist size:" + badAccessions.size() + " speed: " + (timeN-timeS)/count + " ms. / entry");
                     System.out.println(badAccessions);
                 }
                 localFile.delete();
@@ -142,10 +147,18 @@ public class CallableLoader implements Callable<List<String>> {
 
         long diff = (timeE - timeS);
         totalTime += diff;
-        System.out.println("# " + jobNr +" " + count +"/" + accessions2load.size() + " loaded " + accessions2load.size() +" entries in " + diff/1000 +" sec. (average: " + totalTime/count + "ms.");
+        System.out.println("# " + jobNr +" " + count +"/" + accessions2load.size() + " loaded " + accessions2load.size() +" entries in " + diff/1000 +" sec. (average: " + totalTime/count + "ms.)");
         System.out.println("# " + jobNr + " done! ");
         return badAccessions;
 
 
+    }
+
+    public StartupParameters getParams() {
+        return params;
+    }
+
+    public void setParams(StartupParameters params) {
+        this.params = params;
     }
 }

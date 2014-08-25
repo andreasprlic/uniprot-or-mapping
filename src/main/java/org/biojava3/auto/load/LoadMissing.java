@@ -1,5 +1,6 @@
 package org.biojava3.auto.load;
 
+import org.biojava.bio.structure.align.util.CliTools;
 import org.biojava3.auto.dao.UniprotDAO;
 import org.biojava3.auto.dao.UniprotDAOImpl;
 import org.biojava3.auto.tools.JpaUtilsUniProt;
@@ -18,20 +19,26 @@ import java.util.concurrent.Future;
  */
 public class LoadMissing {
 
-    static int availableProcs = Runtime.getRuntime().availableProcessors();
-    static int threadPoolSize = availableProcs - 1;
-    static {
-        if ( threadPoolSize < 1)
-            threadPoolSize = 1;
-        if ( threadPoolSize > 4)
-            threadPoolSize =4;
-    }
-    static ExecutorService pool = Executors.newFixedThreadPool(threadPoolSize);
-
-
     public static void main(String[] args) {
 
-        System.out.println("Using a thread pool size of " +threadPoolSize);
+        long timeS = System.currentTimeMillis();
+
+        StartupParameters params = new StartupParameters();
+        try {
+
+            CliTools.configureBean(params, args);
+
+        } catch (Exception e){
+            e.printStackTrace();
+
+            return ;
+        }
+
+        System.out.println(params);
+
+        int threadPoolSize = params.getThreadSize();
+
+        ExecutorService pool = Executors.newFixedThreadPool(threadPoolSize);
 
         SortedSet<String> upVersions = UniProtTools.getAllCurrentUniProtACs();
 
@@ -46,20 +53,41 @@ public class LoadMissing {
 
         System.out.println("Loading missing " + upVersions.size() + " UniProt entries into DB.");
 
+
+        int count = 0;
         try {
 
+
             int chunkSize = 5000;
+
+            if ( params.getEndPosition() > -1 ) {
+                int l = Math.abs(params.getEndPosition() - params.getStartPosition());
+                chunkSize = l / params.getThreadSize();
+            }
 
             List<String> accessions = new ArrayList<String>();
 
             List<Future<List<String>>> futureResults = new ArrayList<Future<List<String>>>();
             for (String ac : upVersions) {
 
+                count++;
+
+                if ( count < params.getStartPosition()) {
+                    continue;
+                }
+
+                if ( params.getEndPosition() > -1) {
+                    if ( count > params.getEndPosition())
+                        continue;
+                }
+
+
                 accessions.add(ac);
 
                 if (accessions.size() == chunkSize) {
                     // submit job
                     CallableLoader loader = new CallableLoader(accessions);
+                    loader.setParams(params);
                     Future<List<String>> badResult = pool.submit(loader);
                     futureResults.add(badResult);
 
@@ -71,6 +99,7 @@ public class LoadMissing {
 
             // wrap up the remaining  accessions
             CallableLoader loader = new CallableLoader(accessions);
+            loader.setParams(params);
             Future<List<String>> badResult = pool.submit(loader);
             futureResults.add(badResult);
 
@@ -87,6 +116,10 @@ public class LoadMissing {
         } catch (Exception e){
             e.printStackTrace();
         }
+
+        long timeE = System.currentTimeMillis();
+        System.out.println("All OK! Total time: " + (timeE-timeS)/1000 + " sec.");
+        System.exit(0);
 
     }
 }
