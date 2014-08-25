@@ -411,8 +411,18 @@ public class TestUniprotLoading extends TestCase {
         testReading("C5YHH7");
     }
 
+    // featuretype - description length
     public void testWritingAndLoadingC5YHH7(){
         testWritingAndLoading("C5YHH7");
+    }
+
+    public void testListofAcs(){
+        String[] acs = new String[]{"A2BGL3"};
+
+        for (String ac : acs){
+            testReading(ac);
+            testWritingAndLoading(ac);
+        }
     }
 
 }

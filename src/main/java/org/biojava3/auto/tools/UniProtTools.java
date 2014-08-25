@@ -128,8 +128,11 @@ public class UniProtTools {
         BufferedReader br = null;
         try {
             HttpResource resource = new HttpResource(new URL(uniProtQuery), cachedUniProtACsFile);
-            if (!resource.isLocal())
+            if (!resource.isLocal()) {
                 resource.download();
+            } else {
+                System.out.println("Re-using " + resource.cachedFile.getAbsolutePath());
+            }
 
             br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(cachedUniProtACsFile))));
 
