@@ -1,4 +1,4 @@
-package org.biojava3.auto.org.biojava3.auto.load;
+package org.biojava3.auto.load;
 
 import org.biojava3.auto.tools.HttpResource;
 import org.biojava3.auto.tools.JpaUtilsUniProt;
