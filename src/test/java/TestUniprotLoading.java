@@ -1,7 +1,7 @@
 import junit.framework.TestCase;
-import org.biojava3.auto.dao.UniprotDAO;
-import org.biojava3.auto.dao.UniprotDAOImpl;
-import org.biojava3.auto.tools.HibernateUtilsUniprot;
+import org.rcsb.uniprot.auto.dao.UniprotDAO;
+import org.rcsb.uniprot.auto.dao.UniprotDAOImpl;
+import org.rcsb.uniprot.auto.tools.HibernateUtilsUniprot;
 import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
 import org.rcsb.uniprot.auto.tools.UniProtTools;
 
