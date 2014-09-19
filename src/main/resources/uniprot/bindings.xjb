@@ -93,12 +93,18 @@ nodename	Selects all nodes with the name "nodename"
 
 
         <!-- another place where sequence is used -->
+
+        <!-- weird, that the same does not work for the variation field. Prob. because it is its own table-->
         <jxb:bindings
                 node="//xs:complexType[@name='featureType']/xs:sequence/xs:element[@name='original']">
             <hj:basic>
                 <orm:column column-definition="TEXT"/>
             </hj:basic>
         </jxb:bindings>
+
+
+
+
         <jxb:bindings
                 node="//xs:complexType[@name='featureType']/xs:attribute[@name='description']">
             <hj:basic>
@@ -113,6 +119,9 @@ nodename	Selects all nodes with the name "nodename"
                 <orm:column column-definition="TEXT"/>
             </hj:basic>
         </jxb:bindings>
+
+
+
 
     </jxb:bindings>
 
