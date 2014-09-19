@@ -60,7 +60,7 @@ public class JpaUtilsUniProt {
             // use log4j for logging
         }
 
-        entityManagerFactory = Persistence.createEntityManagerFactory("org.biojava3.auto.uniprot", dbproperties);
+        entityManagerFactory = Persistence.createEntityManagerFactory("org.rcsb.uniprot.auto", dbproperties);
 
         return entityManagerFactory;
     }

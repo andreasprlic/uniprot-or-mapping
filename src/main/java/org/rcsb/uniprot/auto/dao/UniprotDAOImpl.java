@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
 
-import org.biojava3.auto.uniprot.*;
+import org.rcsb.uniprot.auto.*;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
@@ -339,7 +339,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         Uniprot up = null;
         try {
             @SuppressWarnings("JpaQlInspection")
-            Query q = em.createQuery("from org.biojava3.auto.uniprot.Uniprot up where :val in elements  (up.entry.accession)  ");
+            Query q = em.createQuery("from org.rcsb.uniprot.auto.Uniprot up where :val in elements  (up.entry.accession)  ");
             q.setParameter("val", uniprotID);
 
             List l = q.getResultList();
@@ -477,7 +477,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             EntityManager em = JpaUtilsUniProt.getEntityManager();
 
             @SuppressWarnings("JpaQlInspection")
-//            Query q = em.createQuery("from org.biojava3.auto.uniprot.Entry");
+//            Query q = em.createQuery("from org.rcsb.uniprot.auto.uniprot.Entry");
                     Query q = em.createNativeQuery(sql);
 
             List<Object[]> li = q.getResultList();

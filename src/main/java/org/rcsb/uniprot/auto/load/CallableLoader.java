@@ -3,7 +3,7 @@ package org.rcsb.uniprot.auto.load;
 import org.rcsb.uniprot.auto.tools.HttpResource;
 import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
 import org.rcsb.uniprot.auto.tools.UniProtTools;
-import org.biojava3.auto.uniprot.Uniprot;
+import org.rcsb.uniprot.auto.Uniprot;
 
 import javax.persistence.EntityManager;
 import java.io.File;

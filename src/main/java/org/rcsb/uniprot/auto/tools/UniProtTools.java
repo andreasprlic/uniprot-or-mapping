@@ -1,6 +1,6 @@
 package org.rcsb.uniprot.auto.tools;
 
-import org.biojava3.auto.uniprot.Uniprot;
+import org.rcsb.uniprot.auto.Uniprot;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
