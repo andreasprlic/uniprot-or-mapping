@@ -1,11 +1,10 @@
 package org.rcsb.uniprot.auto.dao;
 
 import java.io.*;
-import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.biojava3.auto.tools.JpaUtilsUniProt;
+import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
 
 import org.biojava3.auto.uniprot.*;
 import org.hibernate.Session;
