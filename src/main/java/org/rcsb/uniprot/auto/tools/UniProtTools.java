@@ -1,15 +1,12 @@
-package org.biojava3.auto.tools;
+package org.rcsb.uniprot.auto.tools;
 
 import org.biojava3.auto.uniprot.Uniprot;
-import org.hibernate.Session;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;

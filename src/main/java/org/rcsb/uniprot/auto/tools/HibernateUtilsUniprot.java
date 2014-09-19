@@ -1,4 +1,4 @@
-package org.biojava3.auto.tools;
+package org.rcsb.uniprot.auto.tools;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;

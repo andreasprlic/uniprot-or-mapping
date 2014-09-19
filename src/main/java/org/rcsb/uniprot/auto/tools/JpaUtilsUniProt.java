@@ -1,4 +1,4 @@
-package org.biojava3.auto.tools;
+package org.rcsb.uniprot.auto.tools;
 
 import org.hibernate.Session;
 import org.hibernate.jpa.HibernateEntityManager;
@@ -94,10 +94,17 @@ public class JpaUtilsUniProt {
         String sql2 = "alter table EVIDENCEDSTRINGTYPE change column value_ value_ TEXT";
         entityManager.createNativeQuery(sql2).executeUpdate();
 
-        // this is another place that stores sequences!
-        // fixed: now in bindings.xjb
-//        String sql3 = "alter table FEATURETYPE change column ORIGINAL ORIGINAL TEXT";
-//        entityManager.createNativeQuery(sql3).executeUpdate();
+        // isoform type note (e.g. Q9N0Z4-2)
+        String sql3 = "alter table NOTE change column value_ value_ TEXT";
+        entityManager.createNativeQuery(sql3).executeUpdate();
+
+        // featuretype_variation. could not get this to work using bindings.xjb
+        String sql4 = "alter table featuretype_variation change column hjvalue hjvalue text";
+        entityManager.createNativeQuery(sql4).executeUpdate();
+
+        // Fix for C0LGT6 reference scop
+        String sql5 = "alter table referencetype_scope_ change column hjvalue hjvalue text";
+        entityManager.createNativeQuery(sql5).executeUpdate();
 
         entityManager.getTransaction().commit();
 

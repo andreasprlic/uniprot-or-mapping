@@ -1,10 +1,9 @@
-package org.biojava3.auto.load;
+package org.rcsb.uniprot.auto.load;
 
 import org.biojava.bio.structure.align.util.CliTools;
 import org.biojava3.auto.dao.UniprotDAO;
 import org.biojava3.auto.dao.UniprotDAOImpl;
-import org.biojava3.auto.tools.JpaUtilsUniProt;
-import org.biojava3.auto.tools.UniProtTools;
+import org.rcsb.uniprot.auto.tools.UniProtTools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +17,8 @@ import java.util.concurrent.Future;
  * Created by ap3 on 21/08/2014.
  */
 public class LoadMissing {
+
+
 
     public static void main(String[] args) {
 
