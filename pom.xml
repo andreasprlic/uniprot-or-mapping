@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.biojava3</groupId>
-    <artifactId>auto</artifactId>
+    <groupId>org.rcsb.uniprot</groupId>
+    <artifactId>uniprot</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -21,6 +21,22 @@
         <maven.compiler.target>${jdk.version}</maven.compiler.target>
 
     </properties>
+
+    <!-- where Maven deploy will deploy project jars/wars -->
+    <distributionManagement>
+        <downloadUrl>http://nexus.rcsb.org/nexus/content/repositories/releases/</downloadUrl>
+        <repository>
+            <id>releases</id>
+            <name>RCSB PDB Maven Repository</name>
+            <url>http://nexus.rcsb.org/nexus/content/repositories/releases</url>
+
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>http://nexus.rcsb.org/nexus/content/repositories/snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
 
     <dependencies>
 
@@ -186,6 +202,18 @@
 
         <plugins>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <fork>true</fork>
+                    <maxmem>4G</maxmem>
+                </configuration>
+            </plugin>
+
+
             <!-- we want all dependencies on the classpath -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -281,7 +309,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>org.biojava3.auto.load.LoadMissing</mainClass>
+                            <mainClass>org.rcsb.uniprot.auto.load.LoadMissing</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
