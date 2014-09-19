@@ -1,4 +1,4 @@
-package org.biojava3.auto.tools;
+package org.rcsb.uniprot.auto.tools;
 
 /**
  * Created by andreas on 8/15/14.

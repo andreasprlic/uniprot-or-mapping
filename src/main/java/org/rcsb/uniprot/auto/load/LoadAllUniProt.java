@@ -1,18 +1,9 @@
-package org.biojava3.auto.load;
+package org.rcsb.uniprot.auto.load;
 
-import org.biojava3.auto.tools.HttpResource;
-import org.biojava3.auto.tools.JpaUtilsUniProt;
-import org.biojava3.auto.tools.UniProtTools;
-import org.biojava3.auto.uniprot.Uniprot;
+import org.rcsb.uniprot.auto.tools.UniProtTools;
 
-import javax.persistence.EntityManager;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

@@ -1,4 +1,4 @@
-package org.biojava3.auto.dao;
+package org.rcsb.uniprot.auto.dao;
 
 import java.io.*;
 import java.math.BigInteger;
@@ -207,7 +207,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         //System.out.println(sql);
 
         try {
-          EntityManager emf = JpaUtilsUniProt.getEntityManager();
+            EntityManager emf = JpaUtilsUniProt.getEntityManager();
 
             Query q = emf.createNativeQuery(sql);
 
@@ -334,6 +334,33 @@ public class UniprotDAOImpl implements UniprotDAO {
         return sequence;
     }
 
+
+
+    public  synchronized Uniprot getUniProt(String uniprotID, EntityManager em) {
+        Uniprot up = null;
+        try {
+            @SuppressWarnings("JpaQlInspection")
+            Query q = em.createQuery("from org.biojava3.auto.uniprot.Uniprot up where :val in elements  (up.entry.accession)  ");
+            q.setParameter("val", uniprotID);
+
+            List l = q.getResultList();
+            for (Object obj : l) {
+                up = (Uniprot) obj;
+                break;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+        long timeE = System.currentTimeMillis();
+
+        //System.out.println("  TrackTools took " + (timeE-timeS) + " ms. to load " + uniprotID);
+        // note: we don;t close the session here because the outside will request specific details from the Uniprot object
+        return up;
+
+    }
     public  synchronized Uniprot getUniProt(String uniprotID) {
 
         long timeS = System.currentTimeMillis();
@@ -344,19 +371,10 @@ public class UniprotDAOImpl implements UniprotDAO {
         try {
             EntityManager em = JpaUtilsUniProt.getEntityManager();
 
-           @SuppressWarnings("JpaQlInspection")
-           Query q = em.createQuery("from org.biojava3.auto.uniprot.Uniprot up where :val in elements  (up.entry.accession)  ");
-            q.setParameter("val", uniprotID);
 
-            List l = q.getResultList();
-            for (Object obj : l) {
-                up = (Uniprot) obj;
-                break;
-            }
+            return getUniProt(uniprotID,
+                    em);
 
-            long timeE = System.currentTimeMillis();
-
-            System.out.println("  loading UP took " + (timeE-timeS) + " ms. to load " + uniprotID);
 
 
         } catch (Exception e) {
@@ -461,7 +479,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
             @SuppressWarnings("JpaQlInspection")
 //            Query q = em.createQuery("from org.biojava3.auto.uniprot.Entry");
-              Query q = em.createNativeQuery(sql);
+                    Query q = em.createNativeQuery(sql);
 
             List<Object[]> li = q.getResultList();
             for (Object[] o : li) {

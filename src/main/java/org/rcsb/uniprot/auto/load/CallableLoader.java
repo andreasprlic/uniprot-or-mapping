@@ -1,8 +1,8 @@
-package org.biojava3.auto.load;
+package org.rcsb.uniprot.auto.load;
 
-import org.biojava3.auto.tools.HttpResource;
-import org.biojava3.auto.tools.JpaUtilsUniProt;
-import org.biojava3.auto.tools.UniProtTools;
+import org.rcsb.uniprot.auto.tools.HttpResource;
+import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
+import org.rcsb.uniprot.auto.tools.UniProtTools;
 import org.biojava3.auto.uniprot.Uniprot;
 
 import javax.persistence.EntityManager;
@@ -19,6 +19,8 @@ import java.util.concurrent.Callable;
  */
 public class CallableLoader implements Callable<List<String>> {
 
+
+    boolean debug = false;
 
     List<String> accessions2load;
 
@@ -94,12 +96,15 @@ public class CallableLoader implements Callable<List<String>> {
                         System.err.println("# " + jobNr +" Could not load " + accession);
                         // System.exit(0);
                         badAccessions.add(accession);
+                        if ( debug)
+                            System.exit(0);
                         continue;
 
                     }
                 }
 
-
+                if ( debug)
+                    System.out.println("# loading " + accession);
                 InputStream inStream = new FileInputStream(localFile);
 
                 Uniprot up = UniProtTools.readUniProtFromInputStream(inStream);
@@ -127,6 +132,10 @@ public class CallableLoader implements Callable<List<String>> {
                 if ( em.getTransaction().isActive())
                     em.getTransaction().rollback();
                 em.close();
+
+                if ( debug)
+                    System.exit(0);
+
                 em = JpaUtilsUniProt.getEntityManager();
                 continue;
             }

@@ -1,9 +1,10 @@
-package org.biojava3.auto.dao;
+package org.rcsb.uniprot.auto.dao;
 
 import org.biojava3.auto.uniprot.Entry;
 import org.biojava3.auto.uniprot.Uniprot;
 import org.hibernate.Session;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -13,6 +14,7 @@ public interface UniprotDAO {
 
 
     public Uniprot getUniProt(String uniprotAccession);
+    public Uniprot getUniProt(String uniprotID, EntityManager em);
 
     public  String getUniProtAcByName(String uniprotName);
 
