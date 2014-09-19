@@ -2,22 +2,15 @@ import junit.framework.TestCase;
 import org.biojava3.auto.dao.UniprotDAO;
 import org.biojava3.auto.dao.UniprotDAOImpl;
 import org.biojava3.auto.tools.HibernateUtilsUniprot;
-import org.biojava3.auto.tools.JpaUtilsUniProt;
-import org.biojava3.auto.tools.UniProtTools;
+import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
+import org.rcsb.uniprot.auto.tools.UniProtTools;
 
-import org.biojava3.auto.uniprot.Entry;
 import org.biojava3.auto.uniprot.Uniprot;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
-import java.util.SortedMap;
 
 /**
  * Created by ap3 on 13/08/2014.
@@ -75,7 +68,7 @@ public class TestUniprotLoading extends TestCase {
 
     /** makes sure that the sequencetype and EVIDENCEDSTRINGTYPE columns are defined correctly
      *
-      */
+     */
     public void testWritingAndLoadingP50225(){
 
         testWritingAndLoading("P50225");
@@ -103,24 +96,35 @@ public class TestUniprotLoading extends TestCase {
 
             UniprotDAO dao = new UniprotDAOImpl();
 
-            Uniprot up2 = dao.getUniProt(accession);
+            EntityManager em = JpaUtilsUniProt.getEntityManager();
+            Uniprot up2 = dao.getUniProt(accession,em);
 
-            if (up2 == null) {
-
-                // not in DB yet...
-                System.out.println("UP entry not found, loading into DB");
-
-                EntityManager em = JpaUtilsUniProt.getEntityManager();
+            if ( up2 != null) {
+                // unload the entry...
+                System.out.println("deleting UP entry from db");
 
 
                 em.getTransaction().begin();
-
-                em.persist(up);
-
+                em.remove(up2);
                 em.getTransaction().commit();
-
-                up2 = dao.getUniProt(accession);
             }
+
+
+
+            // not in DB yet...
+            System.out.println("Loading into DB");
+
+
+
+
+            em.getTransaction().begin();
+
+            em.persist(up);
+
+            em.getTransaction().commit();
+
+            up2 = dao.getUniProt(accession);
+
 
             String seq2 = dao.cleanSequence(up2.getEntry().get(0).getSequence().getValue().toString());
             assertTrue(seq2.length() == up2.getEntry().get(0).getSequence().getLength());
@@ -170,7 +174,7 @@ public class TestUniprotLoading extends TestCase {
      at org.hibernate.jpa.spi.AbstractEntityManagerImpl.convert(AbstractEntityManagerImpl.java:1677)
      at org.hibernate.jpa.spi.AbstractEntityManagerImpl.convert(AbstractEntityManagerImpl.java:1683)
      at org.hibernate.jpa.spi.AbstractEntityManagerImpl.persist(AbstractEntityManagerImpl.java:1187)
-     at org.biojava3.auto.org.biojava3.auto.load.LoadAllUniProt.main(LoadAllUniProt.java:76)
+     at org.biojava3.auto.org.rcsb.uniprot.auto.load.LoadAllUniProt.main(LoadAllUniProt.java:76)
      at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
      at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
      at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -279,7 +283,7 @@ public class TestUniprotLoading extends TestCase {
      at org.hibernate.jpa.spi.AbstractEntityManagerImpl.convert(AbstractEntityManagerImpl.java:1677)
      at org.hibernate.jpa.spi.AbstractEntityManagerImpl.convert(AbstractEntityManagerImpl.java:1683)
      at org.hibernate.jpa.spi.AbstractEntityManagerImpl.persist(AbstractEntityManagerImpl.java:1187)
-     at org.biojava3.auto.org.biojava3.auto.load.LoadAllUniProt.main(LoadAllUniProt.java:77)
+     at org.biojava3.auto.org.rcsb.uniprot.auto.load.LoadAllUniProt.main(LoadAllUniProt.java:77)
      at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
      at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
      at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -416,13 +420,46 @@ public class TestUniprotLoading extends TestCase {
         testWritingAndLoading("C5YHH7");
     }
 
-    public void testListofAcs(){
-        String[] acs = new String[]{"A2BGL3"};
-
-        for (String ac : acs){
-            testReading(ac);
-            testWritingAndLoading(ac);
-        }
+    // Note field. makes sure it is Text - see isoform 2
+    public void testWritingAndLoadingQ9N0Z4(){
+        testWritingAndLoading("Q9N0Z4");
     }
+
+    public void testWritingAndLoadingP22109(){
+        testWritingAndLoading("P22109");
+    }
+
+
+    /*
+    Hibernate: insert into REFERENCETYPE_SCOPE_ (HJID, HJINDEX, HJVALUE) values (?, ?, ?)
+2014-08-26 11:12:04,678 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [1] as [BIGINT] - [1144623]>
+2014-08-26 11:12:04,678 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [2] as [INTEGER] - [1]>
+2014-08-26 11:12:04,678 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [3] as [VARCHAR] - [MUTAGENESIS OF 76-ILE-SER-77; 81-GLY-GLY-82; 103-ASN--ASP-106; 274-GLY-THR-275; 293-GLU-ARG-294; 298-SER-SER-299; 317-TRP-TRP-318; 347-GLU-TYR-348; 373-SER--PHE-375; 397-GLU--SER-399; 447-HIS--ASN-449; 469-ASP--ASP-473; 564-ASN--SER-568 AND 588-ASN--ASN-590]>
+2014-08-26 11:12:04,686 ERROR [org.hibernate.engine.jdbc.spi.SqlExceptionHelper] - <Data truncation: Data too long for column 'HJVALUE' at row 1>
+2014-08-26 11:12:04,687 ERROR [org.hibernate.engine.jdbc.batch.internal.BatchingBatch] - <HHH000315: Exception executing batch [could not execute batch]>
+     */
+    public void testWritingAndLoadingC0M6C7(){ testWritingAndLoading("C0M6C7");}
+
+
+
+    /** Hibernate: insert into REFERENCETYPE_SCOPE_ (HJID, HJINDEX, HJVALUE) values (?, ?, ?)
+     2014-08-26 12:51:33,115 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [1] as [BIGINT] - [1145247]>
+     2014-08-26 12:51:33,115 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [2] as [INTEGER] - [1]>
+     2014-08-26 12:51:33,115 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [3] as [VARCHAR] - [MUTAGENESIS OF 76-ILE-SER-77; 81-GLY-GLY-82; 103-ASN--ASP-106; 274-GLY-THR-275; 293-GLU-ARG-294; 298-SER-SER-299; 317-TRP-TRP-318; 347-GLU-TYR-348; 373-SER--PHE-375; 397-GLU--SER-399; 447-HIS--ASN-449; 469-ASP--ASP-473; 564-ASN--SER-568 AND 588-ASN--ASN-590]>
+     2014-08-26 12:51:33,122 ERROR [org.hibernate.engine.jdbc.spi.SqlExceptionHelper] - <Data truncation: Data too long for column 'HJVALUE' at row 1>
+     2014-08-26 12:51:33,123 ERROR [org.hibernate.engine.jdbc.batch.internal.BatchingBatch] - <HHH000315: Exception executing batch [could not execute batch]>
+     */
+    public void testC0LGT6(){
+        testWritingAndLoading("C0LGT6");
+    }
+
+//    public void testListofAcs(){
+//        String[] acs = new String[]{"A2BGL3","Q9BRX5", "Q9BXB7", "Q9C0A6", "Q9EQC7", "Q9H6D3", "Q9HCQ7", "Q9I955", "Q9JJ46", "Q9JKS4", "Q9JMI9", "Q9N0Z4", "Q9NGC3", "Q9NUI1", "Q9P225", "Q9QXX8", "Q9R1T9", "Q9SEA4", "Q9U6D2", "Q9UBS5", "Q9UGI6", "Q9UKP5", "Q9ULU8", "Q9UQB3", "Q9V6D6", "Q9VDD9", "Q9VS48"};
+//
+//        for (String ac : acs){
+//            testReading(ac);
+//            testWritingAndLoading(ac);
+//        }
+//    }
 
 }
