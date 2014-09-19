@@ -33,12 +33,12 @@ nodename	Selects all nodes with the name "nodename"
             <jxb:serializable uid="100"/>
 
             <!-- this interface will be used to ensure type safety in generified methods -->
-            <xjc:superInterface name="org.biojava3.auto.tools.UpObject"/>
+            <xjc:superInterface name="org.rcsb.uniprot.auto.tools.UpObject"/>
 
         </jxb:globalBindings>
 
         <jxb:schemaBindings>
-            <jxb:package name="org.biojava3.auto.uniprot"></jxb:package>
+            <jxb:package name="org.rcsb.uniprot.auto"></jxb:package>
 
         </jxb:schemaBindings>
 

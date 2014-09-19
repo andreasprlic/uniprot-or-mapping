@@ -1,8 +1,8 @@
 package org.rcsb.uniprot.auto.load;
 
 import org.biojava.bio.structure.align.util.CliTools;
-import org.biojava3.auto.dao.UniprotDAO;
-import org.biojava3.auto.dao.UniprotDAOImpl;
+import org.rcsb.uniprot.auto.dao.UniprotDAO;
+import org.rcsb.uniprot.auto.dao.UniprotDAOImpl;
 import org.rcsb.uniprot.auto.tools.UniProtTools;
 
 import java.util.ArrayList;

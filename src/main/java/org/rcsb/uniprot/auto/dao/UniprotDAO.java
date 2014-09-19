@@ -1,7 +1,7 @@
 package org.rcsb.uniprot.auto.dao;
 
-import org.biojava3.auto.uniprot.Entry;
-import org.biojava3.auto.uniprot.Uniprot;
+import org.rcsb.uniprot.auto.Entry;
+import org.rcsb.uniprot.auto.Uniprot;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
@@ -40,7 +40,7 @@ public interface UniprotDAO {
     public  String cleanSequence(String sequence);
 
     /** Load all versions of the UniProt entries from the database. Can be compared with
-     * @see(org.biojava3.auto.tools.UniProtTools.loadVersionsFromUniProt())
+     * @see(org.rcsb.uniprot.auto.tools.UniProtTools.loadVersionsFromUniProt())
      *
      * @return
      */
