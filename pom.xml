@@ -20,6 +20,14 @@
         <maven.compiler.source>${jdk.version}</maven.compiler.source>
         <maven.compiler.target>${jdk.version}</maven.compiler.target>
 
+        <!-- make sure that these hibernate & related library version are in sync -->
+        <!-- also make sure to have the same config in pdbormapping/pom.xml -->
+        <hibernate.version>4.3.6.Final</hibernate.version>
+        <hibernate.search.version>4.5.1.Final</hibernate.search.version>
+        <hibernate.tools.version>4.3.1.CR1</hibernate.tools.version>
+        <ehcache.version>2.4.3</ehcache.version>
+        <lucene.version>3.6.2</lucene.version>
+
     </properties>
 
     <!-- where Maven deploy will deploy project jars/wars -->
@@ -61,32 +69,27 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>4.3.6.Final</version>
+            <version>${hibernate.version}</version>
         </dependency>
-
-
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-search-orm</artifactId>
-            <version>4.5.1.Final</version>
-        </dependency>
-
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>4.3.6.Final</version>
+            <version>${hibernate.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-search-orm</artifactId>
+            <version>${hibernate.search.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-search-analyzers</artifactId>
-            <version>4.5.1.Final</version>
+            <version>${hibernate.search.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-tools</artifactId>
-            <version>4.3.1.CR1</version>
+            <version>${hibernate.tools.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -94,25 +97,23 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-c3p0</artifactId>
-            <version>4.3.5.Final</version>
+            <version>${hibernate.version}</version>
         </dependency>
-
 
         <!-- enable 2nd cache - ehcache -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-ehcache</artifactId>
-            <version>4.3.6.Final</version>
+            <version>${hibernate.version}</version>
         </dependency>
 
         <dependency>
         <groupId>net.sf.ehcache</groupId>
         <artifactId>ehcache-core</artifactId>
-        <version>2.4.3</version>
+        <version>${ehcache.version}</version>
         </dependency>
 
 
@@ -124,13 +125,13 @@
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
-            <version>3.6.2</version>
+            <version>${lucene.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-highlighter</artifactId>
-            <version>3.6.2</version>
+            <version>${lucene.version}</version>
             <type>jar</type>
         </dependency>
 
@@ -144,12 +145,12 @@
         <dependency>
             <groupId>org.jvnet.jaxb2_commons</groupId>
             <artifactId>jaxb2-basics-runtime</artifactId>
-            <version>0.6.4</version>
+            <version>0.8.2</version>
         </dependency>
         <dependency>
             <groupId>org.jvnet.hyperjaxb3</groupId>
             <artifactId>maven-hyperjaxb3-plugin</artifactId>
-            <version>0.5.6</version>
+            <version>0.6.0</version>
         </dependency>
 
 
