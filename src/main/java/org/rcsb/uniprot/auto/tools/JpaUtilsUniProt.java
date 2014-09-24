@@ -53,6 +53,9 @@ public class JpaUtilsUniProt {
 
         ClassLoader cloader = Thread.currentThread().getContextClassLoader();
         InputStream propstream = cloader.getResourceAsStream("database.properties");
+        if ( propstream == null){
+            System.err.println("Could not get file database.properties from class context!");
+        }
         try {
             dbproperties.load(propstream);
         } catch (Exception e) {
