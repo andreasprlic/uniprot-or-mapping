@@ -1,9 +1,11 @@
 package org.rcsb.uniprot.auto.dao;
 
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.biojava3.core.util.InputStreamProvider;
 import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
 
 import org.rcsb.uniprot.auto.*;
@@ -20,7 +22,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     static Map<String, List<String>> uniprotGeneMap;
     static Map<String, List<String>> ac2geneName;
     ;
-    static Map<String, Integer> pdbCounts;
+
     static SortedSet<String> mopedIds;
     static AtomicBoolean busyWithInit = new AtomicBoolean(false);
 
@@ -31,6 +33,11 @@ public class UniprotDAOImpl implements UniprotDAO {
     public static void main(String[] args) {
         UniprotDAOImpl me = new UniprotDAOImpl();
         me.init();
+
+        System.out.println("# UP ids:" + me.getAllUniProtIDs().size());
+        System.out.println("P50225 header:" + me.getUniProtHeader("P50225"));
+        System.exit(0);
+
     }
 
     public static void init() {
@@ -39,8 +46,9 @@ public class UniprotDAOImpl implements UniprotDAO {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
+
                 e.printStackTrace();
+
             }
             return;
         }
@@ -49,21 +57,32 @@ public class UniprotDAOImpl implements UniprotDAO {
 
 
         initAllUniprotIDs();
+        long time1 = System.currentTimeMillis();
         if (profiling) {
-            long time1 = System.currentTimeMillis();
+
             System.out.println("Time to initAllUniprotIDs " + (time1 - timeS));
         }
         initGeneNames();
+        long time2 = System.currentTimeMillis();
         if (profiling) {
-            long time1 = System.currentTimeMillis();
-            System.out.println("Time to initGeneNames " + (time1 - timeS));
+
+            System.out.println("Time to initGeneNames " + (time2 - time1));
         }
 
         initUniprotNameMap();
+        long time3 = System.currentTimeMillis();
         if (profiling) {
-            long time1 = System.currentTimeMillis();
-            System.out.println("Time to initUniprotNameMap " + (time1 - timeS));
+
+            System.out.println("Time to initUniprotNameMap " + (time3 - time2));
         }
+
+        initMoped();
+        long time4 = System.currentTimeMillis();
+        if ( profiling){
+
+            System.out.println("Time to initMoped " + (time4 - time3));
+        }
+
 
         busyWithInit.set(false);
 
@@ -78,7 +97,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         Session sess = null;
         try {
             EntityManager entityManager = JpaUtilsUniProt.getEntityManager();
-            String sql = "select distinct(element) from up_entry_accession";
+            String sql = "select distinct(HJVALUE) from entry_accession";
             Query q = entityManager.createNativeQuery(sql);
             List l = q.getResultList();
             for (Object obj : l) {
@@ -102,6 +121,50 @@ public class UniprotDAOImpl implements UniprotDAO {
         System.out.println("time required to initialize all " + allUniprotIDs.size() + " uniprot IDs: " + (timeE - timeS));
         return ups;
     }
+
+    private static void initMoped() {
+        mopedIds = new TreeSet<String>();
+
+        // fetch the list of supported Uniprot IDs from
+        //http://www.proteinspire.org/MOPED/services/referencedata/proteinNames
+
+        InputStreamProvider prov = new InputStreamProvider();
+
+        try {
+
+            URL u = new URL(MOPED_LOCATION);
+            InputStream is = prov.getInputStream(u);
+
+
+            BufferedReader dis
+                    = new BufferedReader(new InputStreamReader(is));
+
+            String line = null;
+            while ((line = dis.readLine()) != null) {
+
+                String upId = line.trim();
+                if ( ! mopedIds.contains(upId))
+                    mopedIds.add(upId);
+
+            }
+
+            System.out.println("loaded " + mopedIds.size() + " IDs from MOPED ("+MOPED_LOCATION+")");
+
+        } catch (Exception e){
+
+            e.printStackTrace();
+        }
+
+
+
+    }
+
+    public SortedSet<String> getMOPEDids() {
+        if ( mopedIds == null)
+            init();
+        return mopedIds;
+    }
+
 
 
     public String getUniProtAcByName(String uniprotName) {
@@ -140,33 +203,24 @@ public class UniprotDAOImpl implements UniprotDAO {
         uniprotNameMap = new TreeMap<String, String>();
         long timeS = System.currentTimeMillis();
 
-
+        EntityManager emf = JpaUtilsUniProt.getEntityManager();
         try {
-            EntityManager emf = JpaUtilsUniProt.getEntityManager();
 
-            String sql = "select  acc.element  , nam.element  from " +
-                    " up_entry_accession acc,  " +
-                    " up_entry_name nam  " +
-                    " where acc.up_entry_objId = nam.up_entry_objId";
-
-//            String hql = "select e.accession from " +
-//                    " org.rcsb.external.uniprot.Entry as e   " ;
-//                  ;
-
-            //String hql = "select e.name, e.accession from org.rcsb.external.uniprot.Entry as e";
+            String sql = "select  ea.HJVALUE as acc , en.HJVALUE as nam from " +
+                    " entry_accession ea,  " +
+                    " entry_name_ en  " +
+                    " where ea.HJID=en.HJID ";
 
             Query q = emf.createNativeQuery(sql);
-            // Query q = sess.createQuery(hql);
-
 
             List<Object[]> l = (List<Object[]>) q.getResultList();
             Iterator<Object[]> iter = l.iterator();
             while (iter.hasNext()) {
                 Object[] obj = iter.next();
-                System.out.println(Arrays.toString(obj) + " " + obj[0].getClass().getName() + " " + obj.length);
+
                 String ac = (String) obj[0];
                 String name = (String) obj[1];
-                System.out.println(name + " " + ac);
+
                 uniprotNameMap.put(name, ac);
 
             }
@@ -177,13 +231,13 @@ public class UniprotDAOImpl implements UniprotDAO {
 
 
         }
-
+        emf.close();
         long timeE = System.currentTimeMillis();
 
         if (profiling) {
             System.out.println("init uniprotName map for " + uniprotNameMap.keySet().size() + " names in : " + (timeE - timeS) + " ms.");
-            System.out.println(uniprotNameMap.get("ELNE_HUMAN"));
-            System.out.println(uniprotNameMap.get("P08246"));
+//            System.out.println(uniprotNameMap.get("ELNE_HUMAN"));
+//            System.out.println(uniprotNameMap.get("P08246"));
         }
         return;
 
@@ -197,11 +251,17 @@ public class UniprotDAOImpl implements UniprotDAO {
         ac2geneName = new TreeMap<String, List<String>>();
         long timeS = System.currentTimeMillis();
 
-        String sql = "select ac.element, gn.value from up_genename as gn , up_gene_up_genename gnn , up_gene g , " +
-                " up_entry_up_gene eg , up_entry e , up_uniprot_up_entry ue, up_uniprot u , up_entry_accession ac " +
-                " where gn.objId = gnn.name_objId and g.objId = gnn.up_gene_objId and eg.gene_objId = g.objId " +
-                " and e.objId = eg.up_entry_objId  and e.objId = ue.entry_objId and ue.up_uniprot_objId = u.objId " +
-                " and ac.up_entry_objId = e.objId";
+//        String sql = "select ac.element, gn.value from up_genename as gn , up_gene_up_genename gnn , up_gene g , " +
+//                " up_entry_up_gene eg , up_entry e , up_uniprot_up_entry ue, up_uniprot u , up_entry_accession ac " +
+//                " where gn.objId = gnn.name_objId and g.objId = gnn.up_gene_objId and eg.gene_objId = g.objId " +
+//                " and e.objId = eg.up_entry_objId  and e.objId = ue.entry_objId and ue.up_uniprot_objId = u.objId " +
+//                " and ac.up_entry_objId = e.objId";
+
+        String sql ="SELECT gnt.VALUE_, ea.HJVALUE FROM genenametype gnt, genetype gt, entry e, entry_accession ea " +
+                    " where e.HJID = gt.GENE_ENTRY_HJID and " +
+                    " gnt.NAME__GENETYPE_HJID = gt.HJID and " +
+                    " ea.HJID = e.HJID ";
+
 
         //System.out.println(sql);
 
@@ -216,7 +276,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
                 String ac = (String) obj[0];
                 String gn = (String) obj[1];
-
+               // System.out.println(ac + "  " +gn);
                 if (gn == null || ac == null)
                     continue;
 
@@ -266,21 +326,6 @@ public class UniprotDAOImpl implements UniprotDAO {
             init();
 
         return ac2geneName.get(uniprotID);
-    }
-
-
-    public Map<String, Integer> getAllPDBCounts() {
-        if (pdbCounts == null)
-            init();
-
-        return pdbCounts;
-    }
-
-
-    public SortedSet<String> getMOPEDids() {
-        if (mopedIds == null)
-            init();
-        return mopedIds;
     }
 
 
