@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.SortedSet;
 
 
 public interface UniprotDAO {
@@ -23,8 +24,6 @@ public interface UniprotDAO {
     public List<String> getGeneNames(String uniprotID);
 
     public String getDescription(String uniprotID);
-
-    public Map<String,Integer> getAllPDBCounts();
 
     public int getLength(String uniprotID);
 
@@ -45,4 +44,10 @@ public interface UniprotDAO {
      * @return
      */
     public SortedMap<String, Integer> getDbVersions();
+
+    /** returns all the uniprot IDs that are in the Moped database
+     *
+     * @return list of Uniprot IDs
+     */
+    public SortedSet<String> getMOPEDids();
 }
