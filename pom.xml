@@ -6,7 +6,7 @@
 
     <groupId>org.rcsb.uniprot</groupId>
     <artifactId>uniprot</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>2014.09.29.10</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -169,6 +169,17 @@
         </dependency>
     </dependencies>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>autoincrement-versions-maven-plugin</id>
+            <name>autoincrement-versions-maven-plugin</name>
+            <url>http://autoincrement-versions-maven-plugin.googlecode.com/svn/repo</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
     <build>
 
         <!--will be added as Source folder-->
@@ -314,6 +325,28 @@
                     </archive>
                 </configuration>
             </plugin>
+
+
+            <!-- this plugin auto-increments the version number from now on... -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>autoincrement-versions-maven-plugin</artifactId>
+                <version>2.0-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <id>update-pom-versions</id>
+                        <goals>
+                            <goal>increment</goal>
+                            <goal>commit</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <autoIncrementVersion>true</autoIncrementVersion>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
 
         </plugins>
 
