@@ -47,7 +47,8 @@ public class HttpResource {
             if (debug)
                 System.out.println("successful download in " + (timeE - timeS) + " ms.");
         } catch (Exception e){
-            e.printStackTrace();
+            System.err.println(e.getMessage());
+           // e.printStackTrace();
             return false;
         }
         return true;

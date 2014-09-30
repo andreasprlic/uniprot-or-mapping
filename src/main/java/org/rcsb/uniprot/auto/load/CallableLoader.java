@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -25,6 +27,8 @@ public class CallableLoader implements Callable<List<String>> {
     List<String> accessions2load;
 
 
+    public static final String UNI_SERVER = "www.uniprot.org";
+
     public static final String UNI_PATH = "/uniprot/";
 
     public static final String SERVER = "sandboxwest.rcsb.org";
@@ -37,7 +41,8 @@ public class CallableLoader implements Callable<List<String>> {
 
     public static final String LOCAL_UNIPROT_DIR = "ftp://" + SERVER + "/pdbx/uniprot/";
 
-
+    public static final int CONNECT_TIMEOUT_MS = 60000;
+    public static final int READ_TIMEOUT_MS = 600000;
 
     static Integer jobs = -1;
 
@@ -94,11 +99,37 @@ public class CallableLoader implements Callable<List<String>> {
                     boolean success = upFile.download();
                     if ( ! success) {
                         System.err.println("# " + jobNr +" Could not load " + accession);
-                        // System.exit(0);
-                        badAccessions.add(accession);
-                        if ( debug)
-                            System.exit(0);
-                        continue;
+
+                        /// probably a Trembl ID!
+
+                        try {
+
+                            // fetch directly from UniProt
+                            URL u = new URL("http://" + UNI_SERVER + UNI_PATH + accession + ".xml");
+                            URLConnection conn = u.openConnection();
+                            // setting these timeouts ensures the client does not deadlock indefinitely
+                            // when the server has problems.
+                            conn.setConnectTimeout(CONNECT_TIMEOUT_MS);
+                            conn.setReadTimeout(READ_TIMEOUT_MS);
+                            InputStream in = conn.getInputStream();
+
+                            Files.copy(in, localFile.toPath());
+                           // Files.copy(Path source, OutputStream out)
+
+                            in.close();
+
+                            System.out.println("got file from " + u);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+
+
+                            // System.exit(0);
+                            badAccessions.add(accession);
+                            if (debug)
+                                System.exit(0);
+                            continue;
+                        }
 
                     }
                 }
