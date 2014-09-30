@@ -6,6 +6,7 @@ import org.hibernate.jpa.HibernateEntityManager;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -72,15 +73,31 @@ public class JpaUtilsUniProt {
 
         // STEP 1 check if we need to modify the column definitions of a few tables
 
-        //TODO: implement me
-
+        // Does the required table exist?
+        boolean hasTable = hasRequiredIdsTable();
 
         // STEP 2 update the column definition, where we can't use hyperjaxb3 due to the lack of
         // support for inheritance
 
-        fixSQLSchema(entityManager);
+        if ( ! hasTable)
+            fixSQLSchema(entityManager);
 
 
+    }
+
+    private static boolean hasRequiredIdsTable() {
+
+        String sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS " +
+        " WHERE TABLE_SCHEMA='uniprot' " +
+        " AND TABLE_NAME='required_ids' ";
+
+         EntityManager em = getEntityManager();
+        Query q = em.createNativeQuery(sql);
+        boolean hasTable = q.getResultList().size()>0;
+
+        em.close();
+
+        return hasTable;
     }
 
     /**
@@ -89,6 +106,8 @@ public class JpaUtilsUniProt {
      * ARGH
      */
     private static void fixSQLSchema(EntityManager entityManager) {
+
+        System.out.println("Updating UniProt DB schema");
 
         entityManager.getTransaction().begin();
         String sql1 = "alter table sequencetype change column value_ value_ TEXT";
@@ -108,6 +127,11 @@ public class JpaUtilsUniProt {
         // Fix for C0LGT6 reference scop
         String sql5 = "alter table referencetype_scope_ change column hjvalue hjvalue text";
         entityManager.createNativeQuery(sql5).executeUpdate();
+
+        // create the table required_ids which tracks what uniprot IDS should be loaded by the loading framework
+        String sql6 = "CREATE TABLE required_ids (uniprot_ac varchar(15));";
+
+        entityManager.createNativeQuery(sql6).executeUpdate();
 
         entityManager.getTransaction().commit();
 

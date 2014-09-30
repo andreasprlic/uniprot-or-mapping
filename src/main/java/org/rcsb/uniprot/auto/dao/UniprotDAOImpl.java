@@ -10,6 +10,7 @@ import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
 
 import org.rcsb.uniprot.auto.*;
 import org.hibernate.Session;
+import org.rcsb.uniprot.auto.tools.UniProtTools;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -36,6 +37,9 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         System.out.println("# UP ids:" + me.getAllUniProtIDs().size());
         System.out.println("P50225 header:" + me.getUniProtHeader("P50225"));
+
+        Uniprot up = me.getUniProt("P50225");
+        System.out.println(up.getEntry().get(0).getAccession().get(0));
         System.exit(0);
 
     }
@@ -165,6 +169,57 @@ public class UniprotDAOImpl implements UniprotDAO {
         return mopedIds;
     }
 
+    @Override
+    public void registerRequiredUniProtIds(SortedSet<String> requiredUniProtIDS) {
+
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+
+        String sql = "delete from required_ids";
+        em.getTransaction().begin();
+        em.createNativeQuery(sql).executeUpdate();
+
+        StringBuffer buf = new StringBuffer();
+        buf.append("insert into required_ids (uniprot_ac) values ");
+
+        boolean first = true;
+        for ( String ac: requiredUniProtIDS){
+            if (UniProtTools.isValidUniProtAC(ac)){
+                if ( ! first)
+                    buf.append(",");
+                buf.append("('");
+                buf.append(ac);
+                buf.append("')");
+                first = false;
+            }
+        }
+
+        em.createNativeQuery(buf.toString()).executeUpdate();
+
+        em.getTransaction().commit();
+
+        em.close();
+
+    }
+
+    public SortedSet<String> getRequiredUniProtIds() {
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+
+        String sql = "select distinct(uniprot_ac) from required_ids";
+
+        SortedSet<String> ups = new TreeSet<String>();
+
+            Query q = em.createNativeQuery(sql);
+            List l = q.getResultList();
+            for (Object obj : l) {
+
+                ups.add((String) obj);
+
+            }
+
+        em.close();
+
+        return ups;
+    }
 
 
     public String getUniProtAcByName(String uniprotName) {
@@ -394,6 +449,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             }
 
         } catch (Exception e) {
+            System.err.println("Could not load UP for " +uniprotID);
             e.printStackTrace();
 
         }

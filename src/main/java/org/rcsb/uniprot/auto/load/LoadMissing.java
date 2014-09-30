@@ -46,6 +46,16 @@ public class LoadMissing {
         System.out.println("UniProt currently contains " + upVersions.size() + " entries.");
 
         UniprotDAO dao = new UniprotDAOImpl();
+
+        SortedSet<String> requiredIds = dao.getRequiredUniProtIds();
+
+        System.out.println("PDB web app requires a minimum of " + requiredIds.size() +" UniProt IDs");
+
+        for ( String id: requiredIds){
+            if ( ! upVersions.contains(id))
+                upVersions.add(id);
+        }
+
         SortedSet<String> dbVersions = new TreeSet<String>(dao.getDbVersions().keySet());
 
         System.out.println("DB contains " + dbVersions.size() + " entries.");

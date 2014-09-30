@@ -50,4 +50,12 @@ public interface UniprotDAO {
      * @return list of Uniprot IDs
      */
     public SortedSet<String> getMOPEDids();
+
+    /** ALLOWS THE PDB webapp to register which UniProt IDs are required. Allows the UniProt framework to also load some Trembl entries, without having to load all of Trembl!
+     *
+     * @param requiredUniProtIDS
+     */
+    public void registerRequiredUniProtIds(SortedSet<String> requiredUniProtIDS);
+
+    public SortedSet<String> getRequiredUniProtIds();
 }

@@ -101,7 +101,7 @@ public class TestUniprotLoading extends TestCase {
 
             if ( up2 != null) {
                 // unload the entry...
-                System.out.println("deleting UP entry from db");
+                System.out.println("deleting UP entry " + accession +" from db");
 
 
                 em.getTransaction().begin();
@@ -112,7 +112,7 @@ public class TestUniprotLoading extends TestCase {
 
 
             // not in DB yet...
-            System.out.println("Loading into DB");
+            System.out.println("Loading " + accession +" into DB");
 
 
 
@@ -149,23 +149,23 @@ public class TestUniprotLoading extends TestCase {
 //        }
 //    }
 
-    public void testReadingA0AVK6() {
-        testReading("A0AVK6");
-    }
-    public void testWritingAndLoadingA0AVK6(){
-        testWritingAndLoading("A0AVK6");
-    }
-
-    public void testReadingA0JNT9(){
-        testReading("A0JNT9");
-    }
-    public void testWritingAndLoadingA0JNT9(){
-        testWritingAndLoading("A0JNT9");
-    }
-
-    public void testReadingA1A4Y4(){
-        testReading("A1A4Y4");
-    }
+//    public void testReadingA0AVK6() {
+//        testReading("A0AVK6");
+//    }
+//    public void testWritingAndLoadingA0AVK6(){
+//        testWritingAndLoading("A0AVK6");
+//    }
+//
+//    public void testReadingA0JNT9(){
+//        testReading("A0JNT9");
+//    }
+//    public void testWritingAndLoadingA0JNT9(){
+//        testWritingAndLoading("A0JNT9");
+//    }
+//
+//    public void testReadingA1A4Y4(){
+//        testReading("A1A4Y4");
+//    }
 
     /** 2014-08-19 19:38:02,268 ERROR [org.hibernate.engine.jdbc.spi.SqlExceptionHelper] - <Data truncation: Data too long for column 'DESCRIPTION' at row 1>
      Failed to load A1A4Y4
@@ -271,9 +271,9 @@ public class TestUniprotLoading extends TestCase {
      at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:208)
      ... 77 more
      */
-    public void testWritingAndLoadingA1A4Y4(){
-        testReading("A1A4Y4");
-    }
+    //public void testWritingAndLoadingA1A4Y4(){
+//        testReading("A1A4Y4");
+//    }
 
     /**
      * 10703
@@ -383,83 +383,83 @@ public class TestUniprotLoading extends TestCase {
      Process finished with exit code 255
 
      */
-    public void testReadingA1KNB8(){
-        testReading("A1KNB8");
-
-    }
-    public void testWritingAndLoadingA1KNB8(){
-        testWritingAndLoading("A1KNB8");
-    }
-
-
-    public void testReadingA2AKX3(){
-        testReading("A2AKX3");
-    }
-
-    public void testWritingAndLoadingA2AKX3(){
-        testWritingAndLoading("A2AKX3");
-    }
-
-    //Caused by: com.mysql.jdbc.MysqlDataTruncation: Data truncation: Data too long for column 'HJVALUE' at row 1
-    public void testReadingA2AKY4(){
-        testReading("A2AKY4");
-    }
-
-    public void testWritingAndLoadingA2AKY4(){
-        testWritingAndLoading("A2AKY4");
-    }
-
-    // A8WGB1 A2AL36 A4UHT7
-
-    public void testReadingC5YHH7(){
-        testReading("C5YHH7");
-    }
-
-    // featuretype - description length
-    public void testWritingAndLoadingC5YHH7(){
-        testWritingAndLoading("C5YHH7");
-    }
-
-    // Note field. makes sure it is Text - see isoform 2
-    public void testWritingAndLoadingQ9N0Z4(){
-        testWritingAndLoading("Q9N0Z4");
-    }
-
-    public void testWritingAndLoadingP22109(){
-        testWritingAndLoading("P22109");
-    }
-
-
-    /*
-    Hibernate: insert into REFERENCETYPE_SCOPE_ (HJID, HJINDEX, HJVALUE) values (?, ?, ?)
-2014-08-26 11:12:04,678 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [1] as [BIGINT] - [1144623]>
-2014-08-26 11:12:04,678 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [2] as [INTEGER] - [1]>
-2014-08-26 11:12:04,678 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [3] as [VARCHAR] - [MUTAGENESIS OF 76-ILE-SER-77; 81-GLY-GLY-82; 103-ASN--ASP-106; 274-GLY-THR-275; 293-GLU-ARG-294; 298-SER-SER-299; 317-TRP-TRP-318; 347-GLU-TYR-348; 373-SER--PHE-375; 397-GLU--SER-399; 447-HIS--ASN-449; 469-ASP--ASP-473; 564-ASN--SER-568 AND 588-ASN--ASN-590]>
-2014-08-26 11:12:04,686 ERROR [org.hibernate.engine.jdbc.spi.SqlExceptionHelper] - <Data truncation: Data too long for column 'HJVALUE' at row 1>
-2014-08-26 11:12:04,687 ERROR [org.hibernate.engine.jdbc.batch.internal.BatchingBatch] - <HHH000315: Exception executing batch [could not execute batch]>
-     */
-    public void testWritingAndLoadingC0M6C7(){ testWritingAndLoading("C0M6C7");}
-
-
-
-    /** Hibernate: insert into REFERENCETYPE_SCOPE_ (HJID, HJINDEX, HJVALUE) values (?, ?, ?)
-     2014-08-26 12:51:33,115 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [1] as [BIGINT] - [1145247]>
-     2014-08-26 12:51:33,115 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [2] as [INTEGER] - [1]>
-     2014-08-26 12:51:33,115 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [3] as [VARCHAR] - [MUTAGENESIS OF 76-ILE-SER-77; 81-GLY-GLY-82; 103-ASN--ASP-106; 274-GLY-THR-275; 293-GLU-ARG-294; 298-SER-SER-299; 317-TRP-TRP-318; 347-GLU-TYR-348; 373-SER--PHE-375; 397-GLU--SER-399; 447-HIS--ASN-449; 469-ASP--ASP-473; 564-ASN--SER-568 AND 588-ASN--ASN-590]>
-     2014-08-26 12:51:33,122 ERROR [org.hibernate.engine.jdbc.spi.SqlExceptionHelper] - <Data truncation: Data too long for column 'HJVALUE' at row 1>
-     2014-08-26 12:51:33,123 ERROR [org.hibernate.engine.jdbc.batch.internal.BatchingBatch] - <HHH000315: Exception executing batch [could not execute batch]>
-     */
-    public void testC0LGT6(){
-        testWritingAndLoading("C0LGT6");
-    }
-
-//    public void testListofAcs(){
-//        String[] acs = new String[]{"A2BGL3","Q9BRX5", "Q9BXB7", "Q9C0A6", "Q9EQC7", "Q9H6D3", "Q9HCQ7", "Q9I955", "Q9JJ46", "Q9JKS4", "Q9JMI9", "Q9N0Z4", "Q9NGC3", "Q9NUI1", "Q9P225", "Q9QXX8", "Q9R1T9", "Q9SEA4", "Q9U6D2", "Q9UBS5", "Q9UGI6", "Q9UKP5", "Q9ULU8", "Q9UQB3", "Q9V6D6", "Q9VDD9", "Q9VS48"};
+//    public void testReadingA1KNB8(){
+//        testReading("A1KNB8");
 //
-//        for (String ac : acs){
-//            testReading(ac);
-//            testWritingAndLoading(ac);
-//        }
 //    }
+//    public void testWritingAndLoadingA1KNB8(){
+//        testWritingAndLoading("A1KNB8");
+//    }
+//
+//
+//    public void testReadingA2AKX3(){
+//        testReading("A2AKX3");
+//    }
+//
+//    public void testWritingAndLoadingA2AKX3(){
+//        testWritingAndLoading("A2AKX3");
+//    }
+//
+//    //Caused by: com.mysql.jdbc.MysqlDataTruncation: Data truncation: Data too long for column 'HJVALUE' at row 1
+//    public void testReadingA2AKY4(){
+//        testReading("A2AKY4");
+//    }
+//
+//    public void testWritingAndLoadingA2AKY4(){
+//        testWritingAndLoading("A2AKY4");
+//    }
+//
+//    // A8WGB1 A2AL36 A4UHT7
+//
+//    public void testReadingC5YHH7(){
+//        testReading("C5YHH7");
+//    }
+//
+//    // featuretype - description length
+//    public void testWritingAndLoadingC5YHH7(){
+//        testWritingAndLoading("C5YHH7");
+//    }
+//
+//    // Note field. makes sure it is Text - see isoform 2
+//    public void testWritingAndLoadingQ9N0Z4(){
+//        testWritingAndLoading("Q9N0Z4");
+//    }
+//
+//    public void testWritingAndLoadingP22109(){
+//        testWritingAndLoading("P22109");
+//    }
+//
+//
+//    /*
+//    Hibernate: insert into REFERENCETYPE_SCOPE_ (HJID, HJINDEX, HJVALUE) values (?, ?, ?)
+//2014-08-26 11:12:04,678 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [1] as [BIGINT] - [1144623]>
+//2014-08-26 11:12:04,678 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [2] as [INTEGER] - [1]>
+//2014-08-26 11:12:04,678 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [3] as [VARCHAR] - [MUTAGENESIS OF 76-ILE-SER-77; 81-GLY-GLY-82; 103-ASN--ASP-106; 274-GLY-THR-275; 293-GLU-ARG-294; 298-SER-SER-299; 317-TRP-TRP-318; 347-GLU-TYR-348; 373-SER--PHE-375; 397-GLU--SER-399; 447-HIS--ASN-449; 469-ASP--ASP-473; 564-ASN--SER-568 AND 588-ASN--ASN-590]>
+//2014-08-26 11:12:04,686 ERROR [org.hibernate.engine.jdbc.spi.SqlExceptionHelper] - <Data truncation: Data too long for column 'HJVALUE' at row 1>
+//2014-08-26 11:12:04,687 ERROR [org.hibernate.engine.jdbc.batch.internal.BatchingBatch] - <HHH000315: Exception executing batch [could not execute batch]>
+//     */
+//    public void testWritingAndLoadingC0M6C7(){ testWritingAndLoading("C0M6C7");}
+//
+//
+//
+//    /** Hibernate: insert into REFERENCETYPE_SCOPE_ (HJID, HJINDEX, HJVALUE) values (?, ?, ?)
+//     2014-08-26 12:51:33,115 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [1] as [BIGINT] - [1145247]>
+//     2014-08-26 12:51:33,115 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [2] as [INTEGER] - [1]>
+//     2014-08-26 12:51:33,115 TRACE [org.hibernate.type.descriptor.sql.BasicBinder] - <binding parameter [3] as [VARCHAR] - [MUTAGENESIS OF 76-ILE-SER-77; 81-GLY-GLY-82; 103-ASN--ASP-106; 274-GLY-THR-275; 293-GLU-ARG-294; 298-SER-SER-299; 317-TRP-TRP-318; 347-GLU-TYR-348; 373-SER--PHE-375; 397-GLU--SER-399; 447-HIS--ASN-449; 469-ASP--ASP-473; 564-ASN--SER-568 AND 588-ASN--ASN-590]>
+//     2014-08-26 12:51:33,122 ERROR [org.hibernate.engine.jdbc.spi.SqlExceptionHelper] - <Data truncation: Data too long for column 'HJVALUE' at row 1>
+//     2014-08-26 12:51:33,123 ERROR [org.hibernate.engine.jdbc.batch.internal.BatchingBatch] - <HHH000315: Exception executing batch [could not execute batch]>
+//     */
+//    public void testC0LGT6(){
+//        testWritingAndLoading("C0LGT6");
+//    }
+//
+////    public void testListofAcs(){
+////        String[] acs = new String[]{"A2BGL3","Q9BRX5", "Q9BXB7", "Q9C0A6", "Q9EQC7", "Q9H6D3", "Q9HCQ7", "Q9I955", "Q9JJ46", "Q9JKS4", "Q9JMI9", "Q9N0Z4", "Q9NGC3", "Q9NUI1", "Q9P225", "Q9QXX8", "Q9R1T9", "Q9SEA4", "Q9U6D2", "Q9UBS5", "Q9UGI6", "Q9UKP5", "Q9ULU8", "Q9UQB3", "Q9V6D6", "Q9VDD9", "Q9VS48"};
+////
+////        for (String ac : acs){
+////            testReading(ac);
+////            testWritingAndLoading(ac);
+////        }
+////    }
 
 }
