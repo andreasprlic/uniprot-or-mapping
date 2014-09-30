@@ -64,7 +64,7 @@ public class LoadMissing {
 
         System.out.println("Loading missing " + upVersions.size() + " UniProt entries into DB.");
 
-
+        List<String> badResults = new ArrayList<String>();
         int count = 0;
         try {
 
@@ -117,7 +117,7 @@ public class LoadMissing {
 
             System.out.println("Broke up calculations into " + futureResults.size() + " jobs...");
 
-            List<String> badResults = new ArrayList<String>();
+
             for (Future<List<String>> b : futureResults) {
 
                 badResults.addAll(b.get());
@@ -127,6 +127,11 @@ public class LoadMissing {
         } catch (Exception e){
             e.printStackTrace();
         }
+
+        System.out.println("# bad results:" + badResults.size());
+
+        System.out.println(badResults);
+
 
         long timeE = System.currentTimeMillis();
         System.out.println("All OK! Total time: " + (timeE-timeS)/1000 + " sec.");
