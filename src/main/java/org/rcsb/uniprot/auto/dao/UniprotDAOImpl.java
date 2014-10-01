@@ -438,9 +438,9 @@ public class UniprotDAOImpl implements UniprotDAO {
     public  synchronized Uniprot getUniProt(String uniprotID, EntityManager em) {
         Uniprot up = null;
         try {
-            @SuppressWarnings("JpaQlInspection")
-            Query q = em.createQuery("from org.rcsb.uniprot.auto.Uniprot up where :val in elements  (up.entry.accession)  ");
-            q.setParameter("val", uniprotID);
+
+            Query q = em.createQuery("select up from org.rcsb.uniprot.auto.Uniprot up where :element in elements (up.entry.accession)  ");
+            q.setParameter("element", uniprotID);
 
             List l = q.getResultList();
             for (Object obj : l) {
