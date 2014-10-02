@@ -368,6 +368,22 @@ public class UniprotDAOImpl implements UniprotDAO {
     }
 
 
+    public SortedSet<String> getAllGeneNames(){
+        if ( geneNames == null)
+            init();
+
+        return geneNames;
+    }
+
+    public List<String> getUniProtACsByGeneName(String gn){
+        if ( uniprotGeneMap == null)
+            init();
+
+        List<String> acs = uniprotGeneMap.get(gn);
+        return acs;
+    }
+
+
     public List<String> getAllUniProtIDs() {
         if (allUniprotIDs == null) {
             init();
