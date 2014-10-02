@@ -58,4 +58,18 @@ public interface UniprotDAO {
     public void registerRequiredUniProtIds(SortedSet<String> requiredUniProtIDS);
 
     public SortedSet<String> getRequiredUniProtIds();
+
+    /** get a list of all gene names in UniProt (for all organisms)
+     *
+     * @return list of gene names as string
+     */
+    public SortedSet<String> getAllGeneNames();
+
+
+    /** Get uniprot accesion codes that match a specific gene name
+     *
+     * @param gn
+     * @return
+     */
+    public List<String> getUniProtACsByGeneName(String gn);
 }
