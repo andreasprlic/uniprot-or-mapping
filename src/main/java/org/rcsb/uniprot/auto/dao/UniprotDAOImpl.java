@@ -15,6 +15,9 @@ import org.rcsb.uniprot.auto.tools.UniProtTools;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 public class UniprotDAOImpl implements UniprotDAO {
     static List<String> allUniprotIDs;
@@ -34,6 +37,8 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     public static void main(String[] args) {
         UniprotDAOImpl me = new UniprotDAOImpl();
+        System.out.println(me.hasPdbUniProtMapping());
+
         me.init();
 
         System.out.println("# UP ids:" + me.getAllUniProtIDs().size());
@@ -41,6 +46,8 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         Uniprot up = me.getUniProt("P50225");
         System.out.println(up.getEntry().get(0).getAccession().get(0));
+
+
         System.exit(0);
 
     }
@@ -619,6 +626,8 @@ public class UniprotDAOImpl implements UniprotDAO {
         return ans;
     }
 
+
+
     public void clearPdbUniProtMapping(){
 
         EntityManager em = JpaUtilsUniProt.getEntityManager();
@@ -626,6 +635,30 @@ public class UniprotDAOImpl implements UniprotDAO {
         q.executeUpdate();
         em.close();
 
+    }
+
+    public boolean hasPdbUniProtMapping(){
+
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<UniProtPdbMap> cQuery = builder.createQuery(UniProtPdbMap.class);
+        Root<UniProtPdbMap> from = cQuery.from(UniProtPdbMap.class);
+        CriteriaQuery<UniProtPdbMap>select = cQuery.select(from);
+
+        CriteriaQuery<Long> cq = builder.createQuery(Long.class);
+        cq.select(builder.count(cq.from(UniProtPdbMap.class)));
+
+        Query countQ = em.createQuery(cq);
+        //cq.where(pArray);
+
+        List<Long> resultList = countQ.getResultList();
+        boolean hasData = false;
+        if (resultList.size()>0 &&  resultList.get(0) > 0 )
+            hasData = true;
+        em.close();
+
+        return hasData;
     }
 
     public SortedSet<String> getPdbForUniProt(String accession){
@@ -666,5 +699,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         em.getTransaction().commit();
 
     }
+
+
 
 }
