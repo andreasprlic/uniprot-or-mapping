@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.biojava3.core.util.InputStreamProvider;
+import org.rcsb.uniprot.auto.or.UniProtPdbMap;
 import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
 
 import org.rcsb.uniprot.auto.*;
@@ -223,8 +224,6 @@ public class UniprotDAOImpl implements UniprotDAO {
 
 
     public String getUniProtAcByName(String uniprotName) {
-
-        System.out.println("Get UNIPROT AC BY NAME: " + uniprotName);
 
         if (uniprotNameMap == null) {
             init();
@@ -619,4 +618,53 @@ public class UniprotDAOImpl implements UniprotDAO {
         }
         return ans;
     }
+
+    public void clearPdbUniProtMapping(){
+
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+        Query q = em.createQuery("delete from uniprotpdbmap");
+        q.executeUpdate();
+        em.close();
+
+    }
+
+    public SortedSet<String> getPdbForUniProt(String accession){
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+        Query q = em.createQuery("Select pdbId from org.rcsb.uniprot.auto.or.UniProtPdbMap m where m.uniProtAc = :acc ");
+        q.setParameter("acc", accession);
+        List<String> data = q.getResultList();
+
+        SortedSet<String> pdbs = new TreeSet<>(data);
+
+        em.close();
+        return pdbs;
+
+    }
+
+    public SortedSet<String> getUniProtForPDB(String pdbId){
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+        Query q = em.createQuery("Select pdbId from org.rcsb.uniprot.auto.or.UniProtPdbMap m where m.pdbId = :pdbId ");
+        q.setParameter("pdbId", pdbId);
+        List<String> data = q.getResultList();
+
+        SortedSet<String> pdbs = new TreeSet<>(data);
+
+        em.close();
+        return pdbs;
+
+    }
+
+    public void addToPdbUniProtMapping(String accession, SortedSet<String> pdbIds){
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+        em.getTransaction().begin();
+        for ( String p : pdbIds){
+            UniProtPdbMap m = new UniProtPdbMap();
+            m.setPdbId(p);
+            m.setUniProtAc(accession);
+            em.persist(m);
+        }
+        em.getTransaction().commit();
+
+    }
+
 }
