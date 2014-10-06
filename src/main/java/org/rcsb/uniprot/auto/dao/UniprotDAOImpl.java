@@ -26,8 +26,6 @@ public class UniprotDAOImpl implements UniprotDAO {
     static SortedSet<String> geneNames;
     static Map<String, List<String>> uniprotGeneMap;
     static Map<String, List<String>> ac2geneName;
-    ;
-
     static SortedSet<String> mopedIds;
     static AtomicBoolean busyWithInit = new AtomicBoolean(false);
     static AtomicBoolean initialized  = new AtomicBoolean(false);
@@ -37,6 +35,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     private static final boolean profiling = true;
 
     public static void main(String[] args) {
+
         UniprotDAOImpl me = new UniprotDAOImpl();
         System.out.println(me.hasPdbUniProtMapping());
 
