@@ -30,6 +30,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     static SortedSet<String> mopedIds;
     static AtomicBoolean busyWithInit = new AtomicBoolean(false);
+    static AtomicBoolean initialized  = new AtomicBoolean(false);
 
     public static final String MOPED_LOCATION = "https://www.proteinspire.org/MOPED/services/referencedata/proteinNames";
 
@@ -54,6 +55,11 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     public static void init() {
         long timeS = System.currentTimeMillis();
+
+        if ( initialized.get()){
+            return;
+        }
+
         while (busyWithInit.get()) {
             try {
                 Thread.sleep(500);
@@ -96,10 +102,12 @@ public class UniprotDAOImpl implements UniprotDAO {
         }
 
 
+        initialized.set(true);
         busyWithInit.set(false);
 
         long timeE = System.currentTimeMillis();
         System.out.println("Time to init UniprotDAO: " + (timeE - timeS));
+
     }
 
     private static List<String> initAllUniprotIDs() {
