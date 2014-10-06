@@ -72,4 +72,10 @@ public interface UniprotDAO {
      * @return
      */
     public List<String> getUniProtACsByGeneName(String gn);
+
+    public void clearPdbUniProtMapping();
+    public void addToPdbUniProtMapping(String accession, SortedSet<String> pdbIds);
+    public SortedSet<String> getPdbForUniProt(String accession);
+    public SortedSet<String> getUniProtForPDB(String pdbId);
+    
 }
