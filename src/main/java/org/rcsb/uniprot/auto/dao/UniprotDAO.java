@@ -100,7 +100,7 @@ public interface UniprotDAO {
     public SortedSet<String> getUniProtForPDB(String pdbId);
 
     /** is the table in the database empty, or does it contain mappings?
-     * 
+     *
      * @return
      */
     public boolean hasPdbUniProtMapping();
