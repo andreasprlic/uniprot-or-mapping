@@ -73,10 +73,36 @@ public interface UniprotDAO {
      */
     public List<String> getUniProtACsByGeneName(String gn);
 
+    /** Clear all PDB to uniprot mappings
+     *
+     */
     public void clearPdbUniProtMapping();
+
+    /** add a new mapping to the the database
+     *
+     * @param accession
+     * @param pdbIds
+     */
     public void addToPdbUniProtMapping(String accession, SortedSet<String> pdbIds);
+
+    /** get all PDB IDs that are mapped to a specific uniprot ID
+     *
+     * @param accession
+     * @return
+     */
     public SortedSet<String> getPdbForUniProt(String accession);
+
+    /** get all Uniprot IDs that are mapped to a PDB
+     *
+     * @param pdbId
+     * @return
+     */
     public SortedSet<String> getUniProtForPDB(String pdbId);
+
+    /** is the table in the database empty, or does it contain mappings?
+     * 
+     * @return
+     */
     public boolean hasPdbUniProtMapping();
 
 
