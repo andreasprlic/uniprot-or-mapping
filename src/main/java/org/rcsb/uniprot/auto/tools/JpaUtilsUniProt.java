@@ -142,7 +142,6 @@ public class JpaUtilsUniProt {
             init();
         }
 
-
         // we need to recreate the entity manager, it has been closed
 
         EntityManagerFactory emf = getEntityManagerFactory();
@@ -152,12 +151,4 @@ public class JpaUtilsUniProt {
 
     }
 
-//    public static Session getSession() {
-//        if (entityManager == null) {
-//            init();
-//        }
-//
-//        HibernateEntityManager hem = entityManager.unwrap(HibernateEntityManager.class);
-//        return hem.getSession();
-//    }
 }
