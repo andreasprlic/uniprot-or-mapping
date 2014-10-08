@@ -626,6 +626,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 //                    }
 //                }
             }
+            em.close();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -704,7 +705,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             em.persist(m);
         }
         em.getTransaction().commit();
-
+        em.close();
     }
 
 
