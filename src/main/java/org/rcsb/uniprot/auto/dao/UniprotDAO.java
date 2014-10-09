@@ -16,6 +16,8 @@ public interface UniprotDAO {
 
     public Uniprot getUniProt(String uniprotAccession);
     public Uniprot getUniProt(String uniprotID, EntityManager em);
+    public Uniprot getUniProt(String uniprotID, EntityManager em, boolean shouldDetach);
+
 
     public  String getUniProtAcByName(String uniprotName);
 

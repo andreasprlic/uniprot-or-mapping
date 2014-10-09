@@ -80,15 +80,6 @@ public class TestUniprotLoading extends TestCase {
 
         try {
 
-            URL u = UniProtTools.getURLforXML(accession);
-
-            InputStream inStream = u.openStream();
-
-
-            Uniprot up = UniProtTools.readUniProtFromInputStream(inStream);
-
-            assertNotNull(up);
-
             Properties dbproperties = new Properties();
             InputStream propstream = this.getClass().getClassLoader().getResourceAsStream("database.properties");
             dbproperties.load(propstream);
@@ -97,7 +88,7 @@ public class TestUniprotLoading extends TestCase {
             UniprotDAO dao = new UniprotDAOImpl();
 
             EntityManager em = JpaUtilsUniProt.getEntityManager();
-            Uniprot up2 = dao.getUniProt(accession,em);
+            Uniprot up2 = dao.getUniProt(accession,em,false);
 
             if ( up2 != null) {
                 // unload the entry...
@@ -109,13 +100,13 @@ public class TestUniprotLoading extends TestCase {
                 em.getTransaction().commit();
             }
 
-
-
             // not in DB yet...
             System.out.println("Loading " + accession +" into DB");
 
-
-
+            URL u = UniProtTools.getURLforXML(accession);
+            InputStream inStream = u.openStream();
+            Uniprot up = UniProtTools.readUniProtFromInputStream(inStream);
+            assertNotNull(up);
 
             em.getTransaction().begin();
 
@@ -123,8 +114,7 @@ public class TestUniprotLoading extends TestCase {
 
             em.getTransaction().commit();
 
-            up2 = dao.getUniProt(accession);
-
+            up2 = dao.getUniProt(accession,em,false);
 
             String seq2 = dao.cleanSequence(up2.getEntry().get(0).getSequence().getValue().toString());
             assertTrue(seq2.length() == up2.getEntry().get(0).getSequence().getLength());
