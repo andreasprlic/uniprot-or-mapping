@@ -133,6 +133,11 @@ public class JpaUtilsUniProt {
 
         entityManager.createNativeQuery(sql6).executeUpdate();
 
+        // add index to table
+        String sql7 = "alter table entry_accession add index (HJVALUE)";
+        entityManager.createNativeQuery(sql7).executeUpdate();
+
+
         entityManager.getTransaction().commit();
 
     }

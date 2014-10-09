@@ -463,9 +463,9 @@ public class UniprotDAOImpl implements UniprotDAO {
     }
 
 
-
-    public  synchronized Uniprot getUniProt(String uniprotID, EntityManager em) {
+    public  synchronized Uniprot getUniProt(String uniprotID, EntityManager em, boolean shouldDetach) {
         Uniprot up = null;
+        long timeS = System.currentTimeMillis();
         try {
 
             Query q = em.createQuery("select up from org.rcsb.uniprot.auto.Uniprot up where :element in elements (up.entry.accession)  ");
@@ -483,12 +483,21 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         }
 
+        if ( shouldDetach)
+            em.detach(up);
+
         long timeE = System.currentTimeMillis();
 
-        //System.out.println("  TrackTools took " + (timeE-timeS) + " ms. to load " + uniprotID);
+        if( timeE - timeS > 500)
+            System.out.println("  UniProt DAO took " + (timeE-timeS) + " ms. to load " + uniprotID);
         // note: we don;t close the session here because the outside will request specific details from the Uniprot object
         return up;
+    }
 
+
+    public  synchronized Uniprot getUniProt(String uniprotID, EntityManager em) {
+
+        return getUniProt(uniprotID,em,false);
     }
     public  synchronized Uniprot getUniProt(String uniprotID) {
 
@@ -501,10 +510,10 @@ public class UniprotDAOImpl implements UniprotDAO {
             EntityManager em = JpaUtilsUniProt.getEntityManager();
 
 
-            return getUniProt(uniprotID,
+            getUniProt(uniprotID,
                     em);
 
-
+            em.close();
 
         } catch (Exception e) {
             e.printStackTrace();
