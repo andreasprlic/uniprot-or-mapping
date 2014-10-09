@@ -695,17 +695,13 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     }
 
-    public void addToPdbUniProtMapping(String accession, SortedSet<String> pdbIds){
-        EntityManager em = JpaUtilsUniProt.getEntityManager();
-        em.getTransaction().begin();
+    public void addToPdbUniProtMapping(EntityManager em, String accession, SortedSet<String> pdbIds){
         for ( String p : pdbIds){
             UniProtPdbMap m = new UniProtPdbMap();
             m.setPdbId(p);
             m.setUniProtAc(accession);
             em.persist(m);
         }
-        em.getTransaction().commit();
-        em.close();
     }
 
 

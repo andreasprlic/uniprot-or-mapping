@@ -83,7 +83,7 @@ public interface UniprotDAO {
      * @param accession
      * @param pdbIds
      */
-    public void addToPdbUniProtMapping(String accession, SortedSet<String> pdbIds);
+    public void addToPdbUniProtMapping(EntityManager em, String accession, SortedSet<String> pdbIds);
 
     /** get all PDB IDs that are mapped to a specific uniprot ID
      *
