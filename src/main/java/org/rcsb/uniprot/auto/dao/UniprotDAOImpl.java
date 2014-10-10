@@ -463,7 +463,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     }
 
 
-    public  synchronized Uniprot getUniProt(String uniprotID, EntityManager em, boolean shouldDetach) {
+    public  synchronized Uniprot getUniProt(String uniprotID, EntityManager em) {
         Uniprot up = null;
         long timeS = System.currentTimeMillis();
         try {
@@ -483,9 +483,6 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         }
 
-        if ( shouldDetach)
-            em.detach(up);
-
         long timeE = System.currentTimeMillis();
 
         if( timeE - timeS > 500)
@@ -495,10 +492,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     }
 
 
-    public  synchronized Uniprot getUniProt(String uniprotID, EntityManager em) {
 
-        return getUniProt(uniprotID,em,false);
-    }
     public  synchronized Uniprot getUniProt(String uniprotID) {
 
         long timeS = System.currentTimeMillis();
