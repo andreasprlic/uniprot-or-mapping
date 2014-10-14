@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.biojava3.core.util.InputStreamProvider;
 import org.rcsb.uniprot.auto.or.UniProtPdbMap;
+import org.rcsb.uniprot.auto.tools.HibernateUtilsUniprot;
 import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
 
 import org.rcsb.uniprot.auto.*;
@@ -42,11 +43,16 @@ public class UniprotDAOImpl implements UniprotDAO {
         me.init();
 
         System.out.println("# UP ids:" + me.getAllUniProtIDs().size());
-        System.out.println("P50225 header:" + me.getUniProtHeader("P50225"));
 
-        Uniprot up = me.getUniProt("P50225");
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+
+        System.out.println("P50225 header:" + me.getUniProtHeader(em,"P50225"));
+
+
+        Uniprot up = me.getUniProt(em, "P50225");
         System.out.println(up.getEntry().get(0).getAccession().get(0));
-
+        em.close();
+        System.out.println(me.getAllUniProtIDs().size());
 
         System.exit(0);
 
@@ -463,7 +469,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     }
 
 
-    public  synchronized Uniprot getUniProt(String uniprotID, EntityManager em) {
+    public  synchronized Uniprot getUniProt(EntityManager em,String uniprotID) {
         Uniprot up = null;
         long timeS = System.currentTimeMillis();
         try {
@@ -473,7 +479,9 @@ public class UniprotDAOImpl implements UniprotDAO {
 
             List l = q.getResultList();
             for (Object obj : l) {
+
                 up = (Uniprot) obj;
+
                 break;
             }
 
@@ -504,8 +512,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             EntityManager em = JpaUtilsUniProt.getEntityManager();
 
 
-            getUniProt(uniprotID,
-                    em);
+            up =getUniProt(em, uniprotID);
 
             em.close();
 
@@ -530,21 +537,25 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         String header = null;
 
-        header = getUniProtHeader(uniprotID);
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+        header = getUniProtHeader(em, uniprotID);
+
+        em.close();
 
         return header;
     }
 
-    public String getUniProtHeader(String uniprotAccession){
+    public String getUniProtHeader(EntityManager em, String uniprotAccession){
         String header = null;
 
-
-        Uniprot up = getUniProt(uniprotAccession);
+        Uniprot up = getUniProt(em,uniprotAccession);
         if (up == null) {
             return "Unknown";
         }
         StringWriter h = new StringWriter();
         for (Entry e : up.getEntry()) {
+            if ( e == null)
+                continue;
             h.append(getUniprotName(e));
 
 

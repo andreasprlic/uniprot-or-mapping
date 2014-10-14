@@ -15,8 +15,8 @@ public interface UniprotDAO {
 
 
     public Uniprot getUniProt(String uniprotAccession);
-    public Uniprot getUniProt(String uniprotID, EntityManager em);
 
+    public Uniprot getUniProt(EntityManager em,String uniprotAccession);
 
     public  String getUniProtAcByName(String uniprotName);
 
@@ -30,7 +30,7 @@ public interface UniprotDAO {
 
     public  String checkForPrimaryAccession(String uniprotAccession);
 
-    public  String getUniProtHeader(String uniprotAccession) ;
+    public  String getUniProtHeader(EntityManager em, String uniprotAccession) ;
 
     /** Remove all whitespace and line breaks from a sequence string (as is in the UniProt file
      *

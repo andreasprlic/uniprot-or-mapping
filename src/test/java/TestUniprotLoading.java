@@ -88,7 +88,7 @@ public class TestUniprotLoading extends TestCase {
             UniprotDAO dao = new UniprotDAOImpl();
 
             EntityManager em = JpaUtilsUniProt.getEntityManager();
-            Uniprot up2 = dao.getUniProt(accession,em);
+            Uniprot up2 = dao.getUniProt(em,accession);
 
             if ( up2 != null) {
                 // unload the entry...
@@ -114,7 +114,7 @@ public class TestUniprotLoading extends TestCase {
 
             em.getTransaction().commit();
 
-            up2 = dao.getUniProt(accession,em);
+            up2 = dao.getUniProt(em,accession);
 
             String seq2 = dao.cleanSequence(up2.getEntry().get(0).getSequence().getValue().toString());
             assertTrue(seq2.length() == up2.getEntry().get(0).getSequence().getLength());
