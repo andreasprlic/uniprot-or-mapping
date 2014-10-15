@@ -256,19 +256,23 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     public String checkForPrimaryAccession(String uniprotAccession) {
 
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+        Uniprot up = getUniProt(em,uniprotAccession );
 
-        Uniprot up = getUniProt(uniprotAccession );
-
-        if (up == null)
+        if (up == null) {
+            em.close();
             return null;
+        }
 
         for (Entry e : up.getEntry()) {
             List<String> accessions = e.getAccession();
-            if (accessions.contains(uniprotAccession))
+            if (accessions.contains(uniprotAccession)) {
+                em.close();
                 return accessions.get(0);
+            }
         }
 
-
+        em.close();
         return null;
     }
 
