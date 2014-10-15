@@ -38,7 +38,13 @@ public class UniprotDAOImpl implements UniprotDAO {
     public static void main(String[] args) {
 
         UniprotDAOImpl me = new UniprotDAOImpl();
+
+
+
+
         System.out.println(me.hasPdbUniProtMapping());
+
+        System.out.println(me.getECNumbers());
 
         me.init();
 
@@ -252,6 +258,44 @@ public class UniprotDAOImpl implements UniprotDAO {
         return uniprotNameMap.get(uniprotName);
 
 
+    }
+
+    @Override
+    public List<Object[]> getECNumbers() {
+
+        // check the EC assignments in
+        //"recommended","alternative","submitted" name
+
+
+// FOR DEBUGGING
+
+//        String sql = "select a.hjvalue, est.value_  " +
+//                " from entry_accession as a, entry as en , proteintype as p , " +
+//                " recommendedname as r , evidencedstringtype est " +
+//                " where en.HJID = a.HJID and p.HJID = en.PROTEIN_ENTRY_HJID and  "  +
+//                " p.RECOMMENDEDNAME_PROTEINTYPE__0 = r.HJID and "+
+//                " est.ECNUMBER_RECOMMENDEDNAME_HJID = r.HJID and " +
+//                " a.HJVALUE='P50225'";
+
+        // CAN BE SIMPLIFIED TO
+
+
+        // only selects this for UniProts that are linked to PDB...
+        String sql = "select a.hjvalue, est.value_  " +
+                " from entry_accession as a, entry as en , proteintype as p , " +
+                "  evidencedstringtype est , uniprotpdbmap updb " +
+                " where updb.uniProtAc = a.HJVALUE and en.HJID = a.HJID and p.HJID = en.PROTEIN_ENTRY_HJID and  "  +
+                " p.RECOMMENDEDNAME_PROTEINTYPE__0 = est.ECNUMBER_RECOMMENDEDNAME_HJID " +
+                " group by a.hjvalue,est.value_ having count(*) > 1";
+
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+
+        Query q = em.createNativeQuery(sql);
+
+        List<Object[]> data = q.getResultList();
+
+        em.close();
+        return data;
     }
 
     public String checkForPrimaryAccession(String uniprotAccession) {
