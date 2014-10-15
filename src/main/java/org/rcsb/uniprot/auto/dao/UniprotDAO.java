@@ -14,11 +14,16 @@ import java.util.SortedSet;
 public interface UniprotDAO {
 
 
-    public Uniprot getUniProt(String uniprotAccession);
-
     public Uniprot getUniProt(EntityManager em,String uniprotAccession);
 
     public  String getUniProtAcByName(String uniprotName);
+
+    /** Get a list of UniProt accessions and their corresponding EC numbers
+     * e.g P50225 - 2.8.2.1
+     *  ( for performance reasons we only look at UniProts that are linked to PDB (in the uniprotpdbmap table)
+     * @return a list of 2-dimensional objects
+     */
+    public List<Object[]> getECNumbers();
 
     public List<String> getAllUniProtIDs();
 
