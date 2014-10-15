@@ -44,7 +44,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         System.out.println(me.hasPdbUniProtMapping());
 
-        for (Object[] data: me.getECNumbers()) {
+        for (Object[] data: me.getECNumbers4Components()) {
             System.out.println(Arrays.toString(data));
         }
 
@@ -305,10 +305,10 @@ public class UniprotDAOImpl implements UniprotDAO {
 
 
         String sql2 = "select a.hjvalue, est.value_  " +
-                " from entry_accession as a, entry as en , proteintype as p , " +
+                " from entry_accession as a, entry as en , " +
                 "  evidencedstringtype est , uniprotpdbmap updb , submittedname sn " +
-                " where updb.uniProtAc = a.HJVALUE and en.HJID = a.HJID and  p.HJID = en.PROTEIN_ENTRY_HJID and  " +
-                " sn.SUBMITTEDNAME_PROTEINTYPE_HJ_0 = p.HJID and " +
+                " where updb.uniProtAc = a.HJVALUE and en.HJID = a.HJID and" +
+                " sn.SUBMITTEDNAME_PROTEINTYPE_HJ_0 = en.PROTEIN_ENTRY_HJID and " +
                 " sn.SUBMITTEDNAME_PROTEINTYPE_HJ_0 = est.ECNUMBER_SUBMITTEDNAME_HJID " +
                 " group by a.hjvalue,est.value_ having count(*) > 1";
 
@@ -321,10 +321,10 @@ public class UniprotDAOImpl implements UniprotDAO {
             em.close();
 
         String sql3 = "select a.hjvalue, est.value_  " +
-                " from entry_accession as a, entry as en , proteintype as p , " +
+                " from entry_accession as a, entry as en  " +
                 "  evidencedstringtype est , uniprotpdbmap updb , alternativename an " +
-                " where updb.uniProtAc = a.HJVALUE and en.HJID = a.HJID and  p.HJID = en.PROTEIN_ENTRY_HJID and  " +
-                " an.ALTERNATIVENAME_PROTEINTYPE__0 = p.HJID and " +
+                " where updb.uniProtAc = a.HJVALUE and en.HJID = a.HJID and  " +
+                " an.ALTERNATIVENAME_PROTEINTYPE__0 = en.PROTEIN_ENTRY_HJID and " +
                 " an.ALTERNATIVENAME_PROTEINTYPE__0 = est.ECNUMBER_ALTERNATIVENAME_HJID " +
                 " group by a.hjvalue,est.value_ having count(*) > 1";
 
@@ -340,6 +340,35 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         return data;
     }
+
+    public List<Object[]> getECNumbers4Components(){
+
+        String sql = "select  a.hjvalue,est.value_, bp.POSITION_ as ps, ep.POSITION_ as es "+
+                "from entry_accession a "+
+                "join entry en on en.HJID = a.HJID  " +
+                "join component c on c.component_proteintype_hjid= en.PROTEIN_ENTRY_HJID "+
+                "join proteintype p on p.HJID = en.PROTEIN_ENTRY_HJID "+
+                "join evidencedstringtype est on  est.ECNUMBER_RECOMMENDEDNAME_HJID = p.RECOMMENDEDNAME_PROTEINTYPE__0 " +
+                "join featuretype f on f.FEATURE_ENTRY_HJID=en.HJID "+
+                "join locationtype l on l.HJID=f.LOCATION__FEATURETYPE_HJID " +
+                "join positiontype bp on bp.HJID = l.BEGIN__LOCATIONTYPE_HJID " +
+                "join positiontype ep on ep.HJID = l.END__LOCATIONTYPE_HJID ";
+
+
+
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+
+        Query q = em.createNativeQuery(sql);
+        List<Object[]> data = new ArrayList<Object[]>();
+        List<Object[]> rows = q.getResultList();
+        data.addAll(rows);
+        em.close();
+
+        return data;
+
+    }
+
+
 
     public String checkForPrimaryAccession(String uniprotAccession) {
 
