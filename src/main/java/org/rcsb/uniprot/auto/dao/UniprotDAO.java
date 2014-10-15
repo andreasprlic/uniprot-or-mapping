@@ -18,12 +18,18 @@ public interface UniprotDAO {
 
     public  String getUniProtAcByName(String uniprotName);
 
-    /** Get a list of UniProt accessions and their corresponding EC numbers
+    /** Get a list of UniProt accessions and their corresponding EC numbers on an protein (and not protein component) level.
      * e.g P50225 - 2.8.2.1
      *  ( for performance reasons we only look at UniProts that are linked to PDB (in the uniprotpdbmap table)
      * @return a list of 2-dimensional objects
      */
     public List<Object[]> getECNumbers();
+
+    /** same as getECNumbers but now for components
+     *
+     * @return
+     */
+    public List<Object[]> getECNumbers4Components();
 
     public List<String> getAllUniProtIDs();
 
