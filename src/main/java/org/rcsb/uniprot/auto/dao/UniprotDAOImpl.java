@@ -44,7 +44,9 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         System.out.println(me.hasPdbUniProtMapping());
 
-        System.out.println(me.getECNumbers());
+        for (Object[] data: me.getECNumbers()) {
+            System.out.println(Arrays.toString(data));
+        }
 
         me.init();
 
@@ -279,12 +281,17 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         // CAN BE SIMPLIFIED TO
 
+        List<Object[]> data = new ArrayList<Object[]>();
+
+//
+
 
         // only selects this for UniProts that are linked to PDB...
+
         String sql = "select a.hjvalue, est.value_  " +
                 " from entry_accession as a, entry as en , proteintype as p , " +
                 "  evidencedstringtype est , uniprotpdbmap updb " +
-                " where updb.uniProtAc = a.HJVALUE and en.HJID = a.HJID and p.HJID = en.PROTEIN_ENTRY_HJID and  "  +
+                " where updb.uniProtAc = a.HJVALUE and en.HJID = a.HJID and p.HJID = en.PROTEIN_ENTRY_HJID and  " +
                 " p.RECOMMENDEDNAME_PROTEINTYPE__0 = est.ECNUMBER_RECOMMENDEDNAME_HJID " +
                 " group by a.hjvalue,est.value_ having count(*) > 1";
 
@@ -292,9 +299,45 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         Query q = em.createNativeQuery(sql);
 
-        List<Object[]> data = q.getResultList();
-
+        List<Object[]> rows = q.getResultList();
+        data.addAll(rows);
         em.close();
+
+
+        String sql2 = "select a.hjvalue, est.value_  " +
+                " from entry_accession as a, entry as en , proteintype as p , " +
+                "  evidencedstringtype est , uniprotpdbmap updb , submittedname sn " +
+                " where updb.uniProtAc = a.HJVALUE and en.HJID = a.HJID and  p.HJID = en.PROTEIN_ENTRY_HJID and  " +
+                " sn.SUBMITTEDNAME_PROTEINTYPE_HJ_0 = p.HJID and " +
+                " sn.SUBMITTEDNAME_PROTEINTYPE_HJ_0 = est.ECNUMBER_SUBMITTEDNAME_HJID " +
+                " group by a.hjvalue,est.value_ having count(*) > 1";
+
+            em = JpaUtilsUniProt.getEntityManager();
+
+            Query q2 = em.createNativeQuery(sql2);
+
+            List<Object[]> rows2 = q2.getResultList();
+            data.addAll(rows2);
+            em.close();
+
+        String sql3 = "select a.hjvalue, est.value_  " +
+                " from entry_accession as a, entry as en , proteintype as p , " +
+                "  evidencedstringtype est , uniprotpdbmap updb , alternativename an " +
+                " where updb.uniProtAc = a.HJVALUE and en.HJID = a.HJID and  p.HJID = en.PROTEIN_ENTRY_HJID and  " +
+                " an.ALTERNATIVENAME_PROTEINTYPE__0 = p.HJID and " +
+                " an.ALTERNATIVENAME_PROTEINTYPE__0 = est.ECNUMBER_ALTERNATIVENAME_HJID " +
+                " group by a.hjvalue,est.value_ having count(*) > 1";
+
+
+
+        em = JpaUtilsUniProt.getEntityManager();
+
+        Query q3 = em.createNativeQuery(sql3);
+
+        List<Object[]> rows3 = q3.getResultList();
+        data.addAll(rows3);
+        em.close();
+
         return data;
     }
 
