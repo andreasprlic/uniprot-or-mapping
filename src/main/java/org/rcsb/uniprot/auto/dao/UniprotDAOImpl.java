@@ -283,9 +283,6 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         List<Object[]> data = new ArrayList<Object[]>();
 
-//
-
-
         // only selects this for UniProts that are linked to PDB...
 
         String sql = "select a.hjvalue, est.value_  " +
@@ -321,7 +318,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             em.close();
 
         String sql3 = "select a.hjvalue, est.value_  " +
-                " from entry_accession as a, entry as en  " +
+                " from entry_accession as a, entry as en , " +
                 "  evidencedstringtype est , uniprotpdbmap updb , alternativename an " +
                 " where updb.uniProtAc = a.HJVALUE and en.HJID = a.HJID and  " +
                 " an.ALTERNATIVENAME_PROTEINTYPE__0 = en.PROTEIN_ENTRY_HJID and " +
