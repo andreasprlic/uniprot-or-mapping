@@ -48,6 +48,10 @@ public class UniprotDAOImpl implements UniprotDAO {
             System.out.println(Arrays.toString(data));
         }
 
+
+        for (Object[] data: me.getECNumbers()) {
+            System.out.println(Arrays.toString(data));
+        }
         me.init();
 
         System.out.println("# UP ids:" + me.getAllUniProtIDs().size());
@@ -326,7 +330,6 @@ public class UniprotDAOImpl implements UniprotDAO {
                 " group by a.hjvalue,est.value_ having count(*) > 1";
 
 
-
         em = JpaUtilsUniProt.getEntityManager();
 
         Query q3 = em.createNativeQuery(sql3);
@@ -463,11 +466,16 @@ public class UniprotDAOImpl implements UniprotDAO {
 
 
             List<Object[]> l = (List<Object[]>) q.getResultList();
+
+            System.out.println("Got " + l.size() + " gene to UP mappings");
             for (Object[] obj : l) {
 
-                String ac = (String) obj[0];
-                String gn = (String) obj[1];
-               // System.out.println(ac + "  " +gn);
+                String gn = (String) obj[0];
+                String ac = (String) obj[1];
+              // System.out.println(ac + "  " +gn);
+                if ( gn.equalsIgnoreCase("HBA1"))
+                    System.out.println(gn + " : " +ac);
+
                 if (gn == null || ac == null)
                     continue;
 
@@ -491,7 +499,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
             }
 
-
+            emf.close();
         } catch (Exception e) {
             e.printStackTrace();
 
