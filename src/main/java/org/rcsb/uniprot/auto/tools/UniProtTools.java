@@ -1,5 +1,7 @@
 package org.rcsb.uniprot.auto.tools;
 
+import org.biojava3.core.sequence.ProteinSequence;
+import org.rcsb.uniprot.auto.Entry;
 import org.rcsb.uniprot.auto.Uniprot;
 
 import javax.xml.bind.JAXBContext;
@@ -166,5 +168,68 @@ public class UniProtTools {
         return data;
 
     }
+
+    public  String getSequence(Uniprot up) {
+
+        String sequence = null;
+
+        for ( Entry entry : up.getEntry()){
+            //System.out.println(entry.getName());
+            sequence  = entry.getSequence().getValue();
+            if ( sequence != null)
+                return cleanSequence(sequence);
+        }
+
+
+
+        return sequence;
+    }
+
+    public static String cleanSequence(String sequence) {
+        sequence = sequence.trim();
+        sequence = sequence.replaceAll("\\s+", "");
+        sequence = sequence.replaceAll("\\r\\n|\\r|\\n", "");
+        return sequence;
+    }
+
+    public static  void prettyPrint(ProteinSequence s) {
+        System.out.println("\t" + s.getAccession() + " \t " + s.getLength() + ":" );
+
+        String rawSeq = s.getSequenceAsString();
+
+        StringBuffer header = new StringBuffer();
+        StringBuffer seqStr = new StringBuffer();
+
+        int lineLength = 60;
+
+        for (int i = 0 ; i < rawSeq.length() ; i ++){
+
+            seqStr.append( rawSeq.charAt(i));
+
+            if ( (i+1) % lineLength == 0) {
+
+                header.append(String.format("%10s", (i+1)));
+                System.out.println(header);
+                System.out.println(seqStr);
+                System.out.println();
+                header = new StringBuffer();
+                seqStr = new StringBuffer();
+
+            }
+
+            if ( ( (i+1)%lineLength ) != 0 && (i+1) % 10 == 0) {
+
+                header.append(String.format("%10s ", (i+1)));
+
+                seqStr.append(" ");
+
+            }
+        }
+
+        System.out.println(header);
+        System.out.println(seqStr);
+
+    }
+
 
 }

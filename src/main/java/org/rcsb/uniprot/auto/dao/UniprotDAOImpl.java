@@ -473,8 +473,8 @@ public class UniprotDAOImpl implements UniprotDAO {
                 String gn = (String) obj[0];
                 String ac = (String) obj[1];
               // System.out.println(ac + "  " +gn);
-                if ( gn.equalsIgnoreCase("HBA1"))
-                    System.out.println(gn + " : " +ac);
+//                if ( gn.equalsIgnoreCase("HBA1"))
+//                    System.out.println(gn + " : " +ac);
 
                 if (gn == null || ac == null)
                     continue;
