@@ -6,7 +6,7 @@
 
     <groupId>org.rcsb.uniprot</groupId>
     <artifactId>uniprot</artifactId>
-    <version>2014.10.10.1</version>
+    <version>2014.11.03.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -27,6 +27,8 @@
         <hibernate.tools.version>4.3.1.CR1</hibernate.tools.version>
         <ehcache.version>2.4.3</ehcache.version>
         <lucene.version>3.6.2</lucene.version>
+
+        <biojava.version>3.1.0</biojava.version>
 
     </properties>
 
@@ -157,7 +159,7 @@
         <dependency>
             <groupId>org.biojava</groupId>
             <artifactId>biojava3-structure</artifactId>
-            <version>3.0.8</version>
+            <version>${biojava.version}</version>
         </dependency>
 
         <!-- Google Guava for caching -->
