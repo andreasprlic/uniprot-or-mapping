@@ -118,7 +118,19 @@ public interface UniprotDAO {
     public boolean hasPdbUniProtMapping();
 
 
-    public List<String> getOrganisms(Uniprot uniprot);
+    /** get the common name of an organism
+     *
+     * @param scientificName
+     * @return
+     */
+    public String getCommonName(String scientificName);
+
+    /** get the scientific organism name
+     *
+     * @param uniprotAc
+     * @return
+     */
+    public String getOrganism(String uniprotAc);
 
     public  String getUniprotName(Entry e);
 

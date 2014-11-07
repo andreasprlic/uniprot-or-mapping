@@ -1,6 +1,7 @@
 package org.rcsb.uniprot.auto.dao;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -27,6 +28,10 @@ public class UniprotDAOImpl implements UniprotDAO {
     static SortedSet<String> geneNames;
     static Map<String, List<String>> uniprotGeneMap;
     static Map<String, List<String>> ac2geneName;
+
+    static Map<String,String> organismNameMap = null;
+    static Map<String,String> organismAcMap = null;
+
     static SortedSet<String> mopedIds;
     static AtomicBoolean busyWithInit = new AtomicBoolean(false);
     static AtomicBoolean initialized  = new AtomicBoolean(false);
@@ -97,6 +102,11 @@ public class UniprotDAOImpl implements UniprotDAO {
 
             System.out.println("Time to initAllUniprotIDs " + (time1 - timeS));
         }
+
+
+        initOrganisms();
+
+
         initGeneNames();
         long time2 = System.currentTimeMillis();
         if (profiling) {
@@ -438,6 +448,72 @@ public class UniprotDAOImpl implements UniprotDAO {
     }
 
 
+
+    private static void initOrganisms(){
+
+        organismNameMap = new HashMap<String,String>();
+        organismAcMap   = new HashMap<String,String>();
+
+        String sql = "SELECT ot.name__organismtype_hjid, ot.type_, ot.value_, ea.HJVALUE " +
+                     " FROM organismnametype ot, entry_accession ea , entry e " +
+                     " where ot.name__organismtype_hjid = e.organism_entry_hjid and e.HJID = ea.HJID";
+
+        long timeS = System.currentTimeMillis();
+        try {
+            EntityManager emf = JpaUtilsUniProt.getEntityManager();
+
+            Query q = emf.createNativeQuery(sql);
+
+
+            List<Object[]> l = (List<Object[]>) q.getResultList();
+
+            if (profiling)
+                System.out.println("Got " + l.size() + " uniprot organism mappings");
+
+            Map<BigInteger,String> orgIdx = new HashMap<BigInteger,String>();
+
+
+
+            for (Object[] obj : l) {
+
+                BigInteger i   = (BigInteger) obj[0];
+                String type = (String) obj[1];
+                String name = (String) obj[2];
+                String ac   = (String) obj[3];
+
+                if (type.equals("scientific") && (! orgIdx.containsKey(i))){
+                    orgIdx.put(i, name);
+                    if (! organismAcMap.containsKey(ac)) {
+                        organismAcMap.put(ac,name);
+
+                    } else {
+                        if ( ! organismAcMap.get(ac).equals(name))
+                            System.err.println("ORGANISM MAP ALREADY HAS: " + organismAcMap.get(ac) + " new: " + name + " | " + ac);
+                    }
+                } else if (type.equals("common")){
+                    String scientific = orgIdx.get(i);
+                    if ( ! organismNameMap.containsKey(scientific)){
+                        organismNameMap.put(scientific,name);
+                    }
+
+                }
+
+            }
+
+            emf.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+
+
+        }
+        long timeE = System.currentTimeMillis();
+        if (profiling)
+            System.out.println("Time to init " + organismNameMap.keySet().size() + " entries in organism map (" + organismAcMap.keySet().size()+" ACs) : " + (timeE - timeS) + " ms.");
+
+
+    }
+
+
     private static void initGeneNames() {
 
         geneNames = new TreeSet<String>();
@@ -472,6 +548,13 @@ public class UniprotDAOImpl implements UniprotDAO {
 
                 String gn = (String) obj[0];
                 String ac = (String) obj[1];
+
+                // this checks if this is a primary DB identifier!
+                if (! organismAcMap.containsKey(ac)){
+                    continue;
+                }
+
+
               // System.out.println(ac + "  " +gn);
 //                if ( gn.equalsIgnoreCase("HBA1"))
 //                    System.out.println(gn + " : " +ac);
@@ -483,10 +566,10 @@ public class UniprotDAOImpl implements UniprotDAO {
                     geneNames.add(gn);
                 }
 
-                List<String> acs = uniprotGeneMap.get(gn);
+                List<String> acs = uniprotGeneMap.get(gn.toUpperCase());
                 if (acs == null) {
                     acs = new ArrayList<String>();
-                    uniprotGeneMap.put(gn, acs);
+                    uniprotGeneMap.put(gn.toUpperCase(), acs);
                 }
                 acs.add(ac);
 
@@ -523,7 +606,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         if ( uniprotGeneMap == null)
             init();
 
-        List<String> acs = uniprotGeneMap.get(gn);
+        List<String> acs = uniprotGeneMap.get(gn.toUpperCase());
         return acs;
     }
 
@@ -843,26 +926,38 @@ public class UniprotDAOImpl implements UniprotDAO {
         }
     }
 
-    public List<String> getOrganisms(Uniprot uniprot) {
-        List<Entry> upentries = uniprot.getEntry();
+    public String getCommonName(String scientificName){
+        if ( organismNameMap == null)
+            init();
 
-        List<String> organisms = new ArrayList<>();
+        return organismNameMap.get(scientificName);
+    }
 
-        for (Entry e: upentries) {
+    public String getOrganism(String uniprotAc) {
+    if( organismAcMap == null)
+        init();
+        return organismAcMap.get(uniprotAc);
 
-            OrganismType o = e.getOrganism();
 
-            if (o.getName().size() > 0) {
+//        List<Entry> upentries = uniprot.getEntry();
+//
+//        List<String> organisms = new ArrayList<>();
+//
+//        for (Entry e: upentries) {
+//
+//            OrganismType o = e.getOrganism();
+//
+//            if (o.getName().size() > 0) {
+//
+//                String org = o.getName().get(0).getValue();
+//
+//                if (!organisms.contains(org)) {
+//                    organisms.add(org);
+//                }
+//            }
+//
+//        }
 
-                String org = o.getName().get(0).getValue();
-
-                if (!organisms.contains(org)) {
-                    organisms.add(org);
-                }
-            }
-
-        }
-        return organisms;
     }
 
 
