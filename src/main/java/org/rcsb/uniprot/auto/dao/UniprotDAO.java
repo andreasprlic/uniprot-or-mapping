@@ -118,5 +118,10 @@ public interface UniprotDAO {
     public boolean hasPdbUniProtMapping();
 
 
+    public List<String> getOrganisms(Uniprot uniprot);
+
+    public  String getUniprotName(Entry e);
+
+
 
 }
