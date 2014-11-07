@@ -843,6 +843,28 @@ public class UniprotDAOImpl implements UniprotDAO {
         }
     }
 
+    public List<String> getOrganisms(Uniprot uniprot) {
+        List<Entry> upentries = uniprot.getEntry();
+
+        List<String> organisms = new ArrayList<>();
+
+        for (Entry e: upentries) {
+
+            OrganismType o = e.getOrganism();
+
+            if (o.getName().size() > 0) {
+
+                String org = o.getName().get(0).getValue();
+
+                if (!organisms.contains(org)) {
+                    organisms.add(org);
+                }
+            }
+
+        }
+        return organisms;
+    }
+
 
 
 }
