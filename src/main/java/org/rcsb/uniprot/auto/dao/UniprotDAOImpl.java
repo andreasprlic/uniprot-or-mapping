@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.biojava3.core.util.InputStreamProvider;
+import org.biojava3.core.util.SoftHashMap;
 import org.rcsb.uniprot.auto.or.UniProtPdbMap;
 import org.rcsb.uniprot.auto.tools.HibernateUtilsUniprot;
 import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
@@ -683,8 +684,13 @@ public class UniprotDAOImpl implements UniprotDAO {
     }
 
 
+    SoftHashMap<String,Uniprot> softCache = new SoftHashMap<String,Uniprot>();
     public  synchronized Uniprot getUniProt(EntityManager em,String uniprotID) {
-        Uniprot up = null;
+
+        Uniprot up = softCache.get(uniprotID);
+        if ( up != null)
+            return up;
+
         long timeS = System.currentTimeMillis();
         try {
 
@@ -710,6 +716,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         if( timeE - timeS > 500)
             System.out.println("  UniProt DAO took " + (timeE-timeS) + " ms. to load " + uniprotID);
         // note: we don;t close the session here because the outside will request specific details from the Uniprot object
+        softCache.put(uniprotID,up);
         return up;
     }
 
