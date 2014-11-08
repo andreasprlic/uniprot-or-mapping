@@ -382,6 +382,12 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     public String checkForPrimaryAccession(String uniprotAccession) {
 
+
+        // the map has only primary accessions as key..
+        if ( organismAcMap.keySet().contains(uniprotAccession))
+            return uniprotAccession;
+
+
         EntityManager em = JpaUtilsUniProt.getEntityManager();
         Uniprot up = getUniProt(em,uniprotAccession );
 

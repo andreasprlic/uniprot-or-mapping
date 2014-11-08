@@ -37,5 +37,17 @@ public class TestOrganism extends TestCase {
         assertFalse(data.contains("P33584"));
 
         assertEquals(dao.getOrganism(rat),"Rattus norvegicus");
+
+        String human ="P68871";
+
+        assertTrue(data.contains(human));
+
+        // and an secondary ID for human...
+        assertFalse(data.contains("A4GX73"));
+
+       assertTrue(dao.getOrganism(human).startsWith("Homo "));
+
+        System.out.println(dao.getGeneNames(human));
+
     }
 }
