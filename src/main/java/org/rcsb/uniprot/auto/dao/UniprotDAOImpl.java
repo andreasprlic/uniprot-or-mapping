@@ -382,7 +382,8 @@ public class UniprotDAOImpl implements UniprotDAO {
 
 
     public String checkForPrimaryAccession(String uniprotAccession) {
-
+        if ( organismAcMap == null)
+            init();
 
         // the map has only primary accessions as key..
         if ( organismAcMap.keySet().contains(uniprotAccession))
@@ -949,6 +950,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     public String getOrganism(String uniprotAc) {
     if( organismAcMap == null)
         init();
+
         return organismAcMap.get(uniprotAc);
 
 
