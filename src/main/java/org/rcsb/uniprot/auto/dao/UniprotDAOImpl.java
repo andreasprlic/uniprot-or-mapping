@@ -834,7 +834,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         String sql = "select a.hjvalue, en.version_ from entry_accession as a, entry as en where en.HJID = a.HJID";
 
-        System.out.println("loading DB versions ");
+
 
         Integer version = null;
         List<String> accList = null;

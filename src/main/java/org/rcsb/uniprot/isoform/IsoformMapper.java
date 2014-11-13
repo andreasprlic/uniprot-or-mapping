@@ -15,10 +15,9 @@ import org.rcsb.uniprot.auto.Uniprot;import java.lang.Override;import java.lang.
 /** Maps coordinates between the main UniProt sequence and one of its isoforms
  *
  *
- *
  * Created by ap3 on 14/05/2014.
  *
- * //TODO: move to UniProtDAO project
+ *
  */
 public class IsoformMapper implements CoordinateMapper {
 
@@ -36,7 +35,7 @@ public class IsoformMapper implements CoordinateMapper {
         // align them
 
         if ( mainSeq.getLength() + other.getLength() > 5000) {
-            System.err.println("Warning, pairwise alignemnt of two long sequences! Make sure there is enough RAM! " + mainSeq.getAccession() + " " + other.getAccession());
+            System.err.println("Warning, pairwise alignment of two long sequences! Make sure there is enough RAM! " + mainSeq.getAccession() + " " + other.getAccession());
 
         }
 

@@ -3,8 +3,14 @@ package org.rcsb.uniprot.auto.load;
 import org.biojava.bio.structure.align.util.CliTools;
 import org.rcsb.uniprot.auto.dao.UniprotDAO;
 import org.rcsb.uniprot.auto.dao.UniprotDAOImpl;
+import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
 import org.rcsb.uniprot.auto.tools.UniProtTools;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
@@ -36,6 +42,27 @@ public class LoadMissing {
         }
 
         System.out.println(params);
+
+        if ( params.getConfigFilePath() != null) {
+            try {
+                File f = new File(params.getConfigFilePath());
+                InputStream is = new FileInputStream(f);
+
+                EntityManagerFactory emf = JpaUtilsUniProt.createEntityManagerFactory(is);
+                JpaUtilsUniProt.setEntityManagerFactory(emf);
+
+                EntityManager entityManager = emf.createEntityManager();
+
+                JpaUtilsUniProt.validateSQLSchema(entityManager);
+
+
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+
+
 
         int threadPoolSize = params.getThreadSize();
 
