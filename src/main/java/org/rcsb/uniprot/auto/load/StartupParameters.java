@@ -11,6 +11,8 @@ public class StartupParameters {
     public int startPosition = 0;
     public int endPosition   = -1;
 
+    public String configFilePath;
+
     static int threadPoolSize = availableProcs - 1;
     static {
         if ( threadPoolSize < 1)
@@ -53,14 +55,22 @@ public class StartupParameters {
         this.endPosition = endPosition;
     }
 
+    public String getConfigFilePath() {
+        return configFilePath;
+    }
+
+    public void setConfigFilePath(String configFilePath) {
+        this.configFilePath = configFilePath;
+    }
 
     @Override
     public String toString() {
         return "StartupParameters{" +
-                "threadSize=" + threadSize +
-                ", commitSize=" + commitSize +
+                "commitSize=" + commitSize +
                 ", startPosition=" + startPosition +
                 ", endPosition=" + endPosition +
+                ", configFilePath=" + configFilePath +
+                ", threadSize=" + threadSize +
                 '}';
     }
 }

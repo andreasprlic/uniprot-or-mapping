@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class JpaUtilsUniProt {
 
 
+
     private static EntityManagerFactory entityManagerFactory;
 
     private static AtomicBoolean busy = new AtomicBoolean(false);
@@ -28,13 +29,22 @@ public class JpaUtilsUniProt {
 
         if (busy.get()) {
             System.err.println("Already initializing uniprot persistence in other thread");
-            return;
+        }
+
+        while (busy.get()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if ( entityManagerFactory != null);
+                return;
         }
 
         busy.set(true);
 
 
-        EntityManagerFactory emf = getEntityManagerFactory();
+        EntityManagerFactory emf = createDefaultEntityManagerFactory();
 
         EntityManager entityManager = emf.createEntityManager();
 
@@ -45,31 +55,48 @@ public class JpaUtilsUniProt {
 
     }
 
-    private static EntityManagerFactory getEntityManagerFactory() {
+    public static void setEntityManagerFactory(EntityManagerFactory factory){
 
+        entityManagerFactory = factory;
+    }
+
+    public static EntityManagerFactory getEntityManagerFactory(){
         if (entityManagerFactory != null)
             return entityManagerFactory;
 
-        Properties dbproperties = new Properties();
+        entityManagerFactory = createDefaultEntityManagerFactory();
+        return entityManagerFactory;
+    }
 
-        ClassLoader cloader = Thread.currentThread().getContextClassLoader();
-        InputStream propstream = cloader.getResourceAsStream("database.properties");
-        if ( propstream == null){
-            System.err.println("Could not get file database.properties from class context!");
-        }
+    public static EntityManagerFactory createEntityManagerFactory(InputStream propstream){
+
+        Properties dbproperties = new Properties();
         try {
             dbproperties.load(propstream);
+
         } catch (Exception e) {
             e.printStackTrace();
             // use log4j for logging
         }
 
-        entityManagerFactory = Persistence.createEntityManagerFactory("org.rcsb.uniprot.auto", dbproperties);
+        EntityManagerFactory myEntityManagerFactory = Persistence.createEntityManagerFactory("org.rcsb.uniprot.auto", dbproperties);
 
-        return entityManagerFactory;
+        return myEntityManagerFactory;
     }
 
-    private static void validateSQLSchema(EntityManager entityManager) {
+    private static EntityManagerFactory createDefaultEntityManagerFactory() {
+
+        ClassLoader cloader = Thread.currentThread().getContextClassLoader();
+        InputStream propstream = cloader.getResourceAsStream("database.properties");
+        if (propstream == null) {
+            System.err.println("Could not get file database.properties from class context!");
+        }
+
+        return createEntityManagerFactory(propstream);
+
+    }
+
+    public static void validateSQLSchema(EntityManager entityManager) {
 
         // STEP 1 check if we need to modify the column definitions of a few tables
 
