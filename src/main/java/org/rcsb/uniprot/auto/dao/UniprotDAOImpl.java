@@ -46,7 +46,15 @@ public class UniprotDAOImpl implements UniprotDAO {
         UniprotDAOImpl me = new UniprotDAOImpl();
 
 
+        for (Object[] data: me.getRecommendedNames4Components() ) {
 
+            if ( data[0].equals("Q8V5E0")) {
+                System.out.println(Arrays.toString(data));
+
+            }
+           // System.out.println(Arrays.toString(data));
+        }
+        System.exit(0);
 
         System.out.println(me.hasPdbUniProtMapping());
 
@@ -58,7 +66,6 @@ public class UniprotDAOImpl implements UniprotDAO {
         for (Object[] data: me.getECNumbers()) {
             System.out.println(Arrays.toString(data));
         }
-        me.init();
 
         System.out.println("# UP ids:" + me.getAllUniProtIDs().size());
 
@@ -77,6 +84,9 @@ public class UniprotDAOImpl implements UniprotDAO {
     }
 
     public static void init() {
+
+
+
         long timeS = System.currentTimeMillis();
 
         if ( initialized.get()){
@@ -129,6 +139,12 @@ public class UniprotDAOImpl implements UniprotDAO {
             System.out.println("Time to initMoped " + (time4 - time3));
         }
 
+//        initComponents();
+//        long time5 = System.currentTimeMillis();
+//        if ( profiling){
+//            System.out.println("Time to init UniProt components: " + (time5 - time4));
+//        }
+
 
         initialized.set(true);
         busyWithInit.set(false);
@@ -136,6 +152,38 @@ public class UniprotDAOImpl implements UniprotDAO {
         long timeE = System.currentTimeMillis();
         System.out.println("Time to init UniprotDAO: " + (timeE - timeS));
 
+    }
+
+    public List<Object[]> getRecommendedNames4Components() {
+
+
+        // get recommended names for components and start, stop positions..
+
+
+        String sql = "select  a.hjvalue,est.value_, bp.POSITION_ as ps, ep.POSITION_ as es "+
+                "from entry_accession a "+
+                "join entry en on en.HJID = a.HJID  " +
+                "join component c on c.component_proteintype_hjid= en.PROTEIN_ENTRY_HJID "+
+                //"join proteintype p on p.HJID = en.PROTEIN_ENTRY_HJID "+
+                //"join evidencedstringtype est on  est.shortname_RECOMMENDEDNAME_HJ_0 = p.RECOMMENDEDNAME_PROTEINTYPE__0 " +
+                //"join evidencedstringtype est on  est.shortname_RECOMMENDEDNAME_HJ_0 = en.PROTEIN_ENTRY_HJID  " +
+                "join evidencedstringtype est on  est.shortname_RECOMMENDEDNAME_HJ_0 = c.recommendedname_component_hj_0  " +
+                "join featuretype f on f.FEATURE_ENTRY_HJID=en.HJID "+
+                "join locationtype l on l.HJID=f.LOCATION__FEATURETYPE_HJID " +
+                "join positiontype bp on bp.HJID = l.BEGIN__LOCATIONTYPE_HJID " +
+                "join positiontype ep on ep.HJID = l.END__LOCATIONTYPE_HJID ";
+
+
+
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+
+        Query q = em.createNativeQuery(sql);
+        List<Object[]> data = new ArrayList<Object[]>();
+        List<Object[]> rows = q.getResultList();
+        data.addAll(rows);
+        em.close();
+
+        return data;
     }
 
     private static List<String> initAllUniprotIDs() {
