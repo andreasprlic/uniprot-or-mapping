@@ -4,6 +4,7 @@ package org.rcsb.uniprot.isoform;
 import org.biojava3.alignment.Alignments;
 import org.biojava3.alignment.SimpleGapPenalty;
 import org.biojava3.alignment.SimpleSubstitutionMatrix;
+import org.biojava3.alignment.SubstitutionMatrixHelper;
 import org.biojava3.alignment.template.AlignedSequence;
 import org.biojava3.alignment.template.SequencePair;
 import org.biojava3.alignment.template.SubstitutionMatrix;
@@ -39,7 +40,7 @@ public class IsoformMapper implements CoordinateMapper {
 
         }
 
-        SubstitutionMatrix<AminoAcidCompound> matrix = new SimpleSubstitutionMatrix<AminoAcidCompound>();
+        SubstitutionMatrix<AminoAcidCompound> matrix = SubstitutionMatrixHelper.getBlosum62();
         pair = Alignments.getPairwiseAlignment(mainSeq,other,
                 Alignments.PairwiseSequenceAlignerType.LOCAL, new SimpleGapPenalty(), matrix);
 
