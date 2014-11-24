@@ -31,6 +31,12 @@ public interface UniprotDAO {
      */
     public List<Object[]> getECNumbers4Components();
 
+
+    /**Get the recommended names for components and their sequence positions
+
+      */
+    public List<Object[]> getRecommendedNames4Components();
+
     public List<String> getAllUniProtIDs();
 
     public List<String> getGeneNames(String uniprotID);
