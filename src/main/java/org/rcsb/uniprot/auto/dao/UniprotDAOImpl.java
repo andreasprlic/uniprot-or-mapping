@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.biojava3.core.util.InputStreamProvider;
 import org.biojava3.core.util.SoftHashMap;
 import org.rcsb.uniprot.auto.or.UniProtPdbMap;
-import org.rcsb.uniprot.auto.tools.HibernateUtilsUniprot;
+
 import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
 
 import org.rcsb.uniprot.auto.*;
@@ -21,6 +21,7 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+
 
 public class UniprotDAOImpl implements UniprotDAO {
     static List<String> allUniprotIDs;
@@ -46,6 +47,12 @@ public class UniprotDAOImpl implements UniprotDAO {
         UniprotDAOImpl me = new UniprotDAOImpl();
 
 
+        for (Object[] data: me.getPdbReferencesFromUniProt() ) {
+            System.out.println(Arrays.toString(data));
+        }
+        System.exit(0);
+
+
         for (Object[] data: me.getRecommendedNames4Components() ) {
 
             if ( data[0].equals("Q8V5E0")) {
@@ -54,7 +61,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             }
            // System.out.println(Arrays.toString(data));
         }
-        System.exit(0);
+
 
         System.out.println(me.hasPdbUniProtMapping());
 
@@ -710,10 +717,12 @@ public class UniprotDAOImpl implements UniprotDAO {
 //
 //            }
 
+            EntityManager em = JpaUtilsUniProt.getEntityManager();
 
-            Uniprot up = getUniProt(uniprotAccession);
+            Uniprot up = getUniProt(em, uniprotAccession);
             length = up.getEntry().get(0).getSequence().getLength();
 
+            em.close();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -737,8 +746,10 @@ public class UniprotDAOImpl implements UniprotDAO {
     public  synchronized Uniprot getUniProt(EntityManager em,String uniprotID) {
 
         Uniprot up = softCache.get(uniprotID);
-        if ( up != null)
+        if ( up != null) {
+            System.out.println("UniProtDaoImpl got UP " + uniprotID + " from soft cache.");
             return up;
+        }
 
         long timeS = System.currentTimeMillis();
         try {
@@ -1020,6 +1031,46 @@ public class UniprotDAOImpl implements UniprotDAO {
 //            }
 //
 //        }
+
+    }
+
+
+    public List<Object[]> getPdbReferencesFromUniProt() {
+
+        return getDbReferencesFromUniProt("PDB");
+    }
+
+    public List<Object[]> getDbReferencesFromUniProt(String dbType) {
+        //String up_sql = "select a.up_entry_objId,a.element,r.id,p.value from up_entry_accession a "
+//                    + "join up_entry_up_dbreference d on a.up_entry_objId=d.up_entry_objId "
+//                    + "join up_dbreference r on d.dbReference_objId=r.objId "
+//                    + "join up_dbreference_up_property u on r.objId=u.up_dbreference_objId "
+//                    + "join up_property p on p.objId=u.property_objId "
+//                    + "where r.type='PDB' and p.type='chains' and r.id not in ( '"
+//                    + StringUtils.join(assignedEntries, "','") + "' )";
+
+
+
+        String sql =
+                " select  a.hjvalue,  r.ID,r.TYPE_ , p.value_ "+
+                " from entry_accession a "+
+                " join entry en on en.HJID = a.HJID  " +
+                " join dbreferencetype r on en.HJID = r.DBREFERENCE_ENTRY_HJID " +
+                " join propertytype p on p.PROPERTY_DBREFERENCETYPE_HJID = r.HJID " +
+                " where r.TYPE_ =:dbreferencetype and p.type_='chains'";
+
+
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+
+        Query q = em.createNativeQuery(sql);
+        q.setParameter("dbreferencetype", dbType);
+        List<Object[]> data = new ArrayList<Object[]>();
+        List<Object[]> rows = q.getResultList();
+        data.addAll(rows);
+        em.close();
+
+        return data;
+
 
     }
 

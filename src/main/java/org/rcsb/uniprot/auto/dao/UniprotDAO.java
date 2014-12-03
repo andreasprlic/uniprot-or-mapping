@@ -141,5 +141,20 @@ public interface UniprotDAO {
     public  String getUniprotName(Entry e);
 
 
+    /** get a list of all mappings between PDB and uniprot. Returns chains and ranges on chains if available.
+     *
+     * @return
+     */
+    public List<Object[]> getPdbReferencesFromUniProt();
+
+    /** get a list of all references of type dbType from uniprot
+     *
+     * @param dbType can be e.g. EMBL, PDB,KEGG,STRING,RefSeq. In total there are currentl more than 100 reference types in UniProt.
+     *               (see them all with SELECT distinct(type_) FROM dbreferencetype )
+     *
+     * @return
+     */
+    public List<Object[]> getDbReferencesFromUniProt(String dbType) ;
+
 
 }
