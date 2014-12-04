@@ -1052,7 +1052,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
 
         String sql =
-                " select  a.hjvalue,  r.ID,r.TYPE_ , p.value_ "+
+                " select en.HJID, a.hjvalue,  r.ID,r.TYPE_ , p.value_ "+
                 " from entry_accession a "+
                 " join entry en on en.HJID = a.HJID  " +
                 " join dbreferencetype r on en.HJID = r.DBREFERENCE_ENTRY_HJID " +
