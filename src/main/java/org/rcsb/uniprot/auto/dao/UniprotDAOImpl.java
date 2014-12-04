@@ -550,8 +550,8 @@ public class UniprotDAOImpl implements UniprotDAO {
                         organismAcMap.put(ac,name);
 
                     } else {
-                        if ( ! organismAcMap.get(ac).equals(name))
-                            System.err.println("ORGANISM MAP ALREADY HAS: " + organismAcMap.get(ac) + " new: " + name + " | " + ac);
+                        //if ( ! organismAcMap.get(ac).equals(name))
+                            //System.err.println("ORGANISM MAP ALREADY HAS: " + organismAcMap.get(ac) + " new: " + name + " | " + ac);
                     }
                 } else if (type.equals("common")){
                     String scientific = orgIdx.get(i);
