@@ -46,11 +46,13 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         UniprotDAOImpl me = new UniprotDAOImpl();
 
+//
+//        for (Object[] data: me.getPdbReferencesFromUniProt() ) {
+//            System.out.println(Arrays.toString(data));
+//        }
 
-        for (Object[] data: me.getPdbReferencesFromUniProt() ) {
-            System.out.println(Arrays.toString(data));
-        }
-        System.exit(0);
+
+        System.out.println("All gene names:" + me.getAllGeneNames().size());
 
 
         for (Object[] data: me.getRecommendedNames4Components() ) {
@@ -91,8 +93,6 @@ public class UniprotDAOImpl implements UniprotDAO {
     }
 
     public static void init() {
-
-
 
         long timeS = System.currentTimeMillis();
 
