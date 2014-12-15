@@ -98,7 +98,7 @@ public class CallableLoader implements Callable<List<String>> {
                 if (! upFile.isLocal()) {
                     boolean success = upFile.download();
                     if ( ! success) {
-                        System.err.println("# " + jobNr +" Could not load " + accession);
+                        System.err.println("# " + jobNr +" Could not download " + accession);
 
                         /// probably a Trembl ID!
 
