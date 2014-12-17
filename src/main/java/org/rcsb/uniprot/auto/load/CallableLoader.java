@@ -4,6 +4,7 @@ import org.rcsb.uniprot.auto.tools.HttpResource;
 import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
 import org.rcsb.uniprot.auto.tools.UniProtTools;
 import org.rcsb.uniprot.auto.Uniprot;
+import org.rcsb.uniprot.config.RCSBUniProtMirror;
 
 import javax.persistence.EntityManager;
 import java.io.File;
@@ -27,22 +28,19 @@ public class CallableLoader implements Callable<List<String>> {
     List<String> accessions2load;
 
 
-    public static final String UNI_SERVER = "www.uniprot.org";
 
-    public static final String UNI_PATH = "/uniprot/";
 
-    public static final String SERVER = "sandboxwest.rcsb.org";
+
 
     public static final String PATH = "pdbx/ext/";
 
-    public static final String PATH_UNIPROT = "pdbx/uniprot/";
+
 
     public static final String FILE = "pdbtosp.txt";
 
-    public static final String LOCAL_UNIPROT_DIR = "ftp://" + SERVER + "/pdbx/uniprot/";
+   // public static final String LOCAL_UNIPROT_DIR = "ftp://" + SERVER + "/pdbx/uniprot/";
 
-    public static final int CONNECT_TIMEOUT_MS = 60000;
-    public static final int READ_TIMEOUT_MS = 600000;
+
 
     static Integer jobs = -1;
 
@@ -75,11 +73,10 @@ public class CallableLoader implements Callable<List<String>> {
         int count = 0;
 
         long totalTime = 0;
+
         EntityManager em = JpaUtilsUniProt.getEntityManager();
 
         em.getTransaction().begin();
-
-
 
         for (String accession : accessions2load){
 
@@ -87,60 +84,18 @@ public class CallableLoader implements Callable<List<String>> {
 
             try {
 
-                String xmlDir = PATH_UNIPROT + accession.substring(0, 1) + "/" + accession.substring(1, 2) + "/" + accession.substring(2, 3) + "/" + accession.substring(3, 4) + "/";
-                String xmlFile = accession + ".xml";
-                URL remoteURL = new URL ("http://" + SERVER+ ":"+10601+"/"+ xmlDir + xmlFile);
 
-                File localFile = new File(System.getProperty("java.io.tmpdir")+"/"+xmlFile);
+                Uniprot up = RCSBUniProtMirror.getUniProtFromFile(accession);
 
-                HttpResource upFile = new HttpResource(remoteURL , localFile);
+                if ( up == null){
 
-                if (! upFile.isLocal()) {
-                    boolean success = upFile.download();
-                    if ( ! success) {
-                        System.err.println("# " + jobNr +" Could not download " + accession);
+                    badAccessions.add(accession);
 
-                        /// probably a Trembl ID!
-
-                        try {
-
-                            // fetch directly from UniProt
-                            URL u = new URL("http://" + UNI_SERVER + UNI_PATH + accession + ".xml");
-                            URLConnection conn = u.openConnection();
-                            // setting these timeouts ensures the client does not deadlock indefinitely
-                            // when the server has problems.
-                            conn.setConnectTimeout(CONNECT_TIMEOUT_MS);
-                            conn.setReadTimeout(READ_TIMEOUT_MS);
-                            InputStream in = conn.getInputStream();
-
-                            Files.copy(in, localFile.toPath());
-                           // Files.copy(Path source, OutputStream out)
-
-                            in.close();
-
-                            System.out.println("got file from " + u);
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-
-
-                            // System.exit(0);
-                            badAccessions.add(accession);
-                            if (debug)
-                                System.exit(0);
-                            continue;
-                        }
-
-                    }
+                    continue;
                 }
 
-                if ( debug)
-                    System.out.println("# loading " + accession);
-                InputStream inStream = new FileInputStream(localFile);
-
-                Uniprot up = UniProtTools.readUniProtFromInputStream(inStream);
-
                 em.persist(up);
+                RCSBUniProtMirror.delete(accession);
 
                 if (count % params.getCommitSize() == 0 && count >0) {
                     System.out.println("# " + jobNr +" Committing transaction. pos #" + count);
@@ -153,7 +108,8 @@ public class CallableLoader implements Callable<List<String>> {
                     System.out.println("# " + jobNr + " badlist size:" + badAccessions.size() + " speed: " + (timeN-timeS)/count + " ms. / entry");
                     System.out.println(badAccessions);
                 }
-                localFile.delete();
+
+
 
             } catch (Exception e){
                 System.err.println("# " + jobNr + " Failed to load " + accession);
@@ -175,7 +131,7 @@ public class CallableLoader implements Callable<List<String>> {
 
 
 
-          //  System.out.println("# " + jobNr +" " + count +"/" + accessions2load.size() + " loaded " + accession +" in " + diff +" ms. (average: " + totalTime/count + "ms.");
+            //  System.out.println("# " + jobNr +" " + count +"/" + accessions2load.size() + " loaded " + accession +" in " + diff +" ms. (average: " + totalTime/count + "ms.");
         }
 
         // commit ongoing transaction

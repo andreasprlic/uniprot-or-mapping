@@ -15,6 +15,7 @@ import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
 import org.rcsb.uniprot.auto.*;
 import org.hibernate.Session;
 import org.rcsb.uniprot.auto.tools.UniProtTools;
+import org.rcsb.uniprot.config.RCSBUniProtMirror;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -745,13 +746,38 @@ public class UniprotDAOImpl implements UniprotDAO {
     SoftHashMap<String,Uniprot> softCache = new SoftHashMap<String,Uniprot>();
     public  synchronized Uniprot getUniProt(EntityManager em,String uniprotID) {
 
+        long timeS = System.currentTimeMillis();
+
+        // step 1: see if the entry is on the cache
         Uniprot up = softCache.get(uniprotID);
         if ( up != null) {
-            System.out.println("UniProtDaoImpl got UP " + uniprotID + " from soft cache.");
+            long timeE = System.currentTimeMillis();
+            System.out.println("UniProtDAOImpl got UP " + uniprotID + " from soft cache in " + (timeE-timeS) + " ms.");
             return up;
         }
 
-        long timeS = System.currentTimeMillis();
+        // step 2: see if we have a local uniprot file
+        try {
+            File localFile = RCSBUniProtMirror.getLocalFile(uniprotID);
+            if ( localFile != null){
+                InputStream inStream = new FileInputStream(localFile);
+
+                up = UniProtTools.readUniProtFromInputStream(inStream);
+            }
+            RCSBUniProtMirror.delete(uniprotID);
+            if ( up != null) {
+                softCache.put(uniprotID,up);
+
+                long timeE = System.currentTimeMillis();
+                System.out.println("UniProtDAOImpl got UP " + uniprotID + " from XML file in " + (timeE-timeS) + " ms.");
+                return up;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+        // load UniProtEntry from DB..
         try {
 
             Query q = em.createQuery("select up from org.rcsb.uniprot.auto.Uniprot up where :element in elements (up.entry.accession)  ");
@@ -773,8 +799,10 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         long timeE = System.currentTimeMillis();
 
-        if( timeE - timeS > 500)
-            System.out.println("  UniProt DAO took " + (timeE-timeS) + " ms. to load " + uniprotID);
+        System.out.println("UniProtDAOImpl got UP " + uniprotID + " from DB in " + (timeE-timeS) + " ms.");
+
+        //if( timeE - timeS > 500)
+        // System.out.println("  UniProt DAO took " + (timeE-timeS) + " ms. to load " + uniprotID);
         // note: we don;t close the session here because the outside will request specific details from the Uniprot object
         softCache.put(uniprotID,up);
         return up;
@@ -1073,7 +1101,14 @@ public class UniprotDAOImpl implements UniprotDAO {
 
 
     }
-
+//
+//    public List<Object[]> getAlternativeNameMap(){
+////        "select up.objId,r.fullName from up_entry up "+
+////                "join up_protein_up_alternativename rn on rn.up_protein_objId= up.protein_objId "+
+////                "join up_alternativename r on r.objId=rn.alternativeName_objId "
+//
+//        String sql = "select en.HJID, "
+//    }
 
 
 }
