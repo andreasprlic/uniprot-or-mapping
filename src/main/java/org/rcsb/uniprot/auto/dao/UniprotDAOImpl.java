@@ -1193,7 +1193,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
 
 
-        System.out.println(sql);
+        //System.out.println(sql);
 //        "select up.objId,rn.fullName from up_entry up "
 //                + "join up_protein_up_recommendedname prn on prn.up_protein_objId= up.protein_objId "
 //                + "join up_recommendedname rn on rn.objId=prn.recommendedName_objId "
@@ -1229,7 +1229,7 @@ public class UniprotDAOImpl implements UniprotDAO {
                 " group by a.hjvalue,est.value_ having count(*) > 1";
 
 
-        System.out.println(sql);
+        //System.out.println(sql);
 
         EntityManager em = JpaUtilsUniProt.getEntityManager();
         Query q = em.createNativeQuery(sql);
