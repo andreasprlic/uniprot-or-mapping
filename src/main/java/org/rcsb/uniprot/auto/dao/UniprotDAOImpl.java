@@ -743,7 +743,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     }
 
 
-    SoftHashMap<String,Uniprot> softCache = new SoftHashMap<String,Uniprot>();
+    static SoftHashMap<String,Uniprot> softCache = new SoftHashMap<String,Uniprot>();
     public  synchronized Uniprot getUniProt(EntityManager em,String uniprotID) {
 
         long timeS = System.currentTimeMillis();
