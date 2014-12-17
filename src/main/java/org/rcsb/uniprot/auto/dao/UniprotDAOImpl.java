@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.lang.StringUtils;
 import org.biojava3.core.util.InputStreamProvider;
 import org.biojava3.core.util.SoftHashMap;
 import org.rcsb.uniprot.auto.or.UniProtPdbMap;
@@ -62,7 +63,7 @@ public class UniprotDAOImpl implements UniprotDAO {
                 System.out.println(Arrays.toString(data));
 
             }
-           // System.out.println(Arrays.toString(data));
+            // System.out.println(Arrays.toString(data));
         }
 
 
@@ -308,13 +309,13 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         SortedSet<String> ups = new TreeSet<String>();
 
-            Query q = em.createNativeQuery(sql);
-            List l = q.getResultList();
-            for (Object obj : l) {
+        Query q = em.createNativeQuery(sql);
+        List l = q.getResultList();
+        for (Object obj : l) {
 
-                ups.add((String) obj);
+            ups.add((String) obj);
 
-            }
+        }
 
         em.close();
 
@@ -380,13 +381,13 @@ public class UniprotDAOImpl implements UniprotDAO {
                 " sn.SUBMITTEDNAME_PROTEINTYPE_HJ_0 = est.ECNUMBER_SUBMITTEDNAME_HJID " +
                 " group by a.hjvalue,est.value_ having count(*) > 1";
 
-            em = JpaUtilsUniProt.getEntityManager();
+        em = JpaUtilsUniProt.getEntityManager();
 
-            Query q2 = em.createNativeQuery(sql2);
+        Query q2 = em.createNativeQuery(sql2);
 
-            List<Object[]> rows2 = q2.getResultList();
-            data.addAll(rows2);
-            em.close();
+        List<Object[]> rows2 = q2.getResultList();
+        data.addAll(rows2);
+        em.close();
 
         String sql3 = "select a.hjvalue, est.value_  " +
                 " from entry_accession as a, entry as en , " +
@@ -519,8 +520,8 @@ public class UniprotDAOImpl implements UniprotDAO {
         organismAcMap   = new HashMap<String,String>();
 
         String sql = "SELECT ot.name__organismtype_hjid, ot.type_, ot.value_, ea.HJVALUE " +
-                     " FROM organismnametype ot, entry_accession ea , entry e " +
-                     " where ot.name__organismtype_hjid = e.organism_entry_hjid and e.HJID = ea.HJID";
+                " FROM organismnametype ot, entry_accession ea , entry e " +
+                " where ot.name__organismtype_hjid = e.organism_entry_hjid and e.HJID = ea.HJID";
 
         long timeS = System.currentTimeMillis();
         try {
@@ -552,7 +553,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
                     } else {
                         //if ( ! organismAcMap.get(ac).equals(name))
-                            //System.err.println("ORGANISM MAP ALREADY HAS: " + organismAcMap.get(ac) + " new: " + name + " | " + ac);
+                        //System.err.println("ORGANISM MAP ALREADY HAS: " + organismAcMap.get(ac) + " new: " + name + " | " + ac);
                     }
                 } else if (type.equals("common")){
                     String scientific = orgIdx.get(i);
@@ -592,9 +593,9 @@ public class UniprotDAOImpl implements UniprotDAO {
 //                " and ac.up_entry_objId = e.objId";
 
         String sql ="SELECT gnt.VALUE_, ea.HJVALUE FROM genenametype gnt, genetype gt, entry e, entry_accession ea " +
-                    " where e.HJID = gt.GENE_ENTRY_HJID and " +
-                    " gnt.NAME__GENETYPE_HJID = gt.HJID and " +
-                    " ea.HJID = e.HJID ";
+                " where e.HJID = gt.GENE_ENTRY_HJID and " +
+                " gnt.NAME__GENETYPE_HJID = gt.HJID and " +
+                " ea.HJID = e.HJID ";
 
 
         //System.out.println(sql);
@@ -619,7 +620,7 @@ public class UniprotDAOImpl implements UniprotDAO {
                 }
 
 
-              // System.out.println(ac + "  " +gn);
+                // System.out.println(ac + "  " +gn);
 //                if ( gn.equalsIgnoreCase("HBA1"))
 //                    System.out.println(gn + " : " +ac);
 
@@ -1035,8 +1036,8 @@ public class UniprotDAOImpl implements UniprotDAO {
     }
 
     public String getOrganism(String uniprotAc) {
-    if( organismAcMap == null)
-        init();
+        if( organismAcMap == null)
+            init();
 
         return organismAcMap.get(uniprotAc);
 
@@ -1081,11 +1082,11 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         String sql =
                 " select en.HJID, a.hjvalue,  r.ID,r.TYPE_ , p.value_ "+
-                " from entry_accession a "+
-                " join entry en on en.HJID = a.HJID  " +
-                " join dbreferencetype r on en.HJID = r.DBREFERENCE_ENTRY_HJID " +
-                " join propertytype p on p.PROPERTY_DBREFERENCETYPE_HJID = r.HJID " +
-                " where r.TYPE_ =:dbreferencetype and p.type_='chains'";
+                        " from entry_accession a "+
+                        " join entry en on en.HJID = a.HJID  " +
+                        " join dbreferencetype r on en.HJID = r.DBREFERENCE_ENTRY_HJID " +
+                        " join propertytype p on p.PROPERTY_DBREFERENCETYPE_HJID = r.HJID " +
+                        " where r.TYPE_ =:dbreferencetype and p.type_='chains'";
 
 
         EntityManager em = JpaUtilsUniProt.getEntityManager();
@@ -1110,5 +1111,138 @@ public class UniprotDAOImpl implements UniprotDAO {
 //        String sql = "select en.HJID, "
 //    }
 
+
+
+    public Map<String, String> getAC2NameMap(Set<String> aaccessions ){
+
+        String sql = "select a.HJID from entry_accession a where a.HJVALUE in ('"
+                + StringUtils.join(aaccessions, "','") + "')";
+
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+        SortedSet<String> objIds = new TreeSet<String> (em.createNativeQuery(sql).getResultList());
+
+        String accSql = "select a.HJID,a.HJVALUE, a.HJINDEX from entry_accession a where a.HJID in ("
+                + StringUtils.join(objIds, ",") + ")";
+
+        Query entryNamesHJID = em.createNativeQuery(accSql);
+        List<Object[]> results = entryNamesHJID.getResultList();
+
+        String puniprotEntryObjId = "";
+
+
+        Map<String, String> uniProtPrimaryAccessions = new HashMap<String, String>();
+
+        Set<String> supercededIds = new HashSet<String>();
+
+        for(Object[] data : results){
+            String hjid = data[0].toString();
+            String accession = (String)data[1];
+            Integer hjindex = (Integer)data[2];
+
+            if (supercededIds.contains(hjid))
+                continue;
+
+            if ( hjindex == 0) {
+
+                uniProtPrimaryAccessions.put(hjid, accession);
+            }
+
+        }
+
+        objIds.removeAll(supercededIds);
+
+        accSql = " select n.HJID,n.HJVALUE from entry_name_ n where n.HJID in ("
+                + StringUtils.join(objIds, ",") + ")";
+        //pdbiddata = QueryLookupValues.querySql(accSql);
+
+        javax.persistence.Query query3 = em.createNativeQuery(accSql);
+        List<Object[]> results3 = query3.getResultList();
+
+        Map<String, String> uniProtNames = new HashMap<String, String>();
+        for (Object[] obj : results3){
+            String hjid = (obj[0]).toString();
+            String name = (String) obj[1];
+            uniProtNames.put(uniProtPrimaryAccessions.get(hjid), name);
+        }
+        em.close();
+
+
+        return uniProtNames;
+
+
+    }
+
+    public Map<String, String> getRecommendedNameMap(Set<String> aaccessions ){
+
+        // this provides access to the recommended short name:
+
+//                String sql = "select a.hjvalue, est.value_  " +
+//                " from entry_accession as a, entry as en , proteintype as p , " +
+//                "  evidencedstringtype est   " +
+//                " where a.HJVALUE in ('" + StringUtils.join(aaccessions, "','")+ "') and en.HJID = a.HJID and p.HJID = en.PROTEIN_ENTRY_HJID and  " +
+//                " p.RECOMMENDEDNAME_PROTEINTYPE__0 = est.shortname_RECOMMENDEDNAME_HJ_0 " +
+//                " group by a.hjvalue,est.value_ having count(*) > 1";
+
+                        String sql = "select a.hjvalue, est.value_  " +
+                " from entry_accession as a, entry as en , proteintype as p , recommendedname as r, " +
+                "  evidencedstringtype est   " +
+                " where a.HJVALUE in ('" + StringUtils.join(aaccessions, "','")+ "') and en.HJID = a.HJID and p.HJID = en.PROTEIN_ENTRY_HJID and  " +
+                " p.RECOMMENDEDNAME_PROTEINTYPE__0 = r.HJID and r.FULLNAME_RECOMMENDEDNAME_HJID = est.HJID " +
+                " group by a.hjvalue,est.value_ having count(*) > 1";
+
+
+
+
+        System.out.println(sql);
+//        "select up.objId,rn.fullName from up_entry up "
+//                + "join up_protein_up_recommendedname prn on prn.up_protein_objId= up.protein_objId "
+//                + "join up_recommendedname rn on rn.objId=prn.recommendedName_objId "
+//                + "where up.objId in (" + idslist + ")";
+
+            EntityManager em = JpaUtilsUniProt.getEntityManager();
+        Query q = em.createNativeQuery(sql);
+        List<Object[]> data = q.getResultList();
+
+        Map<String,String> results = new HashMap<String,String>();
+        for ( Object[] d : data){
+            String ac = d[0].toString();
+            String recname = d[1].toString();
+            results.put(ac,recname);
+        }
+        return results;
+
+    }
+
+    /** returns a map that contains a mapping of uniprot accessions to submitted names
+     *
+     * @param aaccessions
+     * @return
+     */
+    public Map<String, String> getSubmittedNameMap(Set<String> aaccessions ){
+
+
+        String sql = "select a.hjvalue, est.value_  " +
+                " from entry_accession as a, entry as en , proteintype as p , submittedname as s, " +
+                "  evidencedstringtype est   " +
+                " where a.HJVALUE in ('" + StringUtils.join(aaccessions, "','")+ "') and en.HJID = a.HJID and p.HJID = en.PROTEIN_ENTRY_HJID and  " +
+                " p.HJID = s.SUBMITTEDNAME_PROTEINTYPE_HJ_0 and s.FULLNAME_SUBMITTEDNAME_HJID = est.HJID " +
+                " group by a.hjvalue,est.value_ having count(*) > 1";
+
+
+        System.out.println(sql);
+
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+        Query q = em.createNativeQuery(sql);
+        List<Object[]> data = q.getResultList();
+
+        Map<String,String> results = new HashMap<String,String>();
+        for ( Object[] d : data){
+            String ac = d[0].toString();
+            String recname = d[1].toString();
+            results.put(ac,recname);
+        }
+        return results;
+
+    }
 
 }

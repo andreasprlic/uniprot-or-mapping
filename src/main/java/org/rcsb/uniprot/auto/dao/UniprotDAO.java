@@ -5,10 +5,7 @@ import org.rcsb.uniprot.auto.Uniprot;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.SortedSet;
+import java.util.*;
 
 
 public interface UniprotDAO {
@@ -155,6 +152,26 @@ public interface UniprotDAO {
      * @return
      */
     public List<Object[]> getDbReferencesFromUniProt(String dbType) ;
+
+    /** returns a Map<String,String> that contains a mapping from uniprot accessions to entry names.
+     *
+     * @param aaccessions - a list of UniProt Accessions (e.g. P00123)
+     */
+    public Map<String, String> getAC2NameMap(Set<String> aaccessions );
+
+    /** returns a map that contains a mapping of uniprot accessions to recommended names
+     *
+     * @param aaccessions
+     * @return
+     */
+    public Map<String, String> getRecommendedNameMap(Set<String> aaccessions );
+
+    /** returns a map that contains a mapping of uniprot accessions to submitted names
+     *
+     * @param aaccessions
+     * @return
+     */
+    public Map<String, String> getSubmittedNameMap(Set<String> aaccessions );
 
 
 }
