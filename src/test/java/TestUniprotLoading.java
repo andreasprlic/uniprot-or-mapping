@@ -129,6 +129,13 @@ public class TestUniprotLoading extends TestCase {
 
     }
 
+    public void testWritingAndLoadingQ8V5E0(){
+        testWritingAndLoading("Q8V5E0");
+    }
+    public void testWritingAndLoadingP68871(){
+        testWritingAndLoading("P68871");
+    }
+
 //    public void testVersionLoading() {
 //        UniprotDAO dao = new UniprotDAOImpl();
 //        SortedMap<String, String> upVersions = UniProtTools.loadVersionsFromUniProt();
@@ -419,6 +426,10 @@ public class TestUniprotLoading extends TestCase {
 //        testWritingAndLoading("P22109");
 //    }
 //
+
+
+
+
 //
 //    /*
 //    Hibernate: insert into REFERENCETYPE_SCOPE_ (HJID, HJINDEX, HJVALUE) values (?, ?, ?)

@@ -8,7 +8,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -28,6 +31,35 @@ public class UniProtTools {
         Uniprot uniprot = (Uniprot) um.unmarshal(inputStream);
 
         return uniprot;
+    }
+
+    public static final String UNI_SERVER = "www.uniprot.org";
+    public static final String UNI_PATH = "/uniprot/";
+    public static final int CONNECT_TIMEOUT_MS = 60000;
+    public static final int READ_TIMEOUT_MS = 600000;
+
+    public static File fetchFileFromUniProt(String accession, File localFile) throws IOException {
+
+        long timeS = System.currentTimeMillis();
+        // fetch directly from UniProt
+        URL u = new URL("http://" + UNI_SERVER + UNI_PATH + accession + ".xml");
+        URLConnection conn = u.openConnection();
+        // setting these timeouts ensures the client does not deadlock indefinitely
+        // when the server has problems.
+        conn.setConnectTimeout(CONNECT_TIMEOUT_MS);
+        conn.setReadTimeout(READ_TIMEOUT_MS);
+        InputStream in = conn.getInputStream();
+
+        Files.copy(in, localFile.toPath());
+        // Files.copy(Path source, OutputStream out)
+
+        in.close();
+
+        long timeE = System.currentTimeMillis();
+
+        System.out.println("downloaded file from " + u + " in " + (timeE - timeS) + " ms.");
+
+        return localFile;
     }
 
     public static final String upRegexp = "[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}";
