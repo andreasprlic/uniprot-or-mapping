@@ -53,8 +53,10 @@ public class UniprotDAOImpl implements UniprotDAO {
 //            System.out.println(Arrays.toString(data));
 //        }
 
+        System.out.println(me.getShortNameMap().get("P50225"));
+        System.exit(0);
 
-        System.out.println("All gene names:" + me.getAllGeneNames().size());
+        //System.out.println("All gene names:" + me.getAllGeneNames().size());
 
 
         for (Object[] data: me.getRecommendedNames4Components() ) {
@@ -1102,15 +1104,75 @@ public class UniprotDAOImpl implements UniprotDAO {
 
 
     }
-//
-//    public List<Object[]> getAlternativeNameMap(){
-////        "select up.objId,r.fullName from up_entry up "+
-////                "join up_protein_up_alternativename rn on rn.up_protein_objId= up.protein_objId "+
-////                "join up_alternativename r on r.objId=rn.alternativeName_objId "
-//
-//        String sql = "select en.HJID, "
-//    }
 
+    public Map<String,List<String>> getShortNameMap(){
+//        String sqlStatement="select a.element,rs.element from up_entry up join up_protein_up_recommendedname rn on rn.up_protein_objId= up.protein_objId "+
+//                "join up_recommendedname r on r.objId=rn.recommendedName_objId join up_entry_accession a on a.up_entry_objId=up.objId "+
+//                "join up_recommendedname_shortname rs on r.objId=rs.up_recommendedName_objId";
+
+        String sql = "select a.hjvalue, est.value_  " +
+                " from entry_accession as a, entry as en , proteintype as p , " +
+                "  evidencedstringtype est , recommendedname as r " +
+                " where  en.HJID = a.HJID and  " +
+                " p.HJID = en.PROTEIN_ENTRY_HJID and  " +
+                " p.RECOMMENDEDNAME_PROTEINTYPE__0 = r.HJID and " +
+                " r.HJID = est.shortname_RECOMMENDEDNAME_HJ_0  " ;
+
+
+
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+        List<Object[]> data = (List<Object[]>) em.createNativeQuery(sql).getResultList();
+
+        Map<String,List<String>> results = new TreeMap<String,List<String>>();
+
+        for ( Object[] d : data){
+            String ac = d[0].toString();
+            String shortName = d[1].toString();
+            List<String> shorts = results.get(ac);
+            if ( shorts == null){
+                shorts = new ArrayList<>();
+                results.put(ac,shorts);
+            }
+            if ( ! shorts.contains(shortName)) {
+                shorts.add(shortName);
+            }
+        }
+        em.close();
+        return results;
+
+    }
+
+    public Map<String,List<String>> getAlternativeNameMap(){
+
+        String sql = "select a.hjvalue, est.value_  " +
+                " from entry_accession as a, entry as en , " +
+                "  evidencedstringtype est ,  alternativename an " +
+                " where  en.HJID = a.HJID and  " +
+                " an.ALTERNATIVENAME_PROTEINTYPE__0 = en.PROTEIN_ENTRY_HJID and " +
+                " an.FULLNAME_ALTERNATIVENAME_HJID = est.HJID " ;
+
+
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+        List<Object[]> data = (List<Object[]>) em.createNativeQuery(sql).getResultList();
+
+        Map<String,List<String>> results = new TreeMap<String,List<String>>();
+
+        for ( Object[] d : data){
+            String ac = d[0].toString();
+            String altname = d[1].toString();
+            List<String> alternatives = results.get(ac);
+            if ( alternatives == null){
+                alternatives = new ArrayList<>();
+                results.put(ac,alternatives);
+            }
+            if ( ! alternatives.contains(altname)) {
+                alternatives.add(altname);
+            }
+        }
+        em.close();
+        return results;
+
+    }
 
 
     public Map<String, String> getAC2NameMap(Set<String> aaccessions ){
@@ -1186,7 +1248,8 @@ public class UniprotDAOImpl implements UniprotDAO {
                         String sql = "select a.hjvalue, est.value_  " +
                 " from entry_accession as a, entry as en , proteintype as p , recommendedname as r, " +
                 "  evidencedstringtype est   " +
-                " where a.HJVALUE in ('" + StringUtils.join(aaccessions, "','")+ "') and en.HJID = a.HJID and p.HJID = en.PROTEIN_ENTRY_HJID and  " +
+                " where a.HJVALUE in ('" + StringUtils.join(aaccessions, "','")+ "') and en.HJID = a.HJID and " +
+                " p.HJID = en.PROTEIN_ENTRY_HJID and  " +
                 " p.RECOMMENDEDNAME_PROTEINTYPE__0 = r.HJID and r.FULLNAME_RECOMMENDEDNAME_HJID = est.HJID " +
                 " group by a.hjvalue,est.value_ having count(*) > 1";
 
