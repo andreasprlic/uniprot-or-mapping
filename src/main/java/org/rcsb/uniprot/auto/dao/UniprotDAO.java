@@ -133,7 +133,7 @@ public interface UniprotDAO {
      * @param uniprotAc
      * @return
      */
-    public String getOrganism(String uniprotAc);
+    public List<String> getOrganism(String uniprotAc);
 
     public  String getUniprotName(Entry e);
 
@@ -187,5 +187,12 @@ public interface UniprotDAO {
      * @return
      */
     public Map<String,List<String>> getShortNameMap();
+
+
+    /** get a Map of all organisms for UniProt IDs
+     *
+     * @return
+     */
+    public Map<String,List<String>> getOrganismMap();
 
 }
