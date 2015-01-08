@@ -34,7 +34,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     static Map<String, List<String>> ac2geneName;
 
     static Map<String,String> organismNameMap = null;
-    static Map<String,String> organismAcMap = null;
+    static Map<String,List<String>> organismAcMap = null;
 
     static SortedSet<String> mopedIds;
     static AtomicBoolean busyWithInit = new AtomicBoolean(false);
@@ -519,7 +519,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     private static void initOrganisms(){
 
         organismNameMap = new HashMap<String,String>();
-        organismAcMap   = new HashMap<String,String>();
+        organismAcMap   = new HashMap<String,List<String>>();
 
         String sql = "SELECT ot.name__organismtype_hjid, ot.type_, ot.value_, ea.HJVALUE " +
                 " FROM organismnametype ot, entry_accession ea , entry e " +
@@ -551,9 +551,14 @@ public class UniprotDAOImpl implements UniprotDAO {
                 if (type.equals("scientific") && (! orgIdx.containsKey(i))){
                     orgIdx.put(i, name);
                     if (! organismAcMap.containsKey(ac)) {
-                        organismAcMap.put(ac,name);
+                        List<String> d = new ArrayList<String>();
+                        d.add(name);
+                        organismAcMap.put(ac,d);
 
                     } else {
+                        List<String> d = organismAcMap.get(ac);
+                        if ( ! d.contains(name))
+                            d.add(name);
                         //if ( ! organismAcMap.get(ac).equals(name))
                         //System.err.println("ORGANISM MAP ALREADY HAS: " + organismAcMap.get(ac) + " new: " + name + " | " + ac);
                     }
@@ -1037,7 +1042,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         return organismNameMap.get(scientificName);
     }
 
-    public String getOrganism(String uniprotAc) {
+    public List<String> getOrganism(String uniprotAc) {
         if( organismAcMap == null)
             init();
 
@@ -1307,5 +1312,14 @@ public class UniprotDAOImpl implements UniprotDAO {
         return results;
 
     }
+
+    public Map<String,List<String>> getOrganismMap(){
+
+        return organismAcMap;
+
+    }
+
+    // todo: get cellular location map
+    // todo: get disease map
 
 }
