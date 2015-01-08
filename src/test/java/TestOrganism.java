@@ -36,7 +36,7 @@ public class TestOrganism extends TestCase {
         // this is an old identifier for the rat entry:
         assertFalse(data.contains("P33584"));
 
-        assertEquals(dao.getOrganism(rat),"Rattus norvegicus");
+        assertTrue(dao.getOrganism(rat).contains("Rattus norvegicus"));
 
         String human ="P68871";
 
@@ -45,7 +45,7 @@ public class TestOrganism extends TestCase {
         // and an secondary ID for human...
         assertFalse(data.contains("A4GX73"));
 
-       assertTrue(dao.getOrganism(human).startsWith("Homo "));
+        assertTrue(dao.getOrganism(human).contains("Homo sapiens"));
 
         System.out.println(dao.getGeneNames(human));
 
