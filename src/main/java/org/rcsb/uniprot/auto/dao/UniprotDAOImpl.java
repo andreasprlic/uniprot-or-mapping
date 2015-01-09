@@ -754,6 +754,9 @@ public class UniprotDAOImpl implements UniprotDAO {
     static SoftHashMap<String,Uniprot> softCache = new SoftHashMap<String,Uniprot>();
     public  synchronized Uniprot getUniProt(EntityManager em,String uniprotID) {
 
+        if (uniprotNameMap == null )
+            init();
+
         long timeS = System.currentTimeMillis();
 
         // step 1: see if the entry is on the cache
@@ -1314,6 +1317,9 @@ public class UniprotDAOImpl implements UniprotDAO {
     }
 
     public Map<String,List<String>> getOrganismMap(){
+    if ( organismAcMap == null){
+        init();
+    }
 
         return organismAcMap;
 
