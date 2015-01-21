@@ -147,7 +147,10 @@ public class LoadMissing {
 
             for (Future<List<String>> b : futureResults) {
 
-                badResults.addAll(b.get());
+                List<String> results = b.get();
+
+                if ( results != null && results.size() > 0)
+                    badResults.addAll(results);
 
             }
 

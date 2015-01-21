@@ -142,6 +142,8 @@ public class CallableLoader implements Callable<List<String>> {
         long timeE = System.currentTimeMillis();
 
         long diff = (timeE - timeS);
+        if ( diff == 0)
+            diff = 1;
         totalTime += diff;
         System.out.println("# " + jobNr +" " + count +"/" + accessions2load.size() + " loaded " + accessions2load.size() +" entries in " + diff/1000 +" sec. (average: " + totalTime/count + "ms.)");
         System.out.println("# " + jobNr + " done! ");
