@@ -763,8 +763,10 @@ public class UniprotDAOImpl implements UniprotDAO {
         // step 1: see if the entry is on the cache
         Uniprot up = softCache.get(uniprotID);
         if ( up != null) {
-            long timeE = System.currentTimeMillis();
-            System.out.println("UniProtDAOImpl got UP " + uniprotID + " from soft cache in " + (timeE-timeS) + " ms.");
+            if ( profiling {
+                long timeE = System.currentTimeMillis();
+                System.out.println("UniProtDAOImpl got UP " + uniprotID + " from soft cache in " + (timeE - timeS) + " ms.");
+            }
             return up;
         }
 
@@ -780,8 +782,10 @@ public class UniprotDAOImpl implements UniprotDAO {
             if ( up != null) {
                 softCache.put(uniprotID,up);
 
-                long timeE = System.currentTimeMillis();
-                System.out.println("UniProtDAOImpl got UP " + uniprotID + " from XML file in " + (timeE-timeS) + " ms.");
+                if ( profiling) {
+                    long timeE = System.currentTimeMillis();
+                    System.out.println("UniProtDAOImpl got UP " + uniprotID + " from XML file in " + (timeE - timeS) + " ms.");
+                }
                 return up;
             }
         } catch (Exception e){
@@ -811,7 +815,8 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         long timeE = System.currentTimeMillis();
 
-        System.out.println("UniProtDAOImpl got UP " + uniprotID + " from DB in " + (timeE-timeS) + " ms.");
+        if ( profiling)
+            System.out.println("UniProtDAOImpl got UP " + uniprotID + " from DB in " + (timeE-timeS) + " ms.");
 
         //if( timeE - timeS > 500)
         // System.out.println("  UniProt DAO took " + (timeE-timeS) + " ms. to load " + uniprotID);
@@ -1313,6 +1318,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             String recname = d[1].toString();
             results.put(ac,recname);
         }
+        em.close();
         return results;
 
     }
