@@ -763,7 +763,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         // step 1: see if the entry is on the cache
         Uniprot up = softCache.get(uniprotID);
         if ( up != null) {
-            if ( profiling {
+            if ( profiling ) {
                 long timeE = System.currentTimeMillis();
                 System.out.println("UniProtDAOImpl got UP " + uniprotID + " from soft cache in " + (timeE - timeS) + " ms.");
             }
