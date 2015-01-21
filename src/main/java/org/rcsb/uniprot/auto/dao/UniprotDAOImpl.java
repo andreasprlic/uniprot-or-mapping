@@ -650,7 +650,8 @@ public class UniprotDAOImpl implements UniprotDAO {
                     gns = new ArrayList<String>();
                     ac2geneName.put(ac, gns);
                 }
-                gns.add(gn);
+                if ( ! gns.contains(gn))
+                    gns.add(gn);
 
             }
 
