@@ -804,7 +804,6 @@ public class UniprotDAOImpl implements UniprotDAO {
 
                 up = (Uniprot) obj;
 
-                em.detach(up);
                 break;
             }
 
