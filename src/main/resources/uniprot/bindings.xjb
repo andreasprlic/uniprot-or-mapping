@@ -42,6 +42,10 @@ nodename	Selects all nodes with the name "nodename"
 
         </jxb:schemaBindings>
 
+        <!-- we want to load the whole uniprot entry, not just parts of it -->
+        <hj:persistence>
+            <hj:default-one-to-many fetch="EAGER"></hj:default-one-to-many>
+        </hj:persistence>
         <!-- this changes the varchar length for all strings -->
         <!--<hj:persistence>-->
         <!--<hj:default-single-property type="xs:string">-->
