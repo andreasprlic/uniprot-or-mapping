@@ -6,7 +6,7 @@
 
     <groupId>org.rcsb.uniprot</groupId>
     <artifactId>uniprot</artifactId>
-    <version>2014.11.13.1</version>
+    <version>2015.01.30</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -28,7 +28,7 @@
         <ehcache.version>2.4.3</ehcache.version>
         <lucene.version>3.6.2</lucene.version>
 
-        <biojava.version>3.1.0</biojava.version>
+        <biojava.version>4.0.0</biojava.version>
 
     </properties>
 
@@ -158,7 +158,7 @@
 
         <dependency>
             <groupId>org.biojava</groupId>
-            <artifactId>biojava3-structure</artifactId>
+            <artifactId>biojava-structure</artifactId>
             <version>${biojava.version}</version>
         </dependency>
 
@@ -327,6 +327,7 @@
                 <version>2.17</version>
                 <configuration>
                     <argLine>-Xmx1500M</argLine>
+                    <forkMode>once</forkMode>
                     <reuseForks>false</reuseForks>
                     <forkCount>1</forkCount>
 
