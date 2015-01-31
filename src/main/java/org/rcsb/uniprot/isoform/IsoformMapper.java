@@ -1,15 +1,15 @@
 package org.rcsb.uniprot.isoform;
 
 
-import org.biojava3.alignment.Alignments;
-import org.biojava3.alignment.SimpleGapPenalty;
-import org.biojava3.alignment.SimpleSubstitutionMatrix;
-import org.biojava3.alignment.SubstitutionMatrixHelper;
-import org.biojava3.alignment.template.AlignedSequence;
-import org.biojava3.alignment.template.SequencePair;
-import org.biojava3.alignment.template.SubstitutionMatrix;
-import org.biojava3.core.sequence.ProteinSequence;
-import org.biojava3.core.sequence.compound.AminoAcidCompound;
+import org.biojava.nbio.alignment.Alignments;
+import org.biojava.nbio.alignment.SimpleGapPenalty;
+import org.biojava.nbio.alignment.SimpleSubstitutionMatrix;
+import org.biojava.nbio.alignment.SubstitutionMatrixHelper;
+import org.biojava.nbio.alignment.template.AlignedSequence;
+import org.biojava.nbio.alignment.template.SequencePair;
+import org.biojava.nbio.alignment.template.SubstitutionMatrix;
+import org.biojava.nbio.core.sequence.ProteinSequence;
+import org.biojava.nbio.core.sequence.compound.AminoAcidCompound;
 import org.rcsb.uniprot.auto.Uniprot;import java.lang.Override;import java.lang.System;
 
 

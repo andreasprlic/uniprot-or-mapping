@@ -1,8 +1,9 @@
 package org.rcsb.uniprot.isoform;
 
-import org.biojava3.core.sequence.AccessionID;
-import org.biojava3.core.sequence.ProteinSequence;
-import org.biojava3.core.sequence.compound.AminoAcidCompoundSet;
+import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
+import org.biojava.nbio.core.sequence.AccessionID;
+import org.biojava.nbio.core.sequence.ProteinSequence;
+import org.biojava.nbio.core.sequence.compound.AminoAcidCompoundSet;
 
 import org.rcsb.uniprot.auto.*;
 import org.rcsb.uniprot.auto.CommentType;
@@ -28,7 +29,7 @@ public class IsoformTools {
 
     private static final boolean debug = false;
 
-    public  synchronized ProteinSequence[] getIsoforms(Uniprot up) {
+    public  synchronized ProteinSequence[] getIsoforms(Uniprot up) throws CompoundNotFoundException {
 
         if (up.getEntry().size() < 1) {
             System.err.println("UP entry does not contain an entry!! ");
@@ -121,7 +122,7 @@ public class IsoformTools {
     }
 
 
-    public  ProteinSequence buildIsoform(ProteinSequence orig, AccessionID id, List<FeatureType> features, String ref) {
+    public  ProteinSequence buildIsoform(ProteinSequence orig, AccessionID id, List<FeatureType> features, String ref) throws CompoundNotFoundException {
 
         String[] refs;
 
@@ -267,7 +268,7 @@ public class IsoformTools {
                                            PositionType end,
                                            String seqvariation,
                                            IndexOffset offset,
-                                           String original) {
+                                           String original) throws CompoundNotFoundException {
 
         // the region that is in the location has actually been removed
 
@@ -363,7 +364,7 @@ public class IsoformTools {
     }
 
 
-    private  ProteinSequence insert(ProteinSequence isoform, String insert, PositionType pos, IndexOffset offset) {
+    private  ProteinSequence insert(ProteinSequence isoform, String insert, PositionType pos, IndexOffset offset) throws CompoundNotFoundException {
 
 
         int offsetPos = offset.getOffset(pos.getPosition().intValue() - 1);
@@ -393,7 +394,7 @@ public class IsoformTools {
 
     }
 
-    private  ProteinSequence delete(ProteinSequence isoform, PositionType begin, PositionType end, IndexOffset offset) {
+    private  ProteinSequence delete(ProteinSequence isoform, PositionType begin, PositionType end, IndexOffset offset) throws CompoundNotFoundException {
 
         // the region that is in the location has actually been removed
 

@@ -7,8 +7,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.StringUtils;
-import org.biojava3.core.util.InputStreamProvider;
-import org.biojava3.core.util.SoftHashMap;
+import org.biojava.nbio.core.util.InputStreamProvider;
+import org.biojava.nbio.core.util.SoftHashMap;
 import org.rcsb.uniprot.auto.or.UniProtPdbMap;
 
 import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
