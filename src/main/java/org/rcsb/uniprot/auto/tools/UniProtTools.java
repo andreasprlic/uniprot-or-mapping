@@ -1,6 +1,6 @@
 package org.rcsb.uniprot.auto.tools;
 
-import org.biojava3.core.sequence.ProteinSequence;
+import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.rcsb.uniprot.auto.Entry;
 import org.rcsb.uniprot.auto.Uniprot;
 

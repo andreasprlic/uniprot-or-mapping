@@ -6,7 +6,7 @@
 
     <groupId>org.rcsb.uniprot</groupId>
     <artifactId>uniprot</artifactId>
-    <version>2015.01.30</version>
+    <version>2015.01.30.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -27,7 +27,6 @@
         <hibernate.tools.version>4.3.1.CR1</hibernate.tools.version>
         <ehcache.version>2.4.3</ehcache.version>
         <lucene.version>3.6.2</lucene.version>
-
         <biojava.version>4.0.0</biojava.version>
 
     </properties>
