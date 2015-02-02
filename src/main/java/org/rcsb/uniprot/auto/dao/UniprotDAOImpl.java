@@ -42,7 +42,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     public static final String MOPED_LOCATION = "https://www.proteinspire.org/MOPED/services/referencedata/proteinNames";
 
-    private static final boolean profiling = true;
+    private static final boolean profiling = false;
 
     public static void main(String[] args) {
 
