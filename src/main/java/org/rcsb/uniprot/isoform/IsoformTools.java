@@ -36,7 +36,7 @@ public class IsoformTools {
             return null;
         }
 
-        System.out.println("     loading isoforms for " + up.getEntry().get(0).getAccession());
+        //System.out.println("     loading isoforms for " + up.getEntry().get(0).getAccession());
 
         ProteinSequence[] data = null;
         synchronized (up) {
