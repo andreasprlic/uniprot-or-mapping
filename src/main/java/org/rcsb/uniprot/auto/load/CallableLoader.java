@@ -90,7 +90,7 @@ public class CallableLoader implements Callable<List<String>> {
                 if ( up == null){
 
                     badAccessions.add(accession);
-
+                    RCSBUniProtMirror.delete(accession);
                     continue;
                 }
 

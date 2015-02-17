@@ -155,6 +155,7 @@ public class UniProtTools {
     public static SortedSet<String> getAllCurrentUniProtACs(){
         //String uniProtQuery = "http://www.uniprot.org/uniprot/?query=reviewed%3ayes&force=yes&format=tab&columns=id,entry%20name,reviewed,genes,organism,length";
         String uniProtQuery = "http://www.uniprot.org/uniprot/?query=reviewed%3ayes&force=yes&format=list&compress=yes";
+        System.out.println("Fetching " + uniProtQuery);
         SortedSet<String> data = new TreeSet<String>();
         BufferedReader br = null;
         try {

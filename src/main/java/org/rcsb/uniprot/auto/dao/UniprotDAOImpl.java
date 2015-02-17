@@ -28,9 +28,9 @@ import javax.persistence.criteria.Root;
 public class UniprotDAOImpl implements UniprotDAO {
     static List<String> allUniprotIDs;
 
-    static Map<String, String> uniprotNameMap;
-    static SortedSet<String> geneNames;
-    static Map<String, List<String>> uniprotGeneMap;
+    static Map<String, String> uniprotNameMap = null;
+    static SortedSet<String> geneNames = null;
+    static Map<String, List<String>> uniprotGeneMap = null;
     static Map<String, List<String>> ac2geneName;
 
     static Map<String,String> organismNameMap = null;
