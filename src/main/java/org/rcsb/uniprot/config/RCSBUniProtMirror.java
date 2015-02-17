@@ -77,10 +77,12 @@ public class RCSBUniProtMirror {
 
             try {
 
+                localFile = getLocalFileLocation(accession);
                 localFile = UniProtTools.fetchFileFromUniProt(accession, localFile);
 
             } catch (Exception e) {
                 e.printStackTrace();
+
 
                 return null;
             }
