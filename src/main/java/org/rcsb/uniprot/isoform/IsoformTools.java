@@ -12,9 +12,13 @@ import org.rcsb.uniprot.auto.IsoformType;
 import org.rcsb.uniprot.auto.LocationType;
 import org.rcsb.uniprot.auto.PositionType;
 import org.rcsb.uniprot.auto.Uniprot;
+import org.rcsb.uniprot.auto.dao.UniprotDAO;
+import org.rcsb.uniprot.auto.dao.UniprotDAOImpl;
+import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
 import org.rcsb.uniprot.auto.tools.UniProtTools;
 
 
+import javax.persistence.EntityManager;
 import java.lang.RuntimeException;import java.lang.String;import java.lang.System;import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +32,57 @@ public class IsoformTools {
     // Q5JS13 - complicated isoforms
 
     private static final boolean debug = false;
+
+
+    /* isoform nr starts at 1 first canonical isoform nr.
+
+     */
+
+    public static void main(String[] args){
+
+        String up = "Q9BZ29";
+
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+
+        UniprotDAO dao = new UniprotDAOImpl();
+
+        Uniprot uniprot =dao.getUniProt(em, up);
+
+        IsoformTools me = new IsoformTools();
+
+        IsoformType isot = me.getIsoformType(uniprot,5);
+
+        System.out.println(isot.getName().get(0).getValue());
+        System.out.println(isot.getNote().getValue());
+
+
+    }
+
+    public IsoformType getIsoformType(Uniprot up,int isoformNr) {
+        if (up.getEntry().size() < 1) {
+            System.err.println("UP entry does not contain an entry!! ");
+            return null;
+        }
+
+        //System.out.println("     loading isoforms for " + up.getEntry().get(0).getAccession());
+
+        ProteinSequence[] data = null;
+        synchronized (up) {
+            List<FeatureType> features = up.getEntry().get(0).getFeature();
+            List<CommentType> comments = up.getEntry().get(0).getComment();
+
+
+            for (CommentType c : comments) {
+
+                // check isoform
+                List<IsoformType> isoforms = c.getIsoform();
+                if (isoforms != null && isoforms.size() > 0) {
+                    return isoforms.get(isoformNr - 1);
+                }
+            }
+        }
+        return null;
+    }
 
     public  synchronized ProteinSequence[] getIsoforms(Uniprot up) throws CompoundNotFoundException {
 
