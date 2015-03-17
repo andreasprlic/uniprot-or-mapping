@@ -117,18 +117,16 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         busyWithInit.set(true);
 
-
         initAllUniprotIDs();
+
         long time1 = System.currentTimeMillis();
         if (profiling) {
 
             System.out.println("Time to initAllUniprotIDs " + (time1 - timeS));
         }
 
-
         initOrganisms();
-
-
+        
         initGeneNames();
         long time2 = System.currentTimeMillis();
         if (profiling) {
@@ -1325,9 +1323,9 @@ public class UniprotDAOImpl implements UniprotDAO {
     }
 
     public Map<String,List<String>> getOrganismMap(){
-    if ( organismAcMap == null){
-        init();
-    }
+        if ( organismAcMap == null){
+            init();
+        }
 
         return organismAcMap;
 
