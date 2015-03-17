@@ -54,7 +54,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 //        }
 
         System.out.println(me.getShortNameMap().get("P50225"));
-        System.exit(0);
+
 
         //System.out.println("All gene names:" + me.getAllGeneNames().size());
 
@@ -72,9 +72,9 @@ public class UniprotDAOImpl implements UniprotDAO {
         System.out.println(me.hasPdbUniProtMapping());
 
         for (Object[] data: me.getECNumbers4Components()) {
-            System.out.println(Arrays.toString(data));
+            System.out.println("EC nuymber for components:" + Arrays.toString(data));
         }
-
+        System.exit(0);
 
         for (Object[] data: me.getECNumbers()) {
             System.out.println(Arrays.toString(data));
@@ -258,7 +258,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             System.out.println("loaded " + mopedIds.size() + " IDs from MOPED ("+MOPED_LOCATION+")");
 
         } catch (Exception e){
-
+            System.err.println("Could not load moped data from " + MOPED_LOCATION);
             e.printStackTrace();
         }
 
@@ -695,6 +695,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     public List<String> getGeneNames(String uniprotID) {
         if (ac2geneName == null)
             init();
+
 
         return ac2geneName.get(uniprotID);
     }
