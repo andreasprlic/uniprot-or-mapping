@@ -126,7 +126,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         }
 
         initOrganisms();
-        
+
         initGeneNames();
         long time2 = System.currentTimeMillis();
         if (profiling) {
