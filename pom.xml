@@ -168,6 +168,12 @@
             <artifactId>guava</artifactId>
             <version>17.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.2.2</version>
+        </dependency>
     </dependencies>
 
     <pluginRepositories>
@@ -327,7 +333,7 @@
                 <configuration>
                     <argLine>-Xmx1500M</argLine>
                     <forkMode>once</forkMode>
-                    <reuseForks>false</reuseForks>
+                    <reuseForks>true</reuseForks>
                     <forkCount>1</forkCount>
 
                     <excludes>
@@ -338,6 +344,43 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+
+                <!--<plugin>-->
+                    <!--<groupId>org.apache.maven.plugins</groupId>-->
+                    <!--<artifactId>maven-assembly-plugin</artifactId>-->
+                    <!--<configuration>-->
+                        <!--<finalName>uniprot</finalName>-->
+                        <!--<archive>-->
+                            <!--<manifest>-->
+                                <!--<addClasspath>true</addClasspath>-->
+                                <!--<mainClass>org.rcsb.uniprot.auto.load.LoadMissing</mainClass>-->
+                            <!--</manifest>-->
+                        <!--</archive>-->
+                        <!--<descriptorRefs>-->
+                            <!--<descriptorRef>jar-with-dependencies</descriptorRef>-->
+                        <!--</descriptorRefs>-->
+                        <!--<fileSets>-->
+                            <!--<fileSet>-->
+                                <!--&lt;!&ndash; TODO: use expresssions instead: ${project.build.sourceDirectory},-->
+                                    <!--etc &ndash;&gt;-->
+                                <!--<directory>${project.basedir}/src</directory>-->
+                                <!--<useDefaultExcludes>true</useDefaultExcludes>-->
+                            <!--</fileSet>-->
+                        <!--</fileSets>-->
+                    <!--</configuration>-->
+                    <!--<executions>-->
+                        <!--<execution>-->
+                            <!--<id>make-assembly</id> &lt;!&ndash; this is used for inheritance merges &ndash;&gt;-->
+                            <!--<phase>package</phase> &lt;!&ndash; bind to the packaging phase &ndash;&gt;-->
+                            <!--<goals>-->
+                                <!--<goal>single</goal>-->
+                            <!--</goals>-->
+                        <!--</execution>-->
+                    <!--</executions>-->
+                <!--</plugin>-->
+
+
 
         </plugins>
 
