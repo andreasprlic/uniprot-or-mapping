@@ -1,15 +1,24 @@
 package org.rcsb.uniprot.auto.tools;
 
+import com.mchange.v2.c3p0.C3P0Registry;
+import com.mchange.v2.c3p0.PooledDataSource;
 import org.hibernate.Session;
 import org.hibernate.jpa.HibernateEntityManager;
+import org.hibernate.jpa.HibernateEntityManagerFactory;
+import org.springframework.web.util.HtmlUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by ap3 on 18/08/2014.
@@ -112,10 +121,73 @@ public class JpaUtilsUniProt {
 
     }
 
+    private static String getDBNAme(){
+
+        System.out.println("get DBA NAMe");
+
+        String databaseName = "uniprot";
+
+        EntityManagerFactory emf = getEntityManagerFactory();
+
+        if ( emf instanceof HibernateEntityManagerFactory) {
+            HibernateEntityManagerFactory hemf = (HibernateEntityManagerFactory) emf;
+
+            Map<String, Object> props = hemf.getProperties();
+            for (String key : props.keySet()) {
+//                if ( key.startsWith("hibernate") || key.startsWith("c3p0"))
+//                    System.out.println(key + " : " + props.get(key).toString());
+
+                if ( key.equals("hibernate.connection.url")){
+
+                    // extract the DB name from the URL...
+
+                    databaseName = extractDBNameFromURL(props.get(key).toString());
+
+                }
+            }
+
+        }
+
+        return databaseName;
+    }
+
+    private static String extractDBNameFromURL(String s) {
+
+        Pattern pattern = Pattern.compile("jdbc:(\\S+):(\\S+)/(\\S+)");
+
+        Matcher matcher = pattern.matcher(s);
+
+        if ( matcher.find()) {
+
+
+            String g3 = matcher.group(3);
+
+            String[] spl = g3.split("\\?");
+            if ( spl.length > 1) {
+
+                return  spl[0];
+            } else {
+                return g3;
+            }
+        }
+
+        return null;
+
+    }
+
+
     private static boolean hasRequiredIdsTable() {
 
+
+        String databaseName = "uniprot";
+
+        databaseName = getDBNAme();
+
+        System.out.println("using DB name :" + databaseName);
+
+
         String sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS " +
-        " WHERE TABLE_SCHEMA='uniprot' " +
+        " WHERE TABLE_SCHEMA='"+ databaseName+"' " +
         " AND TABLE_NAME='required_ids' ";
 
          EntityManager em = getEntityManager();
