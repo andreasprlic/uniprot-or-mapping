@@ -28,6 +28,9 @@ public class LoadMissing {
 
     public static void main(String[] args) {
 
+
+
+
         long timeS = System.currentTimeMillis();
 
         StartupParameters params = new StartupParameters();
@@ -59,6 +62,9 @@ public class LoadMissing {
             } catch (Exception e){
                 e.printStackTrace();
             }
+        } else {
+
+            JpaUtilsUniProt.validateSQLSchema(JpaUtilsUniProt.getEntityManager());
         }
 
 
