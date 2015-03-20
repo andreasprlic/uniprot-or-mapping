@@ -1,21 +1,18 @@
 package org.rcsb.uniprot.auto.tools;
 
-import com.mchange.v2.c3p0.C3P0Registry;
-import com.mchange.v2.c3p0.PooledDataSource;
-import org.hibernate.Session;
-import org.hibernate.jpa.HibernateEntityManager;
+
 import org.hibernate.jpa.HibernateEntityManagerFactory;
-import org.springframework.web.util.HtmlUtils;
+
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import java.io.InputStream;
-import java.sql.Connection;
+
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -178,17 +175,16 @@ public class JpaUtilsUniProt {
 
     private static boolean hasRequiredIdsTable() {
 
-
         String databaseName = "uniprot";
 
         databaseName = getDBNAme();
 
         System.out.println("using DB name :" + databaseName);
 
-
         String sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS " +
         " WHERE TABLE_SCHEMA='"+ databaseName+"' " +
         " AND TABLE_NAME='required_ids' ";
+
 
          EntityManager em = getEntityManager();
         Query q = em.createNativeQuery(sql);
