@@ -114,9 +114,7 @@ public class JpaUtilsUniProt {
 
     private static boolean hasRequiredIdsTable() {
 
-        String sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS " +
-        " WHERE TABLE_SCHEMA='uniprot' " +
-        " AND TABLE_NAME='required_ids' ";
+        String sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='uniprot' AND TABLE_NAME='required_ids'";
 
          EntityManager em = getEntityManager();
         Query q = em.createNativeQuery(sql);
