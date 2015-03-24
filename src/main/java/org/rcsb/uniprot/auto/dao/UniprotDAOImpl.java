@@ -670,12 +670,28 @@ public class UniprotDAOImpl implements UniprotDAO {
         if ( geneNames == null)
             init();
 
+        while ( busyWithInit.get()){
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         return geneNames;
     }
 
     public List<String> getUniProtACsByGeneName(String gn){
         if ( uniprotGeneMap == null)
             init();
+
+        while ( busyWithInit.get()){
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
         List<String> acs = uniprotGeneMap.get(gn.toUpperCase());
         return acs;
@@ -687,12 +703,28 @@ public class UniprotDAOImpl implements UniprotDAO {
             init();
         }
 
+        while ( busyWithInit.get()){
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         return allUniprotIDs;
     }
 
     public List<String> getGeneNames(String uniprotID) {
         if (ac2geneName == null)
             init();
+
+        while ( busyWithInit.get()){
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
 
         return ac2geneName.get(uniprotID);
