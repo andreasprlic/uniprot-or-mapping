@@ -52,8 +52,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     public static void main(String[] args) {
 
         UniprotDAOImpl me = new UniprotDAOImpl();
-
-//
+        
 //        for (Object[] data: me.getPdbReferencesFromUniProt() ) {
 //            System.out.println(Arrays.toString(data));
 //        }
