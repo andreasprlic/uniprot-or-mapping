@@ -44,6 +44,11 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     private static final boolean profiling = false;
 
+
+    public UniprotDAOImpl (){
+        UniprotDAOImpl.init();
+    }
+
     public static void main(String[] args) {
 
         UniprotDAOImpl me = new UniprotDAOImpl();
@@ -98,11 +103,14 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     public static void init() {
 
-        long timeS = System.currentTimeMillis();
-
         if ( initialized.get()){
             return;
         }
+
+
+        long timeS = System.currentTimeMillis();
+
+
 
         while (busyWithInit.get()) {
             try {
