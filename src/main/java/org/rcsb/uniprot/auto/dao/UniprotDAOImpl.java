@@ -912,7 +912,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     public String getUniProtHeader(EntityManager em, String uniprotAccession){
         String header = null;
 
-        Uniprot up = getUniProt(em,uniprotAccession);
+        Uniprot up = getUniProt(em, uniprotAccession);
         if (up == null) {
             return "Unknown";
         }
@@ -1017,7 +1017,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     public void clearPdbUniProtMapping(){
 
         EntityManager em = JpaUtilsUniProt.getEntityManager();
-        Query q = em.createQuery("delete from uniprotpdbmap");
+        Query q = em.createNativeQuery("delete from uniprotpdbmap");
         q.executeUpdate();
         em.close();
 
@@ -1072,6 +1072,8 @@ public class UniprotDAOImpl implements UniprotDAO {
         return pdbs;
 
     }
+
+
 
     public void addToPdbUniProtMapping(EntityManager em, String accession, SortedSet<String> pdbIds){
         for ( String p : pdbIds){
