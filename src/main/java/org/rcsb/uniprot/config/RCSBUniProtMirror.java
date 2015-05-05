@@ -20,8 +20,15 @@ import java.nio.file.Files;
 public class RCSBUniProtMirror {
 
 
-    public static final String SERVER = "sandboxwest.rcsb.org";
+    public static  String SERVER = "sandboxwest.rcsb.org";
     public static final String PATH_UNIPROT = "pdbx/uniprot/";
+
+
+    public static void setServer(String newServer){
+
+        SERVER = newServer;
+
+    }
 
 
     public static File getLocalFile(String accession) throws MalformedURLException {
