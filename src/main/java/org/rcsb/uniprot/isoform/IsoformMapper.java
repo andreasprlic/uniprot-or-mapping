@@ -5,9 +5,7 @@ import org.biojava.nbio.alignment.Alignments;
 import org.biojava.nbio.alignment.SimpleGapPenalty;
 import org.biojava.nbio.alignment.SimpleSubstitutionMatrix;
 import org.biojava.nbio.alignment.SubstitutionMatrixHelper;
-import org.biojava.nbio.alignment.template.AlignedSequence;
-import org.biojava.nbio.alignment.template.SequencePair;
-import org.biojava.nbio.alignment.template.SubstitutionMatrix;
+import org.biojava.nbio.alignment.template.*;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.compound.AminoAcidCompound;
 import org.rcsb.uniprot.auto.Uniprot;import java.lang.Override;import java.lang.System;
@@ -24,6 +22,7 @@ public class IsoformMapper implements CoordinateMapper {
 
 
     SequencePair<ProteinSequence, AminoAcidCompound> pair ;
+    PairwiseSequenceAligner<ProteinSequence, AminoAcidCompound> aligner;
 
     /** Maps coordinates between the main UniProt sequence and one of its isoforms
      *
@@ -41,8 +40,11 @@ public class IsoformMapper implements CoordinateMapper {
         }
 
         SubstitutionMatrix<AminoAcidCompound> matrix = SubstitutionMatrixHelper.getBlosum62();
-        pair = Alignments.getPairwiseAlignment(mainSeq,other,
+
+         aligner = Alignments.getPairwiseAligner(mainSeq,other,
                 Alignments.PairwiseSequenceAlignerType.LOCAL, new SimpleGapPenalty(), matrix);
+
+        pair = aligner.getPair();
 
 
     }
@@ -102,4 +104,15 @@ public class IsoformMapper implements CoordinateMapper {
     public  SequencePair<ProteinSequence, AminoAcidCompound> getPair(){
         return pair;
     }
+
+    public  void destroy(){
+        AbstractPairwiseSequenceAligner aps = (AbstractPairwiseSequenceAligner)aligner;
+        aps.setQuery(null);
+        aps.setTarget(null);
+        aps.setGapPenalty(null);
+        aps.setSubstitutionMatrix(null);
+
+        pair = null;
+    }
+
 }
