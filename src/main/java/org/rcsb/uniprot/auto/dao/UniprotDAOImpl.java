@@ -60,6 +60,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         System.out.println(me.getShortNameMap().get("P50225"));
 
 
+
         //System.out.println("All gene names:" + me.getAllGeneNames().size());
 
 
@@ -1305,7 +1306,7 @@ public class UniprotDAOImpl implements UniprotDAO {
                 " where a.HJVALUE in ('" + StringUtils.join(aaccessions, "','")+ "') and en.HJID = a.HJID and " +
                 " p.HJID = en.PROTEIN_ENTRY_HJID and  " +
                 " p.RECOMMENDEDNAME_PROTEINTYPE__0 = r.HJID and r.FULLNAME_RECOMMENDEDNAME_HJID = est.HJID " +
-                " group by a.hjvalue,est.value_ having count(*) > 1";
+                " group by a.hjvalue,est.value_ having count(*) > 0";
 
 
 
