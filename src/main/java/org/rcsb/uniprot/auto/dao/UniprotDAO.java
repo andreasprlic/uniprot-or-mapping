@@ -161,6 +161,12 @@ public interface UniprotDAO {
      */
     public Map<String, String> getAC2NameMap(Set<String> aaccessions );
 
+    /** get a Map of all recommended names for UniProt IDs
+     *
+     * @return
+     */
+    public Map<String,String> getRecommendedNameMap();
+
     /** returns a map that contains a mapping of uniprot accessions to recommended names
      *
      * @param aaccessions
