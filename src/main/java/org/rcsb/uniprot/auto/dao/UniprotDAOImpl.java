@@ -52,7 +52,9 @@ public class UniprotDAOImpl implements UniprotDAO {
     public static void main(String[] args) {
 
         UniprotDAOImpl me = new UniprotDAOImpl();
-        
+
+        System.out.println("all recommended name map size :" + me.getRecommendedNameMap().size());
+
 //        for (Object[] data: me.getPdbReferencesFromUniProt() ) {
 //            System.out.println(Arrays.toString(data));
 //        }
@@ -1233,6 +1235,36 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     }
 
+    public Map<String,String> getRecommendedNameMap(){
+
+        StringBuffer sb = new StringBuffer("select a.hjvalue, est.value_");
+        sb.append(" from entry_accession as a");
+        sb.append(" join entry as en");
+        sb.append(" on a.hjid = en.hjid");
+        sb.append(" join proteintype as p");
+        sb.append(" on en.protein_entry_hjid = p.hjid");
+        sb.append(" join recommendedname as r");
+        sb.append(" on p.recommendedname_proteintype__0 = r.hjid");
+        sb.append(" join evidencedstringtype est");
+        sb.append(" on r.fullname_recommendedname_hjid = est.hjid");
+        sb.append(" group by a.hjvalue, est.value_");
+        sb.append(" having count(*)=1");
+
+        String sql = sb.toString();
+
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+        List<Object[]> data = (List<Object[]>) em.createNativeQuery(sql).getResultList();
+
+        Map<String,String> results = new TreeMap<String, String>();
+
+        for ( Object[] d : data){
+            String ac = d[0].toString();
+            String name = d[1].toString();
+            results.put(ac, name);
+        }
+        em.close();
+        return results;
+    }
 
     public Map<String, String> getAC2NameMap(Set<String> aaccessions ){
 
