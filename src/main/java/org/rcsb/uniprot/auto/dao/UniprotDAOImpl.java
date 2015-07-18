@@ -456,7 +456,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
 
         EntityManager em = JpaUtilsUniProt.getEntityManager();
-        Uniprot up = getUniProt(em,uniprotAccession );
+        Uniprot up = getUniProt(em, uniprotAccession);
 
         if (up == null) {
             em.close();
@@ -769,7 +769,11 @@ public class UniprotDAOImpl implements UniprotDAO {
             EntityManager em = JpaUtilsUniProt.getEntityManager();
 
             Uniprot up = getUniProt(em, uniprotAccession);
-            length = up.getEntry().get(0).getSequence().getLength();
+            if ( up == null) {
+                length = -1;
+            } else {
+                length = up.getEntry().get(0).getSequence().getLength();
+            }
 
             em.close();
 
