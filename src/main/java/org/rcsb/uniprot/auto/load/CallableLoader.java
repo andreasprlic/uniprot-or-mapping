@@ -124,6 +124,7 @@ public class CallableLoader implements Callable<List<String>> {
                     System.exit(0);
 
                 em = JpaUtilsUniProt.getEntityManager();
+                em.getTransaction().begin();
                 continue;
             }
 
