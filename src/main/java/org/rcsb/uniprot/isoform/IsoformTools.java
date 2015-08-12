@@ -53,7 +53,7 @@ public class IsoformTools {
         IsoformType isot = me.getIsoformType(uniprot,5);
 
         System.out.println(isot.getName().get(0).getValue());
-        System.out.println(isot.getNote().getValue());
+        
 
 
     }
