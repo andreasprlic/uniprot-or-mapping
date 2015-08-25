@@ -212,8 +212,8 @@ public class JpaUtilsUniProt {
         entityManager.createNativeQuery(sql2).executeUpdate();
 
         // isoform type note (e.g. Q9N0Z4-2)
-        String sql3 = "alter table NOTE change column value_ value_ TEXT";
-        entityManager.createNativeQuery(sql3).executeUpdate();
+//        String sql3 = "alter table NOTE change column value_ value_ TEXT";
+//        entityManager.createNativeQuery(sql3).executeUpdate();
 
         // featuretype_variation. could not get this to work using bindings.xjb
         String sql4 = "alter table featuretype_variation change column hjvalue hjvalue text";
