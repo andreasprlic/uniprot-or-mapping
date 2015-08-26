@@ -232,6 +232,8 @@ public class JpaUtilsUniProt {
         String sql7 = "alter table entry_accession add index (HJVALUE)";
         entityManager.createNativeQuery(sql7).executeUpdate();
 
+        String sql8 = "alter table dbreferencetype add index (TYPE_)";
+        entityManager.createNativeQuery(sql8).executeUpdate();
 
         entityManager.getTransaction().commit();
 
