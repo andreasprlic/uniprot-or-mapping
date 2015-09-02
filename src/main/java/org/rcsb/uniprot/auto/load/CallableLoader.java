@@ -22,25 +22,15 @@ import java.util.concurrent.Callable;
  */
 public class CallableLoader implements Callable<List<String>> {
 
-
     boolean debug = false;
 
     List<String> accessions2load;
 
-
-
-
-
-
     public static final String PATH = "pdbx/ext/";
-
-
 
     public static final String FILE = "pdbtosp.txt";
 
    // public static final String LOCAL_UNIPROT_DIR = "ftp://" + SERVER + "/pdbx/uniprot/";
-
-
 
     static Integer jobs = -1;
 
@@ -140,6 +130,7 @@ public class CallableLoader implements Callable<List<String>> {
 
             em.getTransaction().commit();
 
+        em.close();
         long timeE = System.currentTimeMillis();
 
         long diff = (timeE - timeS);

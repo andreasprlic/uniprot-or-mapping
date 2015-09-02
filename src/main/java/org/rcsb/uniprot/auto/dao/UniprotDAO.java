@@ -189,6 +189,13 @@ public interface UniprotDAO {
     public Map<String,List<String>> getAlternativeNameMap();
 
 
+    /** get a Map of all alternative names for UniProt IDs
+     *
+     * @return
+     */
+    public Map<String,List<String>> getAlternativeNameMap(Set<String> aaccessions);
+
+
 
     /** get a Map of all short names for UniProt IDs
      *

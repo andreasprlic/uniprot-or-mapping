@@ -1208,7 +1208,40 @@ public class UniprotDAOImpl implements UniprotDAO {
         String sql = "select a.hjvalue, est.value_  " +
                 " from entry_accession as a, entry as en , " +
                 "  evidencedstringtype est ,  alternativename an " +
-                " where  en.HJID = a.HJID and  " +
+                " where en.HJID = a.HJID and  " +
+                " an.ALTERNATIVENAME_PROTEINTYPE__0 = en.PROTEIN_ENTRY_HJID and " +
+                " an.FULLNAME_ALTERNATIVENAME_HJID = est.HJID " ;
+
+
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+        List<Object[]> data = (List<Object[]>) em.createNativeQuery(sql).getResultList();
+
+        Map<String,List<String>> results = new TreeMap<String,List<String>>();
+
+        for ( Object[] d : data){
+            String ac = d[0].toString();
+            String altname = d[1].toString();
+            List<String> alternatives = results.get(ac);
+            if ( alternatives == null){
+                alternatives = new ArrayList<>();
+                results.put(ac,alternatives);
+            }
+            if ( ! alternatives.contains(altname)) {
+                alternatives.add(altname);
+            }
+        }
+        em.close();
+        return results;
+
+    }
+
+
+    public Map<String,List<String>> getAlternativeNameMap(Set<String> aaccessions){
+
+        String sql = "select a.hjvalue, est.value_  " +
+                " from entry_accession as a, entry as en , " +
+                "  evidencedstringtype est ,  alternativename an " +
+                " where a.HJVALUE in ('\" + StringUtils.join(aaccessions, \"','\")+ \"') and  en.HJID = a.HJID and  " +
                 " an.ALTERNATIVENAME_PROTEINTYPE__0 = en.PROTEIN_ENTRY_HJID and " +
                 " an.FULLNAME_ALTERNATIVENAME_HJID = est.HJID " ;
 
