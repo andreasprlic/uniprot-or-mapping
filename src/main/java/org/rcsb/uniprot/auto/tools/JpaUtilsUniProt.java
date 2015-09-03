@@ -85,7 +85,12 @@ public class JpaUtilsUniProt {
             // use log4j for logging
         }
 
+        System.out.println("create EMF...");
+        long timeS = System.currentTimeMillis();
         EntityManagerFactory myEntityManagerFactory = Persistence.createEntityManagerFactory("org.rcsb.uniprot.auto", dbproperties);
+        long timeE = System.currentTimeMillis();
+
+        System.out.println("took " + (timeE- timeS) + " to init uniprot EMF");
 
         return myEntityManagerFactory;
     }
@@ -205,10 +210,10 @@ public class JpaUtilsUniProt {
         System.out.println("Updating UniProt DB schema");
 
         entityManager.getTransaction().begin();
-        String sql1 = "alter table sequencetype change column value_ value_ TEXT";
+        String sql1 = "alter table sequence_type change column value_ value_ TEXT";
         entityManager.createNativeQuery(sql1).executeUpdate();
 
-        String sql2 = "alter table EVIDENCEDSTRINGTYPE change column value_ value_ TEXT";
+        String sql2 = "alter table EVIDENCED_STRING_TYPE change column value_ value_ TEXT";
         entityManager.createNativeQuery(sql2).executeUpdate();
 
         // isoform type note (e.g. Q9N0Z4-2)
@@ -216,11 +221,11 @@ public class JpaUtilsUniProt {
 //        entityManager.createNativeQuery(sql3).executeUpdate();
 
         // featuretype_variation. could not get this to work using bindings.xjb
-        String sql4 = "alter table featuretype_variation change column hjvalue hjvalue text";
+        String sql4 = "alter table feature_type_variation change column hjvalue hjvalue text";
         entityManager.createNativeQuery(sql4).executeUpdate();
 
         // Fix for C0LGT6 reference scop
-        String sql5 = "alter table referencetype_scope_ change column hjvalue hjvalue text";
+        String sql5 = "alter table reference_type_scope_ change column hjvalue hjvalue text";
         entityManager.createNativeQuery(sql5).executeUpdate();
 
         // create the table required_ids which tracks what uniprot IDS should be loaded by the loading framework
@@ -232,7 +237,7 @@ public class JpaUtilsUniProt {
         String sql7 = "alter table entry_accession add index (HJVALUE)";
         entityManager.createNativeQuery(sql7).executeUpdate();
 
-        String sql8 = "alter table dbreferencetype add index (TYPE_)";
+        String sql8 = "alter table db_reference_type add index (TYPE_)";
         entityManager.createNativeQuery(sql8).executeUpdate();
 
         entityManager.getTransaction().commit();
