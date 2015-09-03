@@ -59,28 +59,32 @@ public class UniprotDAOImpl implements UniprotDAO {
 //            System.out.println(Arrays.toString(data));
 //        }
 
-        System.out.println(me.getShortNameMap().get("P50225"));
+        System.out.println(me.getShortNameMap().get("B6WQE2"));
 
+
+        SortedSet<String> acs = new TreeSet<>();
+        acs.add("B6WQE2");
+        System.out.println(me.getAC2NameMap(acs));
 
 
         //System.out.println("All gene names:" + me.getAllGeneNames().size());
 
 
-        for (Object[] data: me.getRecommendedNames4Components() ) {
-
-            if ( data[0].equals("Q8V5E0")) {
-                System.out.println(Arrays.toString(data));
-
-            }
-            // System.out.println(Arrays.toString(data));
-        }
-
-
-        System.out.println(me.hasPdbUniProtMapping());
-
-        for (Object[] data: me.getECNumbers4Components()) {
-            System.out.println("EC nuymber for components:" + Arrays.toString(data));
-        }
+//        for (Object[] data: me.getRecommendedNames4Components() ) {
+//
+//            if ( data[0].equals("Q8V5E0")) {
+//                System.out.println(Arrays.toString(data));
+//
+//            }
+//            // System.out.println(Arrays.toString(data));
+//        }
+//
+//
+//        System.out.println(me.hasPdbUniProtMapping());
+//
+//        for (Object[] data: me.getECNumbers4Components()) {
+//            System.out.println("EC nuymber for components:" + Arrays.toString(data));
+//        }
         System.exit(0);
 
         for (Object[] data: me.getECNumbers()) {
@@ -838,19 +842,22 @@ public class UniprotDAOImpl implements UniprotDAO {
         }
 
 
+
         // load UniProtEntry from DB..
         try {
 
             Query q = em.createQuery("select up from org.rcsb.uniprot.auto.Uniprot up where :element in elements (up.entry.accession)  ");
+
             q.setParameter("element", uniprotID);
 
-            List l = q.getResultList();
-            for (Object obj : l) {
-
-                up = (Uniprot) obj;
-
-                break;
+            List<Object> results = q.getResultList();
+            for ( Object o : results){
+                up = (Uniprot)o;
             }
+
+
+
+
 
         } catch (Exception e) {
             System.err.println("Could not load UP for " +uniprotID);
@@ -865,8 +872,11 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         //if( timeE - timeS > 500)
         // System.out.println("  UniProt DAO took " + (timeE-timeS) + " ms. to load " + uniprotID);
+
         // note: we don;t close the session here because the outside will request specific details from the Uniprot object
-        softCache.put(uniprotID,up);
+
+        // do not soft-cache, since this is using lazy loading!
+        //softCache.put(uniprotID,up);
         return up;
     }
 
@@ -1208,7 +1218,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         String sql = "select a.hjvalue, est.value_  " +
                 " from entry_accession as a, entry as en , " +
                 "  evidencedstringtype est ,  alternativename an " +
-                " where en.HJID = a.HJID and  " +
+                " where a.HJVALUE in ('\" + StringUtils.join(aaccessions, \"','\")+ \"') and  en.HJID = a.HJID and  " +
                 " an.ALTERNATIVENAME_PROTEINTYPE__0 = en.PROTEIN_ENTRY_HJID and " +
                 " an.FULLNAME_ALTERNATIVENAME_HJID = est.HJID " ;
 
