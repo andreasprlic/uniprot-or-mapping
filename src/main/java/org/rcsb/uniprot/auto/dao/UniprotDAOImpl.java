@@ -372,10 +372,10 @@ public class UniprotDAOImpl implements UniprotDAO {
         // only selects this for UniProts that are linked to PDB...
 
         String sql = "select a.hjvalue, est.value_  " +
-                " from entry_accession as a, entry as en , proteintype as p , " +
-                "  evidencedstringtype est , uniprotpdbmap updb " +
+                " from entry_accession as a, entry as en , protein_type as p , " +
+                "  evidenced_string_type est , uniprotpdbmap updb " +
                 " where updb.uniProtAc = a.HJVALUE and en.HJID = a.HJID and p.HJID = en.PROTEIN_ENTRY_HJID and  " +
-                " p.RECOMMENDEDNAME_PROTEINTYPE__0 = est.ECNUMBER_RECOMMENDEDNAME_HJID " +
+                " p.RECOMMENDED_NAME_PROTEIN_TYP_0 = est.EC_NUMBER_RECOMMENDED_NAME_H_0 " +
                 " group by a.hjvalue,est.value_ having count(*) > 1";
 
         EntityManager em = JpaUtilsUniProt.getEntityManager();
@@ -389,10 +389,10 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         String sql2 = "select a.hjvalue, est.value_  " +
                 " from entry_accession as a, entry as en , " +
-                "  evidencedstringtype est , uniprotpdbmap updb , submittedname sn " +
+                "  evidenced_string_type est , uniprotpdbmap updb , submitted_name sn " +
                 " where updb.uniProtAc = a.HJVALUE and en.HJID = a.HJID and" +
-                " sn.SUBMITTEDNAME_PROTEINTYPE_HJ_0 = en.PROTEIN_ENTRY_HJID and " +
-                " sn.SUBMITTEDNAME_PROTEINTYPE_HJ_0 = est.ECNUMBER_SUBMITTEDNAME_HJID " +
+                " sn.SUBMITTED_NAME_PROTEIN_TYPE__0 = en.PROTEIN_ENTRY_HJID and " +
+                " sn.SUBMITTED_NAME_PROTEIN_TYPE__0 = est.EC_NUMBER_SUBMITTED_NAME_HJID " +
                 " group by a.hjvalue,est.value_ having count(*) > 1";
 
         em = JpaUtilsUniProt.getEntityManager();
@@ -405,10 +405,10 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         String sql3 = "select a.hjvalue, est.value_  " +
                 " from entry_accession as a, entry as en , " +
-                "  evidencedstringtype est , uniprotpdbmap updb , alternativename an " +
+                "  evidenced_string_type est , uniprotpdbmap updb , alternative_name an " +
                 " where updb.uniProtAc = a.HJVALUE and en.HJID = a.HJID and  " +
-                " an.ALTERNATIVENAME_PROTEINTYPE__0 = en.PROTEIN_ENTRY_HJID and " +
-                " an.ALTERNATIVENAME_PROTEINTYPE__0 = est.ECNUMBER_ALTERNATIVENAME_HJID " +
+                " an.ALTERNATIVE_NAME_PROTEIN_TYP_0 = en.PROTEIN_ENTRY_HJID and " +
+                " an.ALTERNATIVE_NAME_PROTEIN_TYP_0 = est.EC_NUMBER_ALTERNATIVE_NAME_H_0 " +
                 " group by a.hjvalue,est.value_ having count(*) > 1";
 
 
@@ -428,13 +428,13 @@ public class UniprotDAOImpl implements UniprotDAO {
         String sql = "select  a.hjvalue,est.value_, bp.POSITION_ as ps, ep.POSITION_ as es "+
                 "from entry_accession a "+
                 "join entry en on en.HJID = a.HJID  " +
-                "join component c on c.component_proteintype_hjid= en.PROTEIN_ENTRY_HJID "+
-                "join proteintype p on p.HJID = en.PROTEIN_ENTRY_HJID "+
-                "join evidencedstringtype est on  est.ECNUMBER_RECOMMENDEDNAME_HJID = p.RECOMMENDEDNAME_PROTEINTYPE__0 " +
-                "join featuretype f on f.FEATURE_ENTRY_HJID=en.HJID "+
-                "join locationtype l on l.HJID=f.LOCATION__FEATURETYPE_HJID " +
-                "join positiontype bp on bp.HJID = l.BEGIN__LOCATIONTYPE_HJID " +
-                "join positiontype ep on ep.HJID = l.END__LOCATIONTYPE_HJID ";
+                "join component c on c.component_protein_type_hjid= en.PROTEIN_ENTRY_HJID "+
+                "join protein_type p on p.HJID = en.PROTEIN_ENTRY_HJID "+
+                "join evidenced_string_type est on  est.EC_NUMBER_RECOMMENDED_NAME_H_0 = p.RECOMMENDED_NAME_PROTEIN_TYP_0 " +
+                "join feature_type f on f.FEATURE_ENTRY_HJID=en.HJID "+
+                "join location_type l on l.HJID=f.LOCATION__FEATURE_TYPE_HJID " +
+                "join position_type bp on bp.HJID = l.BEGIN__LOCATION_TYPE_HJID " +
+                "join position_type ep on ep.HJID = l.END__LOCATION_TYPE_HJID ";
 
 
 
@@ -533,9 +533,9 @@ public class UniprotDAOImpl implements UniprotDAO {
         organismNameMap = new HashMap<String,String>();
         organismAcMap   = new HashMap<String,List<String>>();
 
-        String sql = "SELECT ot.name__organismtype_hjid, ot.type_, ot.value_, ea.HJVALUE " +
-                " FROM organismnametype ot, entry_accession ea , entry e " +
-                " where ot.name__organismtype_hjid = e.organism_entry_hjid and e.HJID = ea.HJID";
+        String sql = "SELECT ot.name__organism_type_hjid, ot.type_, ot.value_, ea.HJVALUE " +
+                " FROM organism_name_type ot, entry_accession ea , entry e " +
+                " where ot.name__organism_type_hjid = e.organism_entry_hjid and e.HJID = ea.HJID";
 
         long timeS = System.currentTimeMillis();
         try {
@@ -611,9 +611,9 @@ public class UniprotDAOImpl implements UniprotDAO {
 //                " and e.objId = eg.up_entry_objId  and e.objId = ue.entry_objId and ue.up_uniprot_objId = u.objId " +
 //                " and ac.up_entry_objId = e.objId";
 
-        String sql ="SELECT gnt.VALUE_, ea.HJVALUE FROM genenametype gnt, genetype gt, entry e, entry_accession ea " +
+        String sql ="SELECT gnt.VALUE_, ea.HJVALUE FROM gene_name_type gnt, gene_type gt, entry e, entry_accession ea " +
                 " where e.HJID = gt.GENE_ENTRY_HJID and " +
-                " gnt.NAME__GENETYPE_HJID = gt.HJID and " +
+                " gnt.NAME__GENE_TYPE_HJID = gt.HJID and " +
                 " ea.HJID = e.HJID ";
 
 
@@ -1157,9 +1157,9 @@ public class UniprotDAOImpl implements UniprotDAO {
                 " select en.HJID, a.hjvalue,  r.ID,r.TYPE_ , p.value_ "+
                         " from entry_accession a "+
                         " join entry en on en.HJID = a.HJID  " +
-                        " join dbreferencetype r on en.HJID = r.DBREFERENCE_ENTRY_HJID " +
-                        " join propertytype p on p.PROPERTY_DBREFERENCETYPE_HJID = r.HJID " +
-                        " where r.TYPE_ =:dbreferencetype and p.type_='chains'";
+                        " join db_reference_type r on en.HJID = r.DB_REFERENCE_ENTRY_HJID " +
+                        " join property_type p on p.PROPERTY_DBREFERENCETYPE_HJID = r.HJID " +
+                        " where r.TYPE_ =:db_reference_type and p.type_='chains'";
 
 
         EntityManager em = JpaUtilsUniProt.getEntityManager();
@@ -1182,12 +1182,12 @@ public class UniprotDAOImpl implements UniprotDAO {
 //                "join up_recommendedname_shortname rs on r.objId=rs.up_recommendedName_objId";
 
         String sql = "select a.hjvalue, est.value_  " +
-                " from entry_accession as a, entry as en , proteintype as p , " +
-                "  evidencedstringtype est , recommendedname as r " +
+                " from entry_accession as a, entry as en , protein_type as p , " +
+                "  evidenced_string_type est , recommended_name as r " +
                 " where  en.HJID = a.HJID and  " +
                 " p.HJID = en.PROTEIN_ENTRY_HJID and  " +
-                " p.RECOMMENDEDNAME_PROTEINTYPE__0 = r.HJID and " +
-                " r.HJID = est.shortname_RECOMMENDEDNAME_HJ_0  " ;
+                " p.RECOMMENDED_NAME_PROTEIN_TYP_0 = r.HJID and " +
+                " r.HJID = est.shortname_RECOMMENDEDNAME_0  " ;
 
 
 
@@ -1217,10 +1217,10 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         String sql = "select a.hjvalue, est.value_  " +
                 " from entry_accession as a, entry as en , " +
-                "  evidencedstringtype est ,  alternativename an " +
+                "  evidenced_string_type est ,  alternative_name an " +
                 " where a.HJVALUE in ('\" + StringUtils.join(aaccessions, \"','\")+ \"') and  en.HJID = a.HJID and  " +
-                " an.ALTERNATIVENAME_PROTEINTYPE__0 = en.PROTEIN_ENTRY_HJID and " +
-                " an.FULLNAME_ALTERNATIVENAME_HJID = est.HJID " ;
+                " an.ALTERNATIVE_NAME_PROTEIN_TYP_0 = en.PROTEIN_ENTRY_HJID and " +
+                " an.FULL_NAME_ALTERNATIVE_NAME_H_0 = est.HJID " ;
 
 
         EntityManager em = JpaUtilsUniProt.getEntityManager();
@@ -1250,10 +1250,10 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         String sql = "select a.hjvalue, est.value_  " +
                 " from entry_accession as a, entry as en , " +
-                "  evidencedstringtype est ,  alternativename an " +
+                "  evidenced_string_type est ,  alternativename an " +
                 " where a.HJVALUE in ('\" + StringUtils.join(aaccessions, \"','\")+ \"') and  en.HJID = a.HJID and  " +
-                " an.ALTERNATIVENAME_PROTEINTYPE__0 = en.PROTEIN_ENTRY_HJID and " +
-                " an.FULLNAME_ALTERNATIVENAME_HJID = est.HJID " ;
+                " an.ALTERNATIVE_NAME_PROTEINTYPE__0 = en.PROTEIN_ENTRY_HJID and " +
+                " an.FULLNAME_ALTERNATIVE_NAME_HJID = est.HJID " ;
 
 
         EntityManager em = JpaUtilsUniProt.getEntityManager();
@@ -1284,12 +1284,12 @@ public class UniprotDAOImpl implements UniprotDAO {
         sb.append(" from entry_accession as a");
         sb.append(" join entry as en");
         sb.append(" on a.hjid = en.hjid");
-        sb.append(" join proteintype as p");
+        sb.append(" join protein_type as p");
         sb.append(" on en.protein_entry_hjid = p.hjid");
-        sb.append(" join recommendedname as r");
-        sb.append(" on p.recommendedname_proteintype__0 = r.hjid");
+        sb.append(" join recommended_name as r");
+        sb.append(" on p.recommended_name_protein_typ_0 = r.hjid");
         sb.append(" join evidencedstringtype est");
-        sb.append(" on r.fullname_recommendedname_hjid = est.hjid");
+        sb.append(" on r.fullname_recommended_name_hjid = est.hjid");
         sb.append(" group by a.hjvalue, est.value_");
         sb.append(" having count(*)=1");
 
@@ -1380,11 +1380,11 @@ public class UniprotDAOImpl implements UniprotDAO {
 //                " group by a.hjvalue,est.value_ having count(*) > 1";
 
                         String sql = "select a.hjvalue, est.value_  " +
-                " from entry_accession as a, entry as en , proteintype as p , recommendedname as r, " +
-                "  evidencedstringtype est   " +
+                " from entry_accession as a, entry as en , protein_type as p , recommended_name as r, " +
+                "  evidenced_string_type est   " +
                 " where a.HJVALUE in ('" + StringUtils.join(aaccessions, "','")+ "') and en.HJID = a.HJID and " +
                 " p.HJID = en.PROTEIN_ENTRY_HJID and  " +
-                " p.RECOMMENDEDNAME_PROTEINTYPE__0 = r.HJID and r.FULLNAME_RECOMMENDEDNAME_HJID = est.HJID " +
+                " p.RECOMMENDED_NAME_PROTEIN_TYP_0 = r.HJID and r.FULL_NAME_RECOMMENDED_NAME_H_0 = est.HJID " +
                 " group by a.hjvalue,est.value_ having count(*) > 0";
 
 
@@ -1419,10 +1419,10 @@ public class UniprotDAOImpl implements UniprotDAO {
 
 
         String sql = "select a.hjvalue, est.value_  " +
-                " from entry_accession as a, entry as en , proteintype as p , submittedname as s, " +
-                "  evidencedstringtype est   " +
+                " from entry_accession as a, entry as en , protein_type as p , submitted_name as s, " +
+                "  evidenced_string_type est   " +
                 " where a.HJVALUE in ('" + StringUtils.join(aaccessions, "','")+ "') and en.HJID = a.HJID and p.HJID = en.PROTEIN_ENTRY_HJID and  " +
-                " p.HJID = s.SUBMITTEDNAME_PROTEINTYPE_HJ_0 and s.FULLNAME_SUBMITTEDNAME_HJID = est.HJID " +
+                " p.HJID = s.SUBMITTED_NAME_PROTEIN_TYPE__0 and s.FULL_NAME_SUBMITTED_NAME_HJID = est.HJID " +
                 " group by a.hjvalue,est.value_ having count(*) > 1";
 
 

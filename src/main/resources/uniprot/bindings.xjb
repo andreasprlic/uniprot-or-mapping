@@ -45,6 +45,9 @@ nodename	Selects all nodes with the name "nodename"
         <!-- we want to load the whole uniprot entry, not just parts of it -->
         <hj:persistence>
             <hj:default-one-to-many fetch="EAGER"></hj:default-one-to-many>
+            <hj:default-element-collection name="" fetch="EAGER">
+
+            </hj:default-element-collection>
         </hj:persistence>
         <!-- this changes the varchar length for all strings -->
         <!--<hj:persistence>-->
