@@ -67,4 +67,21 @@ public class TestMixedThings  extends TestCase{
 
         System.out.println(nameMap);
     }
+
+    public void testAccessMethods(){
+
+        UniprotDAO dao = new UniprotDAOImpl();
+
+        dao.getAllGeneNames();
+//        dao.getAllUniProtIDs();
+//        dao.getAlternativeNameMap();
+//        dao.getECNumbers4Components();
+//        dao.getDbVersions();
+//        dao.getECNumbers();
+//        dao.getShortNameMap();
+//        dao.getCommonName("homo sapiens");
+//        dao.getPdbReferencesFromUniProt();
+
+
+    }
 }

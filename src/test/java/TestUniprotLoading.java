@@ -11,11 +11,22 @@ import javax.persistence.EntityManager;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
+import java.util.SortedMap;
 
 /**
  * Created by ap3 on 13/08/2014.
  */
 public class TestUniprotLoading extends TestCase {
+
+//    public void testVersionLoading() {
+//        UniprotDAO dao = new UniprotDAOImpl();
+//        SortedMap<String, String> upVersions = UniProtTools.loadVersionsFromUniProt();
+//        SortedMap<String, Integer> dbVersions = dao.getDbVersions();
+//
+//        for (String ac : dbVersions.keySet()) {
+//            System.out.println(dbVersions.get(ac) + " =? " + upVersions.get(ac));
+//        }
+//    }
 
     public void testReadingP50225() {
 
@@ -129,6 +140,7 @@ public class TestUniprotLoading extends TestCase {
 
     }
 
+    /*
     public void testWritingAndLoadingQ8V5E0(){
         testWritingAndLoading("Q8V5E0");
     }
@@ -136,33 +148,26 @@ public class TestUniprotLoading extends TestCase {
         testWritingAndLoading("P68871");
     }
 
-//    public void testVersionLoading() {
-//        UniprotDAO dao = new UniprotDAOImpl();
-//        SortedMap<String, String> upVersions = UniProtTools.loadVersionsFromUniProt();
-//        SortedMap<String, String> dbVersions = dao.getDbVersions();
-//
-//        for (String ac : dbVersions.keySet()) {
-//            System.out.println(dbVersions.get(ac) + " =? " + upVersions.get(ac));
-//        }
-//    }
 
-//    public void testReadingA0AVK6() {
-//        testReading("A0AVK6");
-//    }
-//    public void testWritingAndLoadingA0AVK6(){
-//        testWritingAndLoading("A0AVK6");
-//    }
-//
-//    public void testReadingA0JNT9(){
-//        testReading("A0JNT9");
-//    }
-//    public void testWritingAndLoadingA0JNT9(){
-//        testWritingAndLoading("A0JNT9");
-//    }
-//
-//    public void testReadingA1A4Y4(){
-//        testReading("A1A4Y4");
-//    }
+
+    public void testReadingA0AVK6() {
+        testReading("A0AVK6");
+    }
+    public void testWritingAndLoadingA0AVK6(){
+        testWritingAndLoading("A0AVK6");
+    }
+
+    public void testReadingA0JNT9(){
+        testReading("A0JNT9");
+    }
+    public void testWritingAndLoadingA0JNT9(){
+        testWritingAndLoading("A0JNT9");
+    }
+
+    public void testReadingA1A4Y4(){
+        testReading("A1A4Y4");
+    }
+    */
 
     /** 2014-08-19 19:38:02,268 ERROR [org.hibernate.engine.jdbc.spi.SqlExceptionHelper] - <Data truncation: Data too long for column 'DESCRIPTION' at row 1>
      Failed to load A1A4Y4
@@ -268,9 +273,9 @@ public class TestUniprotLoading extends TestCase {
      at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:208)
      ... 77 more
      */
-    //public void testWritingAndLoadingA1A4Y4(){
-//        testReading("A1A4Y4");
-//    }
+    public void testWritingAndLoadingA1A4Y4(){
+        testReading("A1A4Y4");
+    }
 
     /**
      * 10703
@@ -380,51 +385,51 @@ public class TestUniprotLoading extends TestCase {
      Process finished with exit code 255
 
      */
-//    public void testReadingA1KNB8(){
-//        testReading("A1KNB8");
-//
-//    }
-//    public void testWritingAndLoadingA1KNB8(){
-//        testWritingAndLoading("A1KNB8");
-//    }
-//
-//
-//    public void testReadingA2AKX3(){
-//        testReading("A2AKX3");
-//    }
-//
-//    public void testWritingAndLoadingA2AKX3(){
-//        testWritingAndLoading("A2AKX3");
-//    }
-//
+    public void testReadingA1KNB8(){
+        testReading("A1KNB8");
+
+    }
+    public void testWritingAndLoadingA1KNB8(){
+        testWritingAndLoading("A1KNB8");
+    }
+
+
+    public void testReadingA2AKX3(){
+        testReading("A2AKX3");
+    }
+
+    public void testWritingAndLoadingA2AKX3(){
+        testWritingAndLoading("A2AKX3");
+    }
+
 //    //Caused by: com.mysql.jdbc.MysqlDataTruncation: Data truncation: Data too long for column 'HJVALUE' at row 1
-//    public void testReadingA2AKY4(){
-//        testReading("A2AKY4");
-//    }
-//
-//    public void testWritingAndLoadingA2AKY4(){
-//        testWritingAndLoading("A2AKY4");
-//    }
-//
+    public void testReadingA2AKY4(){
+        testReading("A2AKY4");
+    }
+
+    public void testWritingAndLoadingA2AKY4(){
+        testWritingAndLoading("A2AKY4");
+    }
+
 //    // A8WGB1 A2AL36 A4UHT7
 //
-//    public void testReadingC5YHH7(){
-//        testReading("C5YHH7");
-//    }
+    public void testReadingC5YHH7(){
+        testReading("C5YHH7");
+    }
 //
 //    // featuretype - description length
-//    public void testWritingAndLoadingC5YHH7(){
-//        testWritingAndLoading("C5YHH7");
-//    }
+    public void testWritingAndLoadingC5YHH7(){
+        testWritingAndLoading("C5YHH7");
+    }
+
+    // Note field. makes sure it is Text - see isoform 2
+    public void testWritingAndLoadingQ9N0Z4(){
+        testWritingAndLoading("Q9N0Z4");
+    }
 //
-//    // Note field. makes sure it is Text - see isoform 2
-//    public void testWritingAndLoadingQ9N0Z4(){
-//        testWritingAndLoading("Q9N0Z4");
-//    }
-//
-//    public void testWritingAndLoadingP22109(){
-//        testWritingAndLoading("P22109");
-//    }
+    public void testWritingAndLoadingB6WQE2(){
+        testWritingAndLoading("B6WQE2");
+    }
 //
 
 
