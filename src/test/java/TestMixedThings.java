@@ -72,7 +72,8 @@ public class TestMixedThings  extends TestCase{
 
         UniprotDAO dao = new UniprotDAOImpl();
 
-        dao.getAllGeneNames();
+        //dao.getAllGeneNames();
+        dao.getRecommendedNames4Components();
 //        dao.getAllUniProtIDs();
 //        dao.getAlternativeNameMap();
 //        dao.getECNumbers4Components();
