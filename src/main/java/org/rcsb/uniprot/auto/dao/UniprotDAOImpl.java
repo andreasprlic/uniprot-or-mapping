@@ -867,10 +867,9 @@ public class UniprotDAOImpl implements UniprotDAO {
         if ( profiling)
             System.out.println("UniProtDAOImpl got UP " + uniprotID + " from DB in " + (timeE-timeS) + " ms.");
 
-        //if( timeE - timeS > 500)
-        // System.out.println("  UniProt DAO took " + (timeE-timeS) + " ms. to load " + uniprotID);
+        if( timeE - timeS > 500)
+             System.out.println("  UniProt DAO took " + (timeE-timeS) + " ms. to load " + uniprotID);
 
-        // note: we don;t close the session here because the outside will request specific details from the Uniprot object
 
         softCache.put(uniprotID,up);
         return up;
@@ -881,8 +880,6 @@ public class UniprotDAOImpl implements UniprotDAO {
     public  synchronized Uniprot getUniProt(String uniprotID) {
 
         long timeS = System.currentTimeMillis();
-        //	System.out.println(" TrackTools: LOADING " + uniprotID + " FROM DB");
-
 
         Uniprot up = null;
         try {
@@ -899,9 +896,6 @@ public class UniprotDAOImpl implements UniprotDAO {
         }
 
         long timeE = System.currentTimeMillis();
-
-        //System.out.println("  TrackTools took " + (timeE-timeS) + " ms. to load " + uniprotID);
-        // note: we don;t close the session here because the outside will request specific details from the Uniprot object
 
         return up;
     }
