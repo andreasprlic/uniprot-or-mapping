@@ -853,11 +853,8 @@ public class UniprotDAOImpl implements UniprotDAO {
             List<Object> results = q.getResultList();
             for ( Object o : results){
                 up = (Uniprot)o;
+                break;
             }
-
-
-
-
 
         } catch (Exception e) {
             System.err.println("Could not load UP for " +uniprotID);
@@ -875,8 +872,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         // note: we don;t close the session here because the outside will request specific details from the Uniprot object
 
-        // do not soft-cache, since this is using lazy loading!
-        //softCache.put(uniprotID,up);
+        softCache.put(uniprotID,up);
         return up;
     }
 
@@ -906,6 +902,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         //System.out.println("  TrackTools took " + (timeE-timeS) + " ms. to load " + uniprotID);
         // note: we don;t close the session here because the outside will request specific details from the Uniprot object
+
         return up;
     }
 
