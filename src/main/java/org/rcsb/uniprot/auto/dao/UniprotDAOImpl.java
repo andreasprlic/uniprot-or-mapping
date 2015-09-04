@@ -190,7 +190,7 @@ public class UniprotDAOImpl implements UniprotDAO {
                 //"join proteintype p on p.HJID = en.PROTEIN_ENTRY_HJID "+
                 //"join evidencedstringtype est on  est.shortname_RECOMMENDEDNAME_HJ_0 = p.RECOMMENDEDNAME_PROTEINTYPE__0 " +
                 //"join evidencedstringtype est on  est.shortname_RECOMMENDEDNAME_HJ_0 = en.PROTEIN_ENTRY_HJID  " +
-                "join evidencedstringtype est on  est.short_name_RECOMMENDED_NAME_0 = c.recommendedname_component_h_0  " +
+                "join evidenced_string_type est on  est.short_name_RECOMMENDED_NAME_0 = c.recommendedname_component_h_0  " +
                 "join feature_type f on f.FEATURE_ENTRY_HJID=en.HJID "+
                 "join location_type l on l.HJID=f.LOCATION__FEATURE_TYPE_HJID " +
                 "join position_type bp on bp.HJID = l.BEGIN__LOCATION_TYPE_HJID " +
