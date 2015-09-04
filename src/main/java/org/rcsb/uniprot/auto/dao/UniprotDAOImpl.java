@@ -190,11 +190,11 @@ public class UniprotDAOImpl implements UniprotDAO {
                 //"join proteintype p on p.HJID = en.PROTEIN_ENTRY_HJID "+
                 //"join evidencedstringtype est on  est.shortname_RECOMMENDEDNAME_HJ_0 = p.RECOMMENDEDNAME_PROTEINTYPE__0 " +
                 //"join evidencedstringtype est on  est.shortname_RECOMMENDEDNAME_HJ_0 = en.PROTEIN_ENTRY_HJID  " +
-                "join evidencedstringtype est on  est.shortname_RECOMMENDEDNAME_HJ_0 = c.recommendedname_component_hj_0  " +
-                "join featuretype f on f.FEATURE_ENTRY_HJID=en.HJID "+
-                "join locationtype l on l.HJID=f.LOCATION__FEATURETYPE_HJID " +
-                "join positiontype bp on bp.HJID = l.BEGIN__LOCATIONTYPE_HJID " +
-                "join positiontype ep on ep.HJID = l.END__LOCATIONTYPE_HJID ";
+                "join evidencedstringtype est on  est.short_name_RECOMMENDED_NAME_0 = c.recommendedname_component_h_0  " +
+                "join feature_type f on f.FEATURE_ENTRY_HJID=en.HJID "+
+                "join location_type l on l.HJID=f.LOCATION__FEATURE_TYPE_HJID " +
+                "join position_type bp on bp.HJID = l.BEGIN__LOCATION_TYPE_HJID " +
+                "join position_type ep on ep.HJID = l.END__LOCATION_TYPE_HJID ";
 
 
 
@@ -1158,14 +1158,14 @@ public class UniprotDAOImpl implements UniprotDAO {
                         " from entry_accession a "+
                         " join entry en on en.HJID = a.HJID  " +
                         " join db_reference_type r on en.HJID = r.DB_REFERENCE_ENTRY_HJID " +
-                        " join property_type p on p.PROPERTY_DBREFERENCETYPE_HJID = r.HJID " +
+                        " join property_type p on p.PROPERTY_DB_REFERENCE_TYPE_H_0 = r.HJID " +
                         " where r.TYPE_ =:db_reference_type and p.type_='chains'";
 
 
         EntityManager em = JpaUtilsUniProt.getEntityManager();
 
         Query q = em.createNativeQuery(sql);
-        q.setParameter("dbreferencetype", dbType);
+        q.setParameter("db_reference_type", dbType);
         List<Object[]> data = new ArrayList<Object[]>();
         List<Object[]> rows = q.getResultList();
         data.addAll(rows);
@@ -1187,7 +1187,7 @@ public class UniprotDAOImpl implements UniprotDAO {
                 " where  en.HJID = a.HJID and  " +
                 " p.HJID = en.PROTEIN_ENTRY_HJID and  " +
                 " p.RECOMMENDED_NAME_PROTEIN_TYP_0 = r.HJID and " +
-                " r.HJID = est.shortname_RECOMMENDEDNAME_0  " ;
+                " r.HJID = est.short_name_RECOMMENDED_NAME__0  " ;
 
 
 
@@ -1325,7 +1325,6 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         String puniprotEntryObjId = "";
 
-
         Map<String, String> uniProtPrimaryAccessions = new HashMap<String, String>();
 
         Set<String> supercededIds = new HashSet<String>();
@@ -1365,7 +1364,6 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         return uniProtNames;
 
-
     }
 
     public Map<String, String> getRecommendedNameMap(Set<String> aaccessions ){
@@ -1386,8 +1384,6 @@ public class UniprotDAOImpl implements UniprotDAO {
                 " p.HJID = en.PROTEIN_ENTRY_HJID and  " +
                 " p.RECOMMENDED_NAME_PROTEIN_TYP_0 = r.HJID and r.FULL_NAME_RECOMMENDED_NAME_H_0 = est.HJID " +
                 " group by a.hjvalue,est.value_ having count(*) > 0";
-
-
 
 
         //System.out.println(sql);

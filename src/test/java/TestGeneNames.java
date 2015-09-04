@@ -15,7 +15,6 @@ public class TestGeneNames  extends TestCase {
 
         List<String> geneNames = dao.getGeneNames("P69905");
 
-
         assertNotNull(geneNames);
         assertTrue(geneNames.size() >0);
 
