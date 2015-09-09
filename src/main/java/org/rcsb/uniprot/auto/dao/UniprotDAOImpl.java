@@ -1025,8 +1025,10 @@ public class UniprotDAOImpl implements UniprotDAO {
     public void clearPdbUniProtMapping(){
 
         EntityManager em = JpaUtilsUniProt.getEntityManager();
+        em.getTransaction().begin();
         Query q = em.createNativeQuery("delete from uniprotpdbmap");
         q.executeUpdate();
+        em.getTransaction().commit();
         em.close();
 
     }
