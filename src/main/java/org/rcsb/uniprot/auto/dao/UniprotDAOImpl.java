@@ -55,6 +55,8 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         System.out.println("all recommended name map size :" + me.getRecommendedNameMap().size());
 
+        System.out.println("all alternative name map size :" + me.getAlternativeNameMap().size());
+
 //        for (Object[] data: me.getPdbReferencesFromUniProt() ) {
 //            System.out.println(Arrays.toString(data));
 //        }
@@ -1208,13 +1210,21 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     public Map<String,List<String>> getAlternativeNameMap(){
 
-        String sql = "select a.hjvalue, est.value_  " +
-                " from entry_accession as a, entry as en , " +
-                "  evidenced_string_type est ,  alternative_name an " +
-                " where a.HJVALUE in ('\" + StringUtils.join(aaccessions, \"','\")+ \"') and  en.HJID = a.HJID and  " +
-                " an.ALTERNATIVE_NAME_PROTEIN_TYP_0 = en.PROTEIN_ENTRY_HJID and " +
-                " an.FULL_NAME_ALTERNATIVE_NAME_H_0 = est.HJID " ;
+        //String sql = "select a.hjvalue, est.value_  " +
+        //        " from entry_accession as a, entry as en , " +
+        //        "  evidenced_string_type est ,  alternative_name an " +
+        //        " where a.HJVALUE in ('\" + StringUtils.join(aaccessions, \"','\")+ \"') and  en.HJID = a.HJID and  " +
+        //        " an.ALTERNATIVE_NAME_PROTEIN_TYP_0 = en.PROTEIN_ENTRY_HJID and " +
+        //        " an.FULL_NAME_ALTERNATIVE_NAME_H_0 = est.HJID " ;
 
+
+        StringBuffer sb = new StringBuffer("select a.hjvalue, est.value_ ");
+        sb.append(" from entry_accession as a, entry as en, evidenced_string_type est, alternative_name an ");
+        sb.append(" where en.HJID = a.HJID and ");
+        sb.append(" an.ALTERNATIVE_NAME_PROTEIN_TYP_0 = en.PROTEIN_ENTRY_HJID and ");
+        sb.append(" an.FULL_NAME_ALTERNATIVE_NAME_H_0 = est.HJID ");
+
+        String sql = sb.toString();
 
         EntityManager em = JpaUtilsUniProt.getEntityManager();
         List<Object[]> data = (List<Object[]>) em.createNativeQuery(sql).getResultList();
@@ -1241,13 +1251,20 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     public Map<String,List<String>> getAlternativeNameMap(Set<String> aaccessions){
 
-        String sql = "select a.hjvalue, est.value_  " +
-                " from entry_accession as a, entry as en , " +
-                "  evidenced_string_type est ,  alternativename an " +
-                " where a.HJVALUE in ('\" + StringUtils.join(aaccessions, \"','\")+ \"') and  en.HJID = a.HJID and  " +
-                " an.ALTERNATIVE_NAME_PROTEINTYPE__0 = en.PROTEIN_ENTRY_HJID and " +
-                " an.FULLNAME_ALTERNATIVE_NAME_HJID = est.HJID " ;
+        //String sql = "select a.hjvalue, est.value_  " +
+        //        " from entry_accession as a, entry as en , " +
+        //        "  evidenced_string_type est ,  alternativename an " +
+        //        " where a.HJVALUE in ('\" + StringUtils.join(aaccessions, \"','\")+ \"') and  en.HJID = a.HJID and  " +
+        //        " an.ALTERNATIVE_NAME_PROTEINTYPE__0 = en.PROTEIN_ENTRY_HJID and " +
+        //        " an.FULLNAME_ALTERNATIVE_NAME_HJID = est.HJID " ;
 
+        StringBuffer sb = new StringBuffer("select a.hjvalue, est.value_ ");
+        sb.append(" from entry_accession as a, entry as en , evidenced_string_type est, alternative_name an ");
+        sb.append(" where a.HJVALUE in ('\" + StringUtils.join(aaccessions, \"','\")+ \"') and  en.HJID = a.HJID and  ");
+        sb.append(" an.ALTERNATIVE_NAME_PROTEIN_TYPE_0 = en.PROTEIN_ENTRY_HJID and ");
+        sb.append(" an.FULL_NAME_ALTERNATIVE_NAME_H_0 = est.HJID ");
+
+        String sql = sb.toString();
 
         EntityManager em = JpaUtilsUniProt.getEntityManager();
         List<Object[]> data = (List<Object[]>) em.createNativeQuery(sql).getResultList();
@@ -1281,8 +1298,8 @@ public class UniprotDAOImpl implements UniprotDAO {
         sb.append(" on en.protein_entry_hjid = p.hjid");
         sb.append(" join recommended_name as r");
         sb.append(" on p.recommended_name_protein_typ_0 = r.hjid");
-        sb.append(" join evidencedstringtype est");
-        sb.append(" on r.fullname_recommended_name_hjid = est.hjid");
+        sb.append(" join evidenced_string_type est");
+        sb.append(" on r.full_name_recommended_name_h_0 = est.hjid");
         sb.append(" group by a.hjvalue, est.value_");
         sb.append(" having count(*)=1");
 
