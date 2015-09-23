@@ -1301,7 +1301,6 @@ public class UniprotDAOImpl implements UniprotDAO {
         sb.append(" join evidenced_string_type est");
         sb.append(" on r.full_name_recommended_name_h_0 = est.hjid");
         sb.append(" group by a.hjvalue, est.value_");
-        sb.append(" having count(*)=1");
 
         String sql = sb.toString();
 
