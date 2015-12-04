@@ -50,6 +50,17 @@ public class IsoformMapper implements CoordinateMapper {
     }
 
 
+    /** returns the alignment length
+     *
+     * @return length of the alignment
+     */
+    public int getAlignmentLength(){
+
+        return pair.getLength();
+
+    }
+
+
 
     @Override
     public int convertPos1toPos2(int coordinate) {
@@ -57,48 +68,32 @@ public class IsoformMapper implements CoordinateMapper {
         AlignedSequence s1 = pair.getQuery();
         AlignedSequence s2 = pair.getTarget();
 
-        int aligPos = s1.getAlignmentIndexAt(coordinate);
-        return s2.getSequenceIndexAt(aligPos);
+        try {
+            int aligPos = s1.getAlignmentIndexAt(coordinate);
+            return s2.getSequenceIndexAt(aligPos);
+        } catch (ArrayIndexOutOfBoundsException ex){
+            // the user has requested a position which is not part of the alignment
+            return -1;
+        }
 
 
-//
-//        int index = pair.getIndexInQueryAt(coordinate);
-//        int targetIndex = -1;
-//        try {
-//            targetIndex= pair.getIndexInTargetAt(index);
-//        } catch (Exception e){
-//            e.printStackTrace();
-//            System.err.println(pair.toString(60));
-//            System.err.println(pair.getLength());
-//            System.err.println(coordinate + " ???");
-//            AlignedSequence s1 = pair.getQuery();
-//            //System.err.println(s1);
-//            int aligIndex = s1.getAlignmentIndexAt(coordinate);
-//            System.err.println(aligIndex);
-//
-//            System.err.println(s2.getSequenceIndexAt(aligIndex));
-//
-//        }
-//        return targetIndex;
     }
 
     @Override
     public int convertPos2toPos1(int coordinate) {
-//        int index = pair.getIndexInTargetAt(coordinate);
-//        int queryindex = -1;
-//        try {
-//            queryindex= pair.getIndexInQueryAt(index);
-//        } catch (Exception e){
-//            e.printStackTrace();
-//            System.err.println(pair.toString(60));
-//        }
-//        return queryindex;
+
 
         AlignedSequence s1 = pair.getQuery();
         AlignedSequence s2 = pair.getTarget();
 
-        int aligPos = s2.getAlignmentIndexAt(coordinate);
-        return s1.getSequenceIndexAt(aligPos);
+        try {
+            int aligPos = s2.getAlignmentIndexAt(coordinate);
+
+            return s1.getSequenceIndexAt(aligPos);
+        } catch (ArrayIndexOutOfBoundsException ex){
+            // the user has requested a position which is not part of the alignment
+            return -1;
+        }
     }
 
     public  SequencePair<ProteinSequence, AminoAcidCompound> getPair(){
