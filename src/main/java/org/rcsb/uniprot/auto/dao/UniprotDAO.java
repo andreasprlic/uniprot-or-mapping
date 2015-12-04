@@ -2,7 +2,6 @@ package org.rcsb.uniprot.auto.dao;
 
 import org.rcsb.uniprot.auto.Entry;
 import org.rcsb.uniprot.auto.Uniprot;
-import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
 import java.util.*;
@@ -209,5 +208,25 @@ public interface UniprotDAO {
      * @return
      */
     public Map<String,List<String>> getOrganismMap();
+
+    /** get a Map of all diseases
+     *
+     * @return
+     */
+    public Map<String,String> getDiseaseMap();
+
+    /** get a List of all uniProt IDs for a Disease Name
+     *
+     * @return
+     */
+
+    public Set<String> getUniProtIDsForDiseaseName(String diseaseName);
+
+    /** get a List of all uniProt IDs for a Disease acronym
+     *
+     * @return
+     */
+
+    public Set<String> getUniProtIDsForDiseaseAcronym(String diseaseAcronym);
 
 }

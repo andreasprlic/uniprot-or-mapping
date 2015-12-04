@@ -35,6 +35,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     static Map<String,String> organismNameMap = null;
     static Map<String,List<String>> organismAcMap = null;
+    static Map<String,String> diseaseMap = null;
 
     static SortedSet<String> mopedIds;
     static AtomicBoolean busyWithInit = new AtomicBoolean(false);
@@ -142,6 +143,8 @@ public class UniprotDAOImpl implements UniprotDAO {
         }
 
         initOrganisms();
+
+        initDiseases();
 
         initGeneNames();
         long time2 = System.currentTimeMillis();
@@ -595,6 +598,49 @@ public class UniprotDAOImpl implements UniprotDAO {
         long timeE = System.currentTimeMillis();
         if (profiling)
             System.out.println("Time to init " + organismNameMap.keySet().size() + " entries in organism map (" + organismAcMap.keySet().size()+" ACs) : " + (timeE - timeS) + " ms.");
+
+
+    }
+
+    private static void initDiseases(){
+
+        diseaseMap = new HashMap<String,String>();
+        EntityManager emf = null;
+
+        String sql = "select distinct d.acronym, d.name_ from comment_type ct " +
+                " join disease d on d.hjid = ct.disease_comment_type_hjid " +
+                " where type_ = 'disease' ";
+
+        long timeS = System.currentTimeMillis();
+        try {
+            emf = JpaUtilsUniProt.getEntityManager();
+
+            Query q = emf.createNativeQuery(sql);
+
+
+            List<Object[]> l = (List<Object[]>) q.getResultList();
+
+
+            for (Object[] obj : l) {
+
+                String acronym = String.valueOf(obj[0]);
+                String name = String.valueOf(obj[1]);
+
+                if(!diseaseMap.containsKey(acronym)){
+                    diseaseMap.put(acronym, name);
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }finally{
+            emf.close();
+        }
+        long timeE = System.currentTimeMillis();
+        if (profiling)
+            System.out.println("Time to init " + diseaseMap.keySet().size() + " entries in disease map: " + (timeE - timeS) + " ms.");
 
 
     }
@@ -1456,8 +1502,100 @@ public class UniprotDAOImpl implements UniprotDAO {
         return organismAcMap;
 
     }
+    @Override
+    public Map<String,String> getDiseaseMap(){
+        if ( diseaseMap == null){
+            init();
+        }
+
+        return diseaseMap;
+
+    }
+
+    @Override
+    public Set<String> getUniProtIDsForDiseaseName(String diseaseName) {
+
+        if (StringUtils.isBlank(diseaseName)) {
+            return null;
+        }
+
+        Set<String> results = new TreeSet<String>();
+
+        long timeS = System.currentTimeMillis();
+
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+
+        String sql = "select distinct a.hjvalue from comment_type ct " +
+                "join disease d on d.hjid = ct.disease_comment_type_hjid " +
+                "join entry e on e.hjid = ct.comment__entry_hjid " +
+                "join entry_accession a on a.hjid = e.hjid " +
+                "where type_ = 'disease' " +
+                "and lower(d.name_) = :name ";
+
+
+        Query q = em.createNativeQuery(sql);
+        q.setParameter("name", StringUtils.lowerCase(diseaseName));
+
+        List data = q.getResultList();
+        for (Object obj : data) {
+
+            results.add((String) obj);
+
+        }
+
+        em.close();
+        long timeE = System.currentTimeMillis();
+        System.out.println(" getUniProtIDsForDiseaseName for disease name: " + diseaseName  + " took " + (timeE-timeS) + " milliseconds" );
+
+        return results;
+
+
+    }
+
+    @Override
+    public Set<String> getUniProtIDsForDiseaseAcronym(String diseaseAcronym) {
+
+        if (StringUtils.isBlank(diseaseAcronym)) {
+            return null;
+        }
+
+        Set<String> results = new TreeSet<String>();
+
+        long timeS = System.currentTimeMillis();
+
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+
+        String sql = "select distinct a.hjvalue from comment_type ct " +
+                "join disease d on d.hjid = ct.disease_comment_type_hjid " +
+                "join entry e on e.hjid = ct.comment__entry_hjid " +
+                "join entry_accession a on a.hjid = e.hjid " +
+                "where type_ = 'disease' " +
+                "and upper(d.acronym) = :acronym ";
+
+
+        Query q = em.createQuery(sql);
+        q.setParameter("acronym", StringUtils.upperCase(diseaseAcronym));
+
+        List data = q.getResultList();
+        for (Object obj : data) {
+
+            results.add((String) obj);
+
+        }
+
+        long timeE = System.currentTimeMillis();
+        System.out.println(" getUniProtIDsForDiseaseAcronym for disease acronym: " + diseaseAcronym + " took " + (timeE-timeS) + " milliseconds" );
+
+        em.close();
+        return results;
+
+
+    }
+
 
     // todo: get cellular location map
     // todo: get disease map
+
+
 
 }
