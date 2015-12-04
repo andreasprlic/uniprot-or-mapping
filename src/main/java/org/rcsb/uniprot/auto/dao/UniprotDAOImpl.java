@@ -41,7 +41,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     static AtomicBoolean busyWithInit = new AtomicBoolean(false);
     static AtomicBoolean initialized  = new AtomicBoolean(false);
 
-    public static final String MOPED_LOCATION = "https://www.proteinspire.org/MOPED/services/referencedata/proteinNames";
+    public static final String MOPED_LOCATION = "http://www.proteinspire.org/MOPED/services/referencedata/proteinNames";
 
     private static final boolean profiling = false;
 
