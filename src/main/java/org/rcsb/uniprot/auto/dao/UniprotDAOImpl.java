@@ -36,6 +36,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     static Map<String,String> organismNameMap = null;
     static Map<String,List<String>> organismAcMap = null;
     static Map<String,String> diseaseMap = null;
+    static Map<String,Integer> sequenceLengthsMap = null;
 
     static SortedSet<String> mopedIds;
     static AtomicBoolean busyWithInit = new AtomicBoolean(false);
@@ -145,6 +146,8 @@ public class UniprotDAOImpl implements UniprotDAO {
         initOrganisms();
 
         initDiseases();
+
+        initSequenceLengths();
 
         initGeneNames();
         long time2 = System.currentTimeMillis();
@@ -645,6 +648,56 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     }
 
+    private static void initSequenceLengths(){
+
+        sequenceLengthsMap = new HashMap<String,Integer>();
+        EntityManager emf = null;
+
+        String sql = " select  updb.uniProtAc, st.length_ " +
+                "from entry en " +
+                "join entry_accession a  on en.HJID = a.HJID " +
+                "join uniprotpdbmap updb on updb.uniProtAc = a.HJVALUE " +
+                "join sequence_type st on st.hjid = en.sequence__entry_hjid ";
+
+
+
+        long timeS = System.currentTimeMillis();
+        try {
+            emf = JpaUtilsUniProt.getEntityManager();
+
+            Query q = emf.createNativeQuery(sql);
+
+
+            List<Object[]> l = (List<Object[]>) q.getResultList();
+
+
+            for (Object[] obj : l) {
+
+                String uniprotId = String.valueOf(obj[0]);
+                int length = -1;
+                try {
+                    length = Integer.parseInt(String.valueOf(obj[1]));
+                }catch(Exception e){
+                    length = -1;
+                }
+                if(!sequenceLengthsMap.containsKey(uniprotId)){
+                    sequenceLengthsMap.put(uniprotId, length);
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }finally{
+            emf.close();
+        }
+        long timeE = System.currentTimeMillis();
+        if (profiling)
+            System.out.println("Time to init " + sequenceLengthsMap.keySet().size() + " entries in disease map: " + (timeE - timeS) + " ms.");
+
+
+    }
 
     private static void initGeneNames() {
 
@@ -1509,6 +1562,16 @@ public class UniprotDAOImpl implements UniprotDAO {
         }
 
         return diseaseMap;
+
+    }
+
+    @Override
+    public Map<String,Integer> getSequenceLengthsMap(){
+        if ( sequenceLengthsMap == null){
+            init();
+        }
+
+        return sequenceLengthsMap;
 
     }
 
