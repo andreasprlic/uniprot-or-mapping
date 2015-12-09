@@ -229,4 +229,10 @@ public interface UniprotDAO {
 
     public Set<String> getUniProtIDsForDiseaseAcronym(String diseaseAcronym);
 
+    /** get a Map of sequence lengths for each uniprotId
+     *
+     * @return
+     */
+    public Map<String,Integer> getSequenceLengthsMap();
+
 }
