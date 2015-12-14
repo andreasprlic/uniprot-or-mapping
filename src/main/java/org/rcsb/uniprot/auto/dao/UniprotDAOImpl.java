@@ -17,6 +17,8 @@ import org.rcsb.uniprot.auto.*;
 import org.hibernate.Session;
 import org.rcsb.uniprot.auto.tools.UniProtTools;
 import org.rcsb.uniprot.config.RCSBUniProtMirror;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -26,6 +28,9 @@ import javax.persistence.criteria.Root;
 
 
 public class UniprotDAOImpl implements UniprotDAO {
+
+    private static final Logger logger = LoggerFactory.getLogger(UniprotDAOImpl.class);
+
     static List<String> allUniprotIDs;
 
     static Map<String, String> uniprotNameMap = null;
@@ -36,6 +41,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     static Map<String,String> organismNameMap = null;
     static Map<String,List<String>> organismAcMap = null;
     static Map<String,String> diseaseMap = null;
+    static Map<String,Integer> sequenceLengthsMap = null;
 
     static SortedSet<String> mopedIds;
     static AtomicBoolean busyWithInit = new AtomicBoolean(false);
@@ -139,32 +145,34 @@ public class UniprotDAOImpl implements UniprotDAO {
         long time1 = System.currentTimeMillis();
         if (profiling) {
 
-            System.out.println("Time to initAllUniprotIDs " + (time1 - timeS));
+            logger.info("Time to initAllUniprotIDs " + (time1 - timeS));
         }
 
         initOrganisms();
 
         initDiseases();
 
+        initSequenceLengths();
+
         initGeneNames();
         long time2 = System.currentTimeMillis();
         if (profiling) {
 
-            System.out.println("Time to initGeneNames " + (time2 - time1));
+            logger.info("Time to initGeneNames " + (time2 - time1));
         }
 
         initUniprotNameMap();
         long time3 = System.currentTimeMillis();
         if (profiling) {
 
-            System.out.println("Time to initUniprotNameMap " + (time3 - time2));
+            logger.info("Time to initUniprotNameMap " + (time3 - time2));
         }
 
         initMoped();
         long time4 = System.currentTimeMillis();
         if ( profiling){
 
-            System.out.println("Time to initMoped " + (time4 - time3));
+            logger.info("Time to initMoped " + (time4 - time3));
         }
 
 //        initComponents();
@@ -178,7 +186,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         busyWithInit.set(false);
 
         long timeE = System.currentTimeMillis();
-        System.out.println("Time to init UniprotDAO: " + (timeE - timeS));
+        logger.info("Time to init UniprotDAO: " + (timeE - timeS));
 
     }
 
@@ -232,7 +240,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
 
         } finally {
             if (sess != null)
@@ -242,7 +250,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         long timeE = System.currentTimeMillis();
 
-        System.out.println("time required to initialize all " + allUniprotIDs.size() + " uniprot IDs: " + (timeE - timeS));
+        logger.info("time required to initialize all " + allUniprotIDs.size() + " uniprot IDs: " + (timeE - timeS));
         return ups;
     }
 
@@ -272,11 +280,11 @@ public class UniprotDAOImpl implements UniprotDAO {
 
             }
 
-            System.out.println("loaded " + mopedIds.size() + " IDs from MOPED ("+MOPED_LOCATION+")");
+            logger.info("loaded " + mopedIds.size() + " IDs from MOPED ("+MOPED_LOCATION+")");
 
         } catch (Exception e){
-            System.err.println("Could not load moped data from " + MOPED_LOCATION);
-            e.printStackTrace();
+            logger.error("Could not load moped data from {}, error: {}", MOPED_LOCATION, e.getMessage(),e);
+
         }
 
 
@@ -515,18 +523,18 @@ public class UniprotDAOImpl implements UniprotDAO {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
 
 
         }
         emf.close();
         long timeE = System.currentTimeMillis();
 
-        if (profiling) {
-            System.out.println("init uniprotName map for " + uniprotNameMap.keySet().size() + " names in : " + (timeE - timeS) + " ms.");
-//            System.out.println(uniprotNameMap.get("ELNE_HUMAN"));
-//            System.out.println(uniprotNameMap.get("P08246"));
-        }
+
+        logger.debug("init uniprotName map for " + uniprotNameMap.keySet().size() + " names in : " + (timeE - timeS) + " ms.");
+//      System.out.println(uniprotNameMap.get("ELNE_HUMAN"));
+//      System.out.println(uniprotNameMap.get("P08246"));
+
         return;
 
     }
@@ -591,13 +599,14 @@ public class UniprotDAOImpl implements UniprotDAO {
 
             emf.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
 
 
         }
         long timeE = System.currentTimeMillis();
-        if (profiling)
-            System.out.println("Time to init " + organismNameMap.keySet().size() + " entries in organism map (" + organismAcMap.keySet().size()+" ACs) : " + (timeE - timeS) + " ms.");
+
+
+        logger.debug("Time to init " + organismNameMap.keySet().size() + " entries in organism map (" + organismAcMap.keySet().size()+" ACs) : " + (timeE - timeS) + " ms.");
 
 
     }
@@ -633,18 +642,68 @@ public class UniprotDAOImpl implements UniprotDAO {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+           logger.error(e.getMessage(),e);
 
         }finally{
             emf.close();
         }
         long timeE = System.currentTimeMillis();
-        if (profiling)
-            System.out.println("Time to init " + diseaseMap.keySet().size() + " entries in disease map: " + (timeE - timeS) + " ms.");
+
+        logger.debug("Time to init " + diseaseMap.keySet().size() + " entries in disease map: " + (timeE - timeS) + " ms.");
 
 
     }
 
+    private static void initSequenceLengths(){
+
+        sequenceLengthsMap = new HashMap<String,Integer>();
+        EntityManager emf = null;
+
+        String sql = " select  updb.uniProtAc, st.length_ " +
+                "from entry en " +
+                "join entry_accession a  on en.HJID = a.HJID " +
+                "join uniprotpdbmap updb on updb.uniProtAc = a.HJVALUE " +
+                "join sequence_type st on st.hjid = en.sequence__entry_hjid ";
+
+
+
+        long timeS = System.currentTimeMillis();
+        try {
+            emf = JpaUtilsUniProt.getEntityManager();
+
+            Query q = emf.createNativeQuery(sql);
+
+
+            List<Object[]> l = (List<Object[]>) q.getResultList();
+
+
+            for (Object[] obj : l) {
+
+                String uniprotId = String.valueOf(obj[0]);
+                int length = -1;
+                try {
+                    length = Integer.parseInt(String.valueOf(obj[1]));
+                }catch(Exception e){
+                    length = -1;
+                }
+                if(!sequenceLengthsMap.containsKey(uniprotId)){
+                    sequenceLengthsMap.put(uniprotId, length);
+                }
+
+            }
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+
+        }finally{
+            emf.close();
+        }
+        long timeE = System.currentTimeMillis();
+
+        logger.debug("Time to init " + sequenceLengthsMap.keySet().size() + " entries in disease map: " + (timeE - timeS) + " ms.");
+
+
+    }
 
     private static void initGeneNames() {
 
@@ -675,7 +734,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
             List<Object[]> l = (List<Object[]>) q.getResultList();
 
-            System.out.println("Got " + l.size() + " gene to UP mappings");
+            logger.info("Got " + l.size() + " gene to UP mappings");
             for (Object[] obj : l) {
 
                 String gn = (String) obj[0];
@@ -717,13 +776,13 @@ public class UniprotDAOImpl implements UniprotDAO {
 
             emf.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
 
 
         }
         long timeE = System.currentTimeMillis();
 
-        System.out.println("time to init " + geneNames.size() + " gene names for uniprot: " + (timeE - timeS) + " ms. ");
+        logger.info("time to init " + geneNames.size() + " gene names for uniprot: " + (timeE - timeS) + " ms. ");
 
     }
 
@@ -751,7 +810,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(),e);
             }
         }
 
@@ -769,7 +828,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(),e);
             }
         }
 
@@ -784,7 +843,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(),e);
             }
         }
 
@@ -832,7 +891,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             em.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
 
 
         }
@@ -886,7 +945,7 @@ public class UniprotDAOImpl implements UniprotDAO {
                 return up;
             }
         } catch (Exception e){
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
         }
 
 
@@ -905,18 +964,18 @@ public class UniprotDAOImpl implements UniprotDAO {
             }
 
         } catch (Exception e) {
-            System.err.println("Could not load UP for " +uniprotID);
-            e.printStackTrace();
+            logger.error("Could not load UP for {}, error: {}", uniprotID , e.getMessage(), e);
+
 
         }
 
         long timeE = System.currentTimeMillis();
 
         if ( profiling)
-            System.out.println("UniProtDAOImpl got UP " + uniprotID + " from DB in " + (timeE-timeS) + " ms.");
+            logger.info("UniProtDAOImpl got UP " + uniprotID + " from DB in " + (timeE-timeS) + " ms.");
 
         if( timeE - timeS > 500)
-             System.out.println("  UniProt DAO took " + (timeE-timeS) + " ms. to load " + uniprotID);
+            logger.info("  UniProt DAO took " + (timeE-timeS) + " ms. to load " + uniprotID);
 
 
         softCache.put(uniprotID,up);
@@ -939,7 +998,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             em.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
 
         }
 
@@ -1063,7 +1122,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             em.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
         }
         return ans;
     }
@@ -1513,6 +1572,16 @@ public class UniprotDAOImpl implements UniprotDAO {
     }
 
     @Override
+    public Map<String,Integer> getSequenceLengthsMap(){
+        if ( sequenceLengthsMap == null){
+            init();
+        }
+
+        return sequenceLengthsMap;
+
+    }
+
+    @Override
     public Set<String> getUniProtIDsForDiseaseName(String diseaseName) {
 
         if (StringUtils.isBlank(diseaseName)) {
@@ -1545,7 +1614,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         em.close();
         long timeE = System.currentTimeMillis();
-        System.out.println(" getUniProtIDsForDiseaseName for disease name: " + diseaseName  + " took " + (timeE-timeS) + " milliseconds" );
+        logger.info(" getUniProtIDsForDiseaseName for disease name: " + diseaseName  + " took " + (timeE-timeS) + " milliseconds" );
 
         return results;
 
@@ -1584,7 +1653,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         }
 
         long timeE = System.currentTimeMillis();
-        System.out.println(" getUniProtIDsForDiseaseAcronym for disease acronym: " + diseaseAcronym + " took " + (timeE-timeS) + " milliseconds" );
+        logger.info(" getUniProtIDsForDiseaseAcronym for disease acronym: " + diseaseAcronym + " took " + (timeE-timeS) + " milliseconds" );
 
         em.close();
         return results;

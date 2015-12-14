@@ -2,6 +2,8 @@ package org.rcsb.uniprot.auto.tools;
 
 
 import org.hibernate.jpa.HibernateEntityManagerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import javax.persistence.EntityManager;
@@ -22,7 +24,7 @@ import java.util.regex.Pattern;
  */
 public class JpaUtilsUniProt {
 
-
+    private static final Logger logger = LoggerFactory.getLogger(JpaUtilsUniProt.class );
 
     private static EntityManagerFactory entityManagerFactory;
 
@@ -34,14 +36,14 @@ public class JpaUtilsUniProt {
             return;
 
         if (busy.get()) {
-            System.err.println("Already initializing uniprot persistence in other thread");
+            logger.warn("Already initializing uniprot persistence in other thread");
         }
 
         while (busy.get()) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(),e);
             }
             if ( entityManagerFactory != null);
                 return;
@@ -85,12 +87,12 @@ public class JpaUtilsUniProt {
             // use log4j for logging
         }
 
-        System.out.println("create EMF...");
+        logger.info("create EMF...");
         long timeS = System.currentTimeMillis();
         EntityManagerFactory myEntityManagerFactory = Persistence.createEntityManagerFactory("org.rcsb.uniprot.auto", dbproperties);
         long timeE = System.currentTimeMillis();
 
-        System.out.println("took " + (timeE- timeS) + " to init uniprot EMF");
+        logger.info("took " + (timeE- timeS) + " to init uniprot EMF");
 
         return myEntityManagerFactory;
     }
@@ -100,7 +102,7 @@ public class JpaUtilsUniProt {
         ClassLoader cloader = Thread.currentThread().getContextClassLoader();
         InputStream propstream = cloader.getResourceAsStream("database.properties");
         if (propstream == null) {
-            System.err.println("Could not get file database.properties from class context!");
+            logger.error("Could not get file database.properties from class context!");
         }
 
         return createEntityManagerFactory(propstream);
@@ -125,7 +127,7 @@ public class JpaUtilsUniProt {
 
     private static String getDBNAme(){
 
-        System.out.println("get DBA NAMe");
+        logger.info("get DBA NAMe");
 
         String databaseName = "uniprot";
 
@@ -184,7 +186,7 @@ public class JpaUtilsUniProt {
 
         databaseName = getDBNAme();
 
-        System.out.println("using DB name :" + databaseName);
+        logger.info("using DB name :" + databaseName);
 
         String sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS " +
         " WHERE TABLE_SCHEMA='"+ databaseName+"' " +
@@ -207,7 +209,7 @@ public class JpaUtilsUniProt {
      */
     private static void fixSQLSchema(EntityManager entityManager) {
 
-        System.out.println("Updating UniProt DB schema");
+        logger.info("Updating UniProt DB schema");
 
         entityManager.getTransaction().begin();
         String sql1 = "alter table sequence_type change column value_ value_ TEXT";
