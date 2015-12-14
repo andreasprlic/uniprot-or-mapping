@@ -6,7 +6,7 @@
 
     <groupId>org.rcsb.uniprot</groupId>
     <artifactId>uniprot</artifactId>
-    <version>2015.09.03.1</version>
+    <version>2015.12.09.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -152,6 +152,15 @@
             <groupId>org.jvnet.hyperjaxb3</groupId>
             <artifactId>maven-hyperjaxb3-plugin</artifactId>
             <version>${hyperjaxb3.version}</version>
+            <!-- We need to exclude because the hyperjaxb3 included it as compile scope and not as runtime scope
+                 We exclude it here so it doesn't affect downstream projects, i.e. pdb-webapp - JD 2015-12-09 -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+
+            </exclusions>
         </dependency>
 
 
@@ -174,6 +183,48 @@
             <artifactId>jackson-core</artifactId>
             <version>2.2.2</version>
         </dependency>
+
+        <!-- Logging through slf4j interface and log4j2 binding -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.12</version>
+        </dependency>
+        <!-- binding for log4j 2 -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.4.1</version>
+            <!-- runtime scope includes the test scope as well -->
+            <scope>runtime</scope>
+        </dependency>
+        <!-- Log4j API and Core implementation required for binding -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.4.1</version>
+            <!-- runtime scope includes the test scope as well -->
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.4.1</version>
+            <!-- runtime scope includes the test scope as well -->
+            <scope>runtime</scope>
+        </dependency>
+        <!-- The adapter api to redirect log4j1 logs to log4j2
+             See http://stackoverflow.com/questions/26005149/mixing-log4j-1-x-and-log4j-2-->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
+            <version>2.4.1</version>
+            <!-- runtime scope includes the test scope as well -->
+            <scope>runtime</scope>
+        </dependency>
+
+
+
     </dependencies>
 
     <pluginRepositories>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="WARN" monitorInterval="30">
+    <appenders>
+        <Console name="ConsoleStdErr" target="SYSTEM_ERR">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+
+    </appenders>
+    <loggers>
+        <root level="info">
+            <appender-ref ref="ConsoleStdErr"/>
+
+        </root>
+
+        <!-- Setting special levels for some packages -->
+
+        <!-- Hibernate -->
+        <Logger name="org.hibernate" level="warn" >
+            <appender-ref ref="ConsoleStdErr"/>
+
+        </Logger>
+
+        <!-- c3p0 database pool logging -->
+        <Logger name="com.mchange.v2" level="info" >
+            <appender-ref ref="ConsoleStdErr"/>
+        </Logger>
+
+
+
+        <!-- Biojava 4+ -->
+        <Logger name="org.biojava.nbio" level="warn">
+            <appender-ref ref="ConsoleStdErr"/>
+        </Logger>
+
+
+        <!-- Changing the log level to DEBUG will result in Hibernate generated SQL to be logged -->
+        <!--
+        <Logger name="org.hibernate.SQL" level="debug" >
+            <appender-ref ref="ConsoleStdErr" level="debug"/>
+        </Logger>
+        -->
+
+        <!-- Changing the log level to DEBUG will result in the PreparedStatement bound variable values to be logged. -->
+        <!--
+        <Logger name="org.hibernate.type" level="debug" >
+            <appender-ref ref="ConsoleStdErr" level="debug"/>
+        </Logger>
+        -->
+
+
+
+    </loggers>
+</configuration>
