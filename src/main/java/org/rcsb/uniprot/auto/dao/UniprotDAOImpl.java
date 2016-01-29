@@ -3,12 +3,14 @@ package org.rcsb.uniprot.auto.dao;
 import java.io.*;
 import java.math.BigInteger;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.StringUtils;
 import org.biojava.nbio.core.util.InputStreamProvider;
 import org.biojava.nbio.core.util.SoftHashMap;
+import org.hibernate.HibernateException;
 import org.rcsb.uniprot.auto.or.UniProtPdbMap;
 
 import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
@@ -25,6 +27,7 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.xml.bind.JAXBException;
 
 
 public class UniprotDAOImpl implements UniprotDAO {
@@ -49,7 +52,6 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     public static final String MOPED_LOCATION = "http://www.proteinspire.org/MOPED/services/referencedata/proteinNames";
 
-    private static final boolean profiling = false;
 
 
     public UniprotDAOImpl (){
@@ -143,10 +145,10 @@ public class UniprotDAOImpl implements UniprotDAO {
         initAllUniprotIDs();
 
         long time1 = System.currentTimeMillis();
-        if (profiling) {
 
-            logger.info("Time to initAllUniprotIDs " + (time1 - timeS));
-        }
+
+        logger.debug("Time to initAllUniprotIDs " + (time1 - timeS));
+
 
         initOrganisms();
 
@@ -156,24 +158,19 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         initGeneNames();
         long time2 = System.currentTimeMillis();
-        if (profiling) {
 
-            logger.info("Time to initGeneNames " + (time2 - time1));
-        }
+        logger.debug("Time to initGeneNames " + (time2 - time1));
+
 
         initUniprotNameMap();
         long time3 = System.currentTimeMillis();
-        if (profiling) {
 
-            logger.info("Time to initUniprotNameMap " + (time3 - time2));
-        }
+        logger.debug("Time to initUniprotNameMap " + (time3 - time2));
 
         initMoped();
         long time4 = System.currentTimeMillis();
-        if ( profiling){
 
-            logger.info("Time to initMoped " + (time4 - time3));
-        }
+        logger.debug("Time to initMoped " + (time4 - time3));
 
 //        initComponents();
 //        long time5 = System.currentTimeMillis();
@@ -283,7 +280,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             logger.info("loaded " + mopedIds.size() + " IDs from MOPED ("+MOPED_LOCATION+")");
 
         } catch (Exception e){
-            logger.error("Could not load moped data from {}, error: {}", MOPED_LOCATION, e.getMessage(),e);
+            logger.error("Could not load moped data from {}, error: {}", MOPED_LOCATION, e.getMessage());
 
         }
 
@@ -523,7 +520,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
 
         } catch (Exception e) {
-            logger.error(e.getMessage(),e);
+            logger.error("Could not initialise the UniProt name map. Error: {}", e.getMessage());
 
 
         }
@@ -559,8 +556,8 @@ public class UniprotDAOImpl implements UniprotDAO {
 
             List<Object[]> l = (List<Object[]>) q.getResultList();
 
-            if (profiling)
-                System.out.println("Got " + l.size() + " uniprot organism mappings");
+
+            logger.debug("Got " + l.size() + " uniprot organism mappings");
 
             Map<BigInteger,String> orgIdx = new HashMap<BigInteger,String>();
 
@@ -599,7 +596,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
             emf.close();
         } catch (Exception e) {
-            logger.error(e.getMessage(),e);
+            logger.error("Could not initialise the organism map. Error: {}", e.getMessage());
 
 
         }
@@ -642,7 +639,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             }
 
         } catch (Exception e) {
-           logger.error(e.getMessage(),e);
+           logger.error("Could not initialise the disease map. Error: {}", e.getMessage());
 
         }finally{
             emf.close();
@@ -683,7 +680,7 @@ public class UniprotDAOImpl implements UniprotDAO {
                 int length = -1;
                 try {
                     length = Integer.parseInt(String.valueOf(obj[1]));
-                }catch(Exception e){
+                } catch (NumberFormatException e) {
                     length = -1;
                 }
                 if(!sequenceLengthsMap.containsKey(uniprotId)){
@@ -693,14 +690,14 @@ public class UniprotDAOImpl implements UniprotDAO {
             }
 
         } catch (Exception e) {
-            logger.error(e.getMessage(),e);
+            logger.error("Could not initialise the sequence lengths map. Error: {}", e.getMessage());
 
         }finally{
             emf.close();
         }
         long timeE = System.currentTimeMillis();
 
-        logger.debug("Time to init " + sequenceLengthsMap.keySet().size() + " entries in disease map: " + (timeE - timeS) + " ms.");
+        logger.debug("Time to init " + sequenceLengthsMap.keySet().size() + " entries in sequence lengths map: " + (timeE - timeS) + " ms.");
 
 
     }
@@ -795,7 +792,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(),e);
             }
         }
 
@@ -911,6 +908,8 @@ public class UniprotDAOImpl implements UniprotDAO {
     static SoftHashMap<String,Uniprot> softCache = new SoftHashMap<String,Uniprot>();
     public  synchronized Uniprot getUniProt(EntityManager em,String uniprotID) {
 
+        if (uniprotID==null) return null;
+
         if (uniprotNameMap == null )
             init();
 
@@ -919,16 +918,18 @@ public class UniprotDAOImpl implements UniprotDAO {
         // step 1: see if the entry is on the cache
         Uniprot up = softCache.get(uniprotID);
         if ( up != null) {
-            if ( profiling ) {
-                long timeE = System.currentTimeMillis();
-                System.out.println("UniProtDAOImpl got UP " + uniprotID + " from soft cache in " + (timeE - timeS) + " ms.");
-            }
+
+            long timeE = System.currentTimeMillis();
+            logger.debug("UniProtDAOImpl got UP " + uniprotID + " from soft cache in " + (timeE - timeS) + " ms.");
+
+            logger.debug("Got UP information from soft cache for UniProt id {}", uniprotID);
             return up;
         }
 
         // step 2: see if we have a local uniprot file
         try {
             File localFile = RCSBUniProtMirror.getLocalFile(uniprotID);
+
             if ( localFile != null){
                 InputStream inStream = new FileInputStream(localFile);
 
@@ -938,47 +939,48 @@ public class UniprotDAOImpl implements UniprotDAO {
             if ( up != null) {
                 softCache.put(uniprotID,up);
 
-                if ( profiling) {
-                    long timeE = System.currentTimeMillis();
-                    System.out.println("UniProtDAOImpl got UP " + uniprotID + " from XML file in " + (timeE - timeS) + " ms.");
-                }
+
+                long timeE = System.currentTimeMillis();
+                logger.debug("UniProtDAOImpl got UP " + uniprotID + " from XML file in " + (timeE - timeS) + " ms.");
+
                 return up;
             }
-        } catch (Exception e){
-            logger.error(e.getMessage(),e);
+        } catch (IOException|JAXBException e){
+            logger.error("Could not load UP information from local file for UniProt id {}. Will try from database next. Error: {}", uniprotID, e.getMessage());
         }
 
 
 
-        // load UniProtEntry from DB..
+        // step 3: load UniProtEntry from DB..
         try {
 
             Query q = em.createQuery("select up from org.rcsb.uniprot.auto.Uniprot up where :element in elements (up.entry.accession)  ");
 
             q.setParameter("element", uniprotID);
 
-            List<Object> results = q.getResultList();
-            for ( Object o : results){
-                up = (Uniprot)o;
-                break;
+            Iterator<?> it = q.getResultList().iterator();
+            if (it.hasNext())
+                up = (Uniprot) it.next();
+
+            if (up==null) {
+                logger.error("No results could be found in database for UniProt id {}", uniprotID);
+                return null;
             }
 
-        } catch (Exception e) {
-            logger.error("Could not load UP for {}, error: {}", uniprotID , e.getMessage(), e);
-
-
+        } catch (HibernateException e) {
+            logger.error("Could not load UP information from database for UniProt id {}, error: {}", uniprotID , e.getMessage());
+            return null;
         }
 
         long timeE = System.currentTimeMillis();
 
-        if ( profiling)
-            logger.info("UniProtDAOImpl got UP " + uniprotID + " from DB in " + (timeE-timeS) + " ms.");
+        logger.debug("UniProtDAOImpl got UP " + uniprotID + " from DB in " + (timeE-timeS) + " ms.");
 
         if( timeE - timeS > 500)
             logger.info("  UniProt DAO took " + (timeE-timeS) + " ms. to load " + uniprotID);
 
 
-        softCache.put(uniprotID,up);
+        softCache.put(uniprotID, up);
         return up;
     }
 
@@ -993,16 +995,15 @@ public class UniprotDAOImpl implements UniprotDAO {
             EntityManager em = JpaUtilsUniProt.getEntityManager();
 
 
-            up =getUniProt(em, uniprotID);
+            up = getUniProt(em, uniprotID);
 
             em.close();
 
         } catch (Exception e) {
-            logger.error(e.getMessage(),e);
+            logger.error("Could not get UP information from database for UniProt id {}. Error: {}",uniprotID, e.getMessage());
 
         }
 
-        long timeE = System.currentTimeMillis();
 
         return up;
     }
