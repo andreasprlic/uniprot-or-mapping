@@ -1,6 +1,7 @@
 package org.rcsb.uniprot.auto.dao;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
 import java.sql.SQLException;
@@ -1643,14 +1644,12 @@ public class UniprotDAOImpl implements UniprotDAO {
                 "and upper(d.acronym) = :acronym ";
 
 
-        Query q = em.createQuery(sql);
+        Query q = em.createNativeQuery(sql);
         q.setParameter("acronym", StringUtils.upperCase(diseaseAcronym));
 
-        List data = q.getResultList();
-        for (Object obj : data) {
-
-            results.add((String) obj);
-
+        List<String> rows = q.getResultList();
+        if(rows != null && rows.size() > 0){
+            results.addAll(rows);
         }
 
         long timeE = System.currentTimeMillis();
@@ -1660,6 +1659,48 @@ public class UniprotDAOImpl implements UniprotDAO {
         return results;
 
 
+    }
+
+
+    public List<Object[]> getSequenceVariationInfo(String uniprotId) {
+
+
+        // get sequence variation info, start and stop positions...
+
+        List<Object[]> results = new ArrayList<Object[]>();
+
+        if (StringUtils.isBlank(uniprotId)) {
+            return results;
+        }
+
+
+        String sql = "select " +
+                " distinct f.description, f.id, f.original, fv.hjvalue as variation, p.status, updb.uniProtAc, p.position_ as pos, bp.position_ as start_pos, ep.position_ as end_pos " +
+                "from entry_accession ea " +
+                "join entry en on en.HJID = ea.HJID  " +
+                "left join feature_type f on  f.FEATURE_ENTRY_HJID = en.HJID " +
+                "left join feature_type_variation fv on  fv.HJID = f.HJID " +
+                "join uniprotpdbmap updb on updb.uniProtAc = ea.HJVALUE " +
+                "join location_type l on l.HJID=f.LOCATION__FEATURE_TYPE_HJID " +
+                "left join position_type p on p.HJID = l.position__LOCATION_TYPE_HJID  " +
+                "left join position_type bp on bp.HJID = l.BEGIN__LOCATION_TYPE_HJID  " +
+                "left join position_type ep on ep.HJID = l.END__LOCATION_TYPE_HJID  " +
+                "where 1=1 " +
+                "and f.type_ = 'sequence variant' " +
+                "and updb.uniProtAc = :uniprotId";
+
+
+
+        EntityManager em = JpaUtilsUniProt.getEntityManager();
+
+        Query q = em.createNativeQuery(sql);
+        q.setParameter("uniprotId", StringUtils.upperCase(uniprotId));
+
+        List<Object[]> rows = q.getResultList();
+        results.addAll(rows);
+        em.close();
+
+        return results;
     }
 
 
