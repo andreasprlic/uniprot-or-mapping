@@ -235,4 +235,9 @@ public interface UniprotDAO {
      */
     public Map<String,Integer> getSequenceLengthsMap();
 
+    /** get a List of sequence variations for a uniprotId
+     *
+     * @return
+     */
+    public List<Object[]> getSequenceVariationInfo(String uniprotId);
 }
