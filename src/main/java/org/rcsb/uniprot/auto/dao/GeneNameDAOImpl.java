@@ -139,7 +139,7 @@ public class GeneNameDAOImpl implements GeneNameDAO{
 
         for (File resource : externalresources) {
 
-            System.out.println(resource.getName());
+            PdbLogger.info(resource.getName());
 
             if (resource.getName().equals(geneNameFile)) {
                 f = resource;
@@ -154,7 +154,8 @@ public class GeneNameDAOImpl implements GeneNameDAO{
 
         }
 
-        System.out.println(f37);
+        if (f37!=null)
+            PdbLogger.info(f37.toString());
 
         try {
 
@@ -174,8 +175,8 @@ public class GeneNameDAOImpl implements GeneNameDAO{
             mapGeneNames2Position(geneChromosomeFile38, f38, genePositions38, geneChromosomePositionMap38);
 
 
-        } catch (Exception e) {
-            PdbLogger.error(e.getMessage(), e);
+        } catch (IOException e) {
+            PdbLogger.error("Caught IOException while reading resource file {}. Error: {} ", f , e.getMessage());
         }
     }
 
@@ -222,8 +223,8 @@ public class GeneNameDAOImpl implements GeneNameDAO{
                 geneChromosomePositionsResource38 = downloadFile(chromoUrl38,geneChromosomeFile38);
             }
 
-        } catch (Exception e){
-            e.printStackTrace();
+        } catch (IOException e){
+            PdbLogger.error("Caught IOException while downloading external resources: ", e.getMessage());
             return false;
         }
 
@@ -250,7 +251,7 @@ public class GeneNameDAOImpl implements GeneNameDAO{
                                        Map<String, List<GeneChromosomePosition>> geneChromosomePositionMap) throws IOException {
 
         //File f2 = new File("/Users/ap3/Downloads/refFlat.txt.gz");
-        System.out.println("parsing " + f.getAbsolutePath());
+        PdbLogger.info("parsing " + f.getAbsolutePath());
         InputStream instream2 = new GZIPInputStream(new FileInputStream(f));
         GeneChromosomePositionParser gp = new GeneChromosomePositionParser();
 
@@ -310,7 +311,7 @@ public class GeneNameDAOImpl implements GeneNameDAO{
 //                }
 
 
-        System.out.println("Got " + geneChromosomePositionMap.keySet().size() + " human gene positions");
+        PdbLogger.info("Got " + geneChromosomePositionMap.keySet().size() + " human gene positions");
 
 
 
@@ -442,7 +443,7 @@ public class GeneNameDAOImpl implements GeneNameDAO{
 
                 //Range r = Range.closed(pos.getCdsStart(), pos.getCdsEnd());
                 Range r = Range.closed(pos.getTranscriptionStart(), pos.getTranscriptionEnd());
-                //System.out.println(pos.getGeneName() + " " + search.lowerEndpoint() + " " + search.upperEndpoint() + " " + r.lowerEndpoint() + " " + r.upperEndpoint());
+                PdbLogger.debug(pos.getGeneName() + " " + search.lowerEndpoint() + " " + search.upperEndpoint() + " " + r.lowerEndpoint() + " " + r.upperEndpoint());
                 if (search.isConnected(r)) {
                     data.add(pos);
                 }
@@ -452,13 +453,15 @@ public class GeneNameDAOImpl implements GeneNameDAO{
         return data;
     }
 
-    /** Check if a particualr position on this chromosome is in a UTR
+    /** Check if a particular position on this chromosome is in a UTR
      *
      * @param pos
+     * @param chromosome
      * @param chromosomePos
+     * @param assemblyVersion
      * @return
      */
-    public  boolean inExon(GeneChromosomePosition pos , String chromosome, int chromosomePos,String assemblyVersion){
+    public  boolean inExon(GeneChromosomePosition pos , String chromosome, int chromosomePos, String assemblyVersion){
 
         List<GeneChromosomePosition> data = new ArrayList<GeneChromosomePosition>();
 
