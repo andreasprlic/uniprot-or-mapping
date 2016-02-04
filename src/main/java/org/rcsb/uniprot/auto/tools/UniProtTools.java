@@ -3,6 +3,8 @@ package org.rcsb.uniprot.auto.tools;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.rcsb.uniprot.auto.Entry;
 import org.rcsb.uniprot.auto.Uniprot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -22,6 +24,8 @@ import java.util.zip.GZIPInputStream;
  * Created by ap3 on 13/08/2014.
  */
 public class UniProtTools {
+
+    private static final Logger logger = LoggerFactory.getLogger(UniProtTools.class);
 
     public static Uniprot readUniProtFromInputStream(InputStream inputStream) throws JAXBException {
         JAXBContext ctx = JAXBContext.newInstance(new Class[]{Uniprot.class});
@@ -163,7 +167,7 @@ public class UniProtTools {
             if (!resource.isLocal()) {
                 resource.download();
             } else {
-                System.out.println("Re-using " + resource.cachedFile.getAbsolutePath());
+                logger.info("Re-using " + resource.cachedFile.getAbsolutePath());
             }
 
             br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(cachedUniProtACsFile))));
@@ -183,14 +187,14 @@ public class UniProtTools {
 
 
         } catch (Exception e){
-           e.printStackTrace();
+           logger.error(e.getMessage(),e);
 
             if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e1) {
                     //PdbLogger.ignoringError(e1);
-                    System.err.println("UniProtTools Ignoring error " + e1.getMessage());
+                    logger.error("Could not close file {}. Error: {}", cachedUniProtACsFile, e1.getMessage());
                 }
             }
 
