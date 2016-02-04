@@ -1,7 +1,11 @@
 package org.rcsb.uniprot.auto.tools;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -13,11 +17,11 @@ import java.nio.channels.ReadableByteChannel;
  */
 public class HttpResource {
 
+    private static final Logger logger = LoggerFactory.getLogger(HttpResource.class);
 
-    boolean debug = false;
-    URL u ;
+    private URL u ;
 
-    File cachedFile;
+    protected File cachedFile;
 
     public HttpResource(URL remoteLocation, File localFile) {
         u = remoteLocation;
@@ -28,30 +32,28 @@ public class HttpResource {
         return cachedFile.exists();
     }
 
-    public boolean download() {
+    public void download() throws IOException {
 
-        if( debug)
-            System.out.println("Downloading " + u + " to " + cachedFile.getAbsolutePath());
+
+        logger.debug("Downloading " + u + " to " + cachedFile.getAbsolutePath());
+
         long timeS = System.currentTimeMillis();
-        try {
-            ReadableByteChannel rbc = Channels.newChannel(u.openStream());
 
-            FileOutputStream fos = new FileOutputStream(cachedFile);
+        ReadableByteChannel rbc = Channels.newChannel(u.openStream());
 
-            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+        FileOutputStream fos = new FileOutputStream(cachedFile);
 
-            rbc.close();
-            fos.close();
-            long timeE = System.currentTimeMillis();
+        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 
-            if (debug)
-                System.out.println("successful download in " + (timeE - timeS) + " ms.");
-        } catch (Exception e){
-            System.err.println(e.getMessage());
-           // e.printStackTrace();
-            return false;
-        }
-        return true;
+        rbc.close();
+        fos.close();
+
+        long timeE = System.currentTimeMillis();
+
+
+        logger.debug("successful download in " + (timeE - timeS) + " ms.");
+
+
     }
 
 

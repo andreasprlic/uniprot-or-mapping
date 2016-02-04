@@ -3,22 +3,21 @@ package org.rcsb.uniprot.config;
 import org.rcsb.uniprot.auto.Uniprot;
 import org.rcsb.uniprot.auto.tools.HttpResource;
 import org.rcsb.uniprot.auto.tools.UniProtTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.nio.file.Files;
+
 
 /**
  * Created by ap3 on 17/12/2014.
  */
 public class RCSBUniProtMirror {
 
+    private static final Logger logger = LoggerFactory.getLogger(RCSBUniProtMirror.class);
 
     public static  String SERVER = "sandboxwest.rcsb.org";
     public static final String PATH_UNIPROT = "pdbx/uniprot/";
@@ -43,13 +42,16 @@ public class RCSBUniProtMirror {
 
             return localFile;
         } else {
-            boolean success = upFile.download();
-            if (  success) {
-                return  localFile;
+            try {
+                upFile.download();
             }
+            catch (IOException e) {
+                logger.error("Could not download file {}", remoteURL);
+                return null;
+            }
+            return  localFile;
         }
 
-        return null;
     }
 
     private static File getLocalFileLocation(String accession) {
