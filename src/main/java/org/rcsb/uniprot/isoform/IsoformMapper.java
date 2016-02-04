@@ -8,7 +8,11 @@ import org.biojava.nbio.alignment.SubstitutionMatrixHelper;
 import org.biojava.nbio.alignment.template.*;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.compound.AminoAcidCompound;
-import org.rcsb.uniprot.auto.Uniprot;import java.lang.Override;import java.lang.System;
+import org.rcsb.uniprot.auto.Uniprot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.Override;import java.lang.System;
 
 
 /** Maps coordinates between the main UniProt sequence and one of its isoforms
@@ -20,9 +24,10 @@ import org.rcsb.uniprot.auto.Uniprot;import java.lang.Override;import java.lang.
  */
 public class IsoformMapper implements CoordinateMapper {
 
+    private static final Logger logger = LoggerFactory.getLogger(IsoformMapper.class);
 
-    SequencePair<ProteinSequence, AminoAcidCompound> pair ;
-    PairwiseSequenceAligner<ProteinSequence, AminoAcidCompound> aligner;
+    private SequencePair<ProteinSequence, AminoAcidCompound> pair ;
+    private PairwiseSequenceAligner<ProteinSequence, AminoAcidCompound> aligner;
 
     /** Maps coordinates between the main UniProt sequence and one of its isoforms
      *
@@ -35,7 +40,7 @@ public class IsoformMapper implements CoordinateMapper {
         // align them
 
         if ( mainSeq.getLength() + other.getLength() > 5000) {
-            System.err.println("Warning, pairwise alignment of two long sequences! Make sure there is enough RAM! " + mainSeq.getAccession() + " " + other.getAccession());
+            logger.warn("Pairwise alignment of two long sequences! Make sure there is enough RAM! " + mainSeq.getAccession() + " " + other.getAccession());
 
         }
 

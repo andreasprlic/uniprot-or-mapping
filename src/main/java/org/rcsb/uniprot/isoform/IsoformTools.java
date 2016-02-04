@@ -16,6 +16,8 @@ import org.rcsb.uniprot.auto.dao.UniprotDAO;
 import org.rcsb.uniprot.auto.dao.UniprotDAOImpl;
 import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
 import org.rcsb.uniprot.auto.tools.UniProtTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import javax.persistence.EntityManager;
@@ -30,6 +32,8 @@ public class IsoformTools {
 
     // good test cases:
     // Q5JS13 - complicated isoforms
+
+    private static final Logger logger = LoggerFactory.getLogger(IsoformTools.class);
 
     private static final boolean debug = false;
 
@@ -60,7 +64,7 @@ public class IsoformTools {
 
     public IsoformType getIsoformType(Uniprot up,int isoformNr) {
         if (up.getEntry().size() < 1) {
-            System.err.println("UP entry does not contain an entry!! ");
+            logger.error("UP entry does not contain an entry!! ");
             return null;
         }
 
@@ -87,7 +91,7 @@ public class IsoformTools {
     public  synchronized ProteinSequence[] getIsoforms(Uniprot up) throws CompoundNotFoundException {
 
         if (up.getEntry().size() < 1) {
-            System.err.println("UP entry does not contain an entry!! ");
+            logger.error("UP entry does not contain an entry!! ");
             return null;
         }
 
@@ -255,8 +259,8 @@ public class IsoformTools {
 
                                 UniProtTools.prettyPrint(isoform);
                             }
-                            System.err.println("Did not delete the right sequence!");
-                            System.err.println("should be of length " + (lengthcheck) + " but got: " + isoform.getLength());
+                            logger.error("Did not delete the right sequence!");
+                            logger.error("should be of length " + (lengthcheck) + " but got: " + isoform.getLength());
                             //System.exit(-1);
                             throw new RuntimeException("error when recreating isoform  (delete region in variant) from UniProt for " + id);
                         }
@@ -272,8 +276,8 @@ public class IsoformTools {
 
                         int lengthAfter = isoform.getLength();
                         if (lengthAfter != lengthcheck) {
-                            System.err.println("Did not replace the correct sequence!");
-                            System.err.println("should be of length " + lengthcheck + " but got " + lengthAfter);
+                            logger.error("Did not replace the correct sequence!");
+                            logger.error("should be of length " + lengthcheck + " but got " + lengthAfter);
                             //System.exit(-1);
                             throw new RuntimeException("Error while recreating sequence isoform (replacement of region) from UniProt " + id);
                         }
@@ -372,12 +376,12 @@ public class IsoformTools {
             System.out.println("   R : diff(" + insertDiff + ")");
         }
         if (!original.equals(old)) {
-            System.err.println("The extracted sequence does not match the info in UniProt! ");
-            System.err.println("original should be:" + original);
-            System.err.println("but it was        :" + old);
+            logger.error("The extracted sequence does not match the info in UniProt! ");
+            logger.error("original should be:" + original);
+            logger.error("but it was        :" + old);
 
             if (original.length() > 4)
-                System.err.println(" seems to start at: " + old.indexOf(original.substring(0, 4)));
+                logger.error(" seems to start at: " + old.indexOf(original.substring(0, 4)));
 
             throw new RuntimeException("Error when recreating isoform (replacement of variant) from UniProt for " + isoform.getAccession().getID());
         }
