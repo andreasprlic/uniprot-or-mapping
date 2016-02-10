@@ -39,14 +39,15 @@ public class HttpResource {
 
         long timeS = System.currentTimeMillis();
 
-        ReadableByteChannel rbc = Channels.newChannel(u.openStream());
+        try (ReadableByteChannel rbc = Channels.newChannel(u.openStream())) {
 
-        FileOutputStream fos = new FileOutputStream(cachedFile);
+            FileOutputStream fos = new FileOutputStream(cachedFile);
 
-        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 
-        rbc.close();
-        fos.close();
+            rbc.close();
+            fos.close();
+        }
 
         long timeE = System.currentTimeMillis();
 
