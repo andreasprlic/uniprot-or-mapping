@@ -52,12 +52,15 @@ public class UniProtTools {
         // when the server has problems.
         conn.setConnectTimeout(CONNECT_TIMEOUT_MS);
         conn.setReadTimeout(READ_TIMEOUT_MS);
-        InputStream in = conn.getInputStream();
 
-        Files.copy(in, localFile.toPath());
-        // Files.copy(Path source, OutputStream out)
 
-        in.close();
+        try (InputStream in = conn.getInputStream()) {
+
+            Files.copy(in, localFile.toPath());
+            // Files.copy(Path source, OutputStream out)
+
+            in.close();
+        }
 
         long timeE = System.currentTimeMillis();
 
