@@ -21,6 +21,8 @@ public class TestOrganism extends TestCase {
 
         List<String> data = dao.getUniProtACsByGeneName(geneName);
 
+        assertNotNull(data);
+
 //        System.out.println(data.size());
 //
 //        for ( String ac : data){
@@ -29,12 +31,15 @@ public class TestOrganism extends TestCase {
 
         String rat = "P02091";
 
-
-        // the rat entry has lower casecharacters in the gene name: Hbb
+        // the rat entry has lower case characters in the gene name: Hbb
         assertTrue(data.contains(rat));
 
         // this is an old identifier for the rat entry:
-        assertFalse(data.contains("P33584"));
+        // these should be now included in the map
+        assertTrue(data.contains("P33584"));
+
+        // and the new ac code for the rat entry
+        assertTrue(data.contains("P02091"));
 
         assertTrue(dao.getOrganism(rat).contains("Rattus norvegicus"));
 
@@ -42,12 +47,14 @@ public class TestOrganism extends TestCase {
 
         assertTrue(data.contains(human));
 
-        // and an secondary ID for human...
-        assertFalse(data.contains("A4GX73"));
+        // and an secondary ID for HBB human...
+        assertTrue(data.contains("A4GX73"));
 
         assertTrue(dao.getOrganism(human).contains("Homo sapiens"));
 
         System.out.println(dao.getGeneNames(human));
+
+        System.out.println(dao.getOrganism("P69905"));
 
     }
 }
