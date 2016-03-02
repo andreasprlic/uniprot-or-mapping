@@ -562,8 +562,6 @@ public class UniprotDAOImpl implements UniprotDAO {
 
             Map<BigInteger,String> orgIdx = new HashMap<BigInteger,String>();
 
-
-
             for (Object[] obj : l) {
 
                 BigInteger i   = (BigInteger) obj[0];
@@ -571,7 +569,7 @@ public class UniprotDAOImpl implements UniprotDAO {
                 String name = (String) obj[2];
                 String ac   = (String) obj[3];
 
-                if (type.equals("scientific") && (! orgIdx.containsKey(i))){
+                if (type.equals("scientific") ){
                     orgIdx.put(i, name);
                     if (! organismAcMap.containsKey(ac)) {
                         List<String> d = new ArrayList<String>();
@@ -587,7 +585,7 @@ public class UniprotDAOImpl implements UniprotDAO {
                     }
                 } else if (type.equals("common")){
                     String scientific = orgIdx.get(i);
-                    if ( ! organismNameMap.containsKey(scientific)){
+                    if ( scientific != null && (! organismNameMap.containsKey(scientific))) {
                         organismNameMap.put(scientific,name);
                     }
 
@@ -604,7 +602,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         long timeE = System.currentTimeMillis();
 
 
-        logger.debug("Time to init " + organismNameMap.keySet().size() + " entries in organism map (" + organismAcMap.keySet().size()+" ACs) : " + (timeE - timeS) + " ms.");
+        logger.info("Time to init " + organismNameMap.keySet().size() + " entries in organism map (" + organismAcMap.keySet().size()+" ACs) : " + (timeE - timeS) + " ms.");
 
 
     }
@@ -1215,26 +1213,6 @@ public class UniprotDAOImpl implements UniprotDAO {
             init();
 
         return organismAcMap.get(uniprotAc);
-
-
-//        List<Entry> upentries = uniprot.getEntry();
-//
-//        List<String> organisms = new ArrayList<>();
-//
-//        for (Entry e: upentries) {
-//
-//            OrganismType o = e.getOrganism();
-//
-//            if (o.getName().size() > 0) {
-//
-//                String org = o.getName().get(0).getValue();
-//
-//                if (!organisms.contains(org)) {
-//                    organisms.add(org);
-//                }
-//            }
-//
-//        }
 
     }
 

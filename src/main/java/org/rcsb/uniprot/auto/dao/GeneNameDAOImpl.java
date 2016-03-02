@@ -328,6 +328,9 @@ public class GeneNameDAOImpl implements GeneNameDAO{
 
     public SortedSet<String> getUniprotIdsWithGeneName() {
 
+        if ( geneNamesMap == null)
+            init();
+
         SortedSet<String> uniprotIDs = new TreeSet<String>();
 
         for ( GeneName geneName : geneNamesMap.values()){
