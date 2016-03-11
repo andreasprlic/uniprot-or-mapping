@@ -3,9 +3,12 @@ package org.rcsb.uniprot.isoform;
 
 import org.biojava.nbio.alignment.Alignments;
 import org.biojava.nbio.alignment.SimpleGapPenalty;
-import org.biojava.nbio.alignment.SimpleSubstitutionMatrix;
-import org.biojava.nbio.alignment.SubstitutionMatrixHelper;
+
 import org.biojava.nbio.alignment.template.*;
+import org.biojava.nbio.core.alignment.matrices.SubstitutionMatrixHelper;
+import org.biojava.nbio.core.alignment.template.AlignedSequence;
+import org.biojava.nbio.core.alignment.template.SequencePair;
+import org.biojava.nbio.core.alignment.template.SubstitutionMatrix;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.compound.AminoAcidCompound;
 import org.rcsb.uniprot.auto.Uniprot;
