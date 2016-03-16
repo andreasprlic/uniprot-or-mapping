@@ -20,8 +20,14 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 
-/**
- * Created by ap3 on 13/08/2014.
+/** Tools for fetching data from the UniProt website.
+ *
+ *
+ *
+ *
+ * Created by Andreas Prlic on 13/08/2014.
+ *
+ * @author Andreas Prlic
  */
 public class UniProtTools {
 
