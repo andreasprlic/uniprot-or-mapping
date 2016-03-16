@@ -13,7 +13,7 @@ import java.nio.channels.ReadableByteChannel;
 /**
  *  A file that allows to download a file from an external Http location.
  *
- * Created by ap3 on 19/08/2014.
+ * Created by Andreas Prlic on 19/08/2014.
  */
 public class HttpResource {
 
