@@ -1,5 +1,5 @@
 # UniProt-Or-Mapping
-An *object relational* mapping of *UniProtKB* to a database (and Java objects) using Hibernate.
+An *object relational* mapping of **UniProtKB** to a database (and Java objects) using Hibernate.
 
 ## Auto-generate Java code and a relational database to manage UniProt data.
 
