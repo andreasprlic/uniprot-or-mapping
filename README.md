@@ -11,7 +11,8 @@ Once the initial code/database have been created any UniProt-XML file can get pa
 
 ## Default: Load all of SWISSPROT
 
-The default functionality provided here is to load all SWISSPROT entries into the database (see the ``LoadMissing.java`` class). Currently these are about 550k UniProt entries. This process takes about 8 hours on a typical database server.
+The default functionality provided here is to load all SWISSPROT entries into the database (see the ``LoadMissing.java`` class).
+Currently these includes about 550k UniProt entries. The process to load all these files takes about 8 hours on a typical database server.
 
 
 
