@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 /** JPA tools for when dealing with a UniProt installation. Also contains some hacks to modifiy the DB schema, to work
  *  around some hyperjaxb shortcomings.
- *  
+ *
  * Created by Andreas Prlic on 18/08/2014.
  */
 public class JpaUtilsUniProt {
