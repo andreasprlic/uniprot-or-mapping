@@ -24,6 +24,11 @@ Currently these includes about 550k UniProt entries. The process to load all the
 
 Alternative, if you compile the code with ```mvn package```, you will get an executable jar file. You can run this jar file and pass in the DB configuration as a command line parameter (see ```LoadMissing.java``` as the main class).   
 
+## Use Case
+
+A database that is maintained using this code base is used for the UniProt section of the RCSB PDB Protein Feature View that is available from e.g.
+[here](http://www.rcsb.org/pdb/protein/P12497).
+
 ## Still TODO
 
   Release on Maven Central
