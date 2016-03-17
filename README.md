@@ -15,5 +15,17 @@ The default functionality provided here is to load all SWISSPROT entries into th
 Currently these includes about 550k UniProt entries. The process to load all these files takes about 8 hours on a typical database server.
 
 
+## Get Started
+
+  1. Check out the code
+  2. Make sure you have access to a MySQL installation, create an empty new database there, make sure you have write permissions
+  3. Update the configuration in '''src/main/resources/database.properties''' to match your configuration
+  4. Run '''LoadMissing.java''' (ideally over-night, by next morning you will have a populated database)
+
+Alternative, if you compile the code with ```mvn package```, you will get an executable jar file. You can run this jar file and pass in the DB configuration as a command line parameter (see ```LoadMissing.java``` as the main class).   
+
+## Still TODO
+
+  Release on Maven Central
 
 
