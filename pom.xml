@@ -6,7 +6,9 @@
 
     <groupId>org.rcsb.uniprot</groupId>
     <artifactId>uniprot</artifactId>
+
     <version>2016.03.17.10</version>
+
     <packaging>jar</packaging>
 
     <properties>
