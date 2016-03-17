@@ -9,9 +9,9 @@ This projects uses the [UniProt XML schema](http://www.uniprot.org/docs/uniprot.
 
 Once the initial code/database have been created any UniProt-XML file can get parsed and loaded into the database.
 
-## Default: Load all of SWISSPROT
+## Default: Load all of Swiss-Prot
 
-The default functionality provided here is to load all SWISSPROT entries into the database (see the ``LoadMissing.java`` class).
+The default functionality provided here is to load all [Swiss-Prot](http://web.expasy.org/docs/swiss-prot_guideline.html) entries into the database (see the ``LoadMissing.java`` class).
 Currently these includes about 550k UniProt entries. The process to load all these files takes about 8 hours on a typical database server.
 
 
