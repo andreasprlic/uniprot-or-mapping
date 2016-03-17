@@ -33,7 +33,7 @@
 
     <!-- where Maven deploy will deploy project jars/wars -->
 
-    // TODO: migrate this to OSS Sonatype
+    <!-- TODO: migrate this to OSS Sonatype -->
     <!--<distributionManagement>-->
         <!--<downloadUrl>http://nexus.rcsb.org/nexus/content/repositories/releases/</downloadUrl>-->
         <!--<repository>-->
