@@ -87,6 +87,13 @@ public interface UniprotDAO {
      */
     public List<String> getUniProtACsByGeneName(String gn);
 
+    /** Get uniprot primary accesion codes that match a specific gene name
+     *
+     * @param gn
+     * @return
+     */
+    public List<String> getUniProtPrimaryACsByGeneName(String gn);
+
     /** Clear all PDB to uniprot mappings
      *
      */

@@ -40,6 +40,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     static Map<String, String> uniprotNameMap = null;
     static SortedSet<String> geneNames = null;
     static Map<String, List<String>> uniprotGeneMap = null;
+    static Map<String, List<String>> uniprotGenePrimaryAccessionMap = null;
     static Map<String, List<String>> ac2geneName;
 
     static Map<String,String> organismNameMap = null;
@@ -158,6 +159,9 @@ public class UniprotDAOImpl implements UniprotDAO {
         initSequenceLengths();
 
         initGeneNames();
+
+        initPrimaryAccessions();
+
         long time2 = System.currentTimeMillis();
 
         logger.debug("Time to initGeneNames " + (time2 - time1));
@@ -782,6 +786,61 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     }
 
+    private static void initPrimaryAccessions() {
+
+        uniprotGenePrimaryAccessionMap = new TreeMap<String, List<String>>();
+
+        long timeS = System.currentTimeMillis();
+
+        String sql ="SELECT gnt.VALUE_, ea.HJVALUE FROM gene_name_type gnt, gene_type gt, entry e, entry_accession ea " +
+                " where e.HJID = gt.GENE_ENTRY_HJID and " +
+                " gnt.NAME__GENE_TYPE_HJID = gt.HJID and " +
+                " ea.HJID = e.HJID and ea.hjindex = 0 ";
+
+
+        try {
+            EntityManager emf = JpaUtilsUniProt.getEntityManager();
+
+            Query q = emf.createNativeQuery(sql);
+
+
+            List<Object[]> l = (List<Object[]>) q.getResultList();
+
+            logger.info("Got " + l.size() + " gene to UP primary accession mappings");
+            for (Object[] obj : l) {
+
+                String geneName = (String) obj[0];
+                String primaryAccession = (String) obj[1];
+
+                // this checks if this is a primary DB identifier!
+                if (! organismAcMap.containsKey(primaryAccession)){
+                    continue;
+                }
+
+                if (geneName == null || primaryAccession == null)
+                    continue;
+
+                List<String> acs = uniprotGenePrimaryAccessionMap.get(geneName.toUpperCase());
+                if (acs == null) {
+                    acs = new ArrayList<String>();
+                }
+                acs.add(primaryAccession);
+                uniprotGenePrimaryAccessionMap.put(geneName.toUpperCase(), acs);
+
+            }
+
+            emf.close();
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+
+
+        }
+        long timeE = System.currentTimeMillis();
+
+        logger.info("time to init " + geneNames.size() + " gene names for uniprot: " + (timeE - timeS) + " ms. ");
+
+    }
+
 
     public SortedSet<String> getAllGeneNames(){
         if ( geneNames == null)
@@ -814,6 +873,21 @@ public class UniprotDAOImpl implements UniprotDAO {
         return acs;
     }
 
+    public List<String> getUniProtPrimaryACsByGeneName(String gn){
+        if ( uniprotGenePrimaryAccessionMap == null)
+            init();
+
+        while ( busyWithInit.get()){
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                logger.error(e.getMessage(),e);
+            }
+        }
+
+        List<String> acs = uniprotGenePrimaryAccessionMap.get(gn.toUpperCase());
+        return acs;
+    }
 
     public List<String> getAllUniProtIDs() {
         if (allUniprotIDs == null) {
