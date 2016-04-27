@@ -1,7 +1,6 @@
 package org.rcsb.uniprot.auto.dao;
 
 import java.io.*;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
 import java.sql.SQLException;
@@ -17,7 +16,6 @@ import org.rcsb.uniprot.auto.or.UniProtPdbMap;
 import org.rcsb.uniprot.auto.tools.JpaUtilsUniProt;
 
 import org.rcsb.uniprot.auto.*;
-import org.hibernate.Session;
 import org.rcsb.uniprot.auto.tools.UniProtTools;
 import org.rcsb.uniprot.config.RCSBUniProtMirror;
 import org.slf4j.Logger;
@@ -35,22 +33,22 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(UniprotDAOImpl.class);
 
-    static List<String> allUniprotIDs;
+   private  static List<String> allUniprotIDs;
 
-    static Map<String, String> uniprotNameMap = null;
-    static SortedSet<String> geneNames = null;
-    static Map<String, List<String>> uniprotGeneMap = null;
-    static Map<String, List<String>> uniprotGenePrimaryAccessionMap = null;
-    static Map<String, List<String>> ac2geneName;
+    private static Map<String, String> uniprotNameMap = null;
+    private static SortedSet<String> geneNames = null;
+    private static Map<String, List<String>> uniprotGeneMap = null;
+    private static Map<String, List<String>> uniprotGenePrimaryAccessionMap = null;
+    private static Map<String, List<String>> ac2geneName;
 
-    static Map<String,String> organismNameMap = null;
-    static Map<String,List<String>> organismAcMap = null;
-    static Map<String,String> diseaseMap = null;
-    static Map<String,Integer> sequenceLengthsMap = null;
+    private static Map<String,String> organismNameMap = null;
+    private static Map<String,List<String>> organismAcMap = null;
+    private static Map<String,String> diseaseMap = null;
+    private static Map<String,Integer> sequenceLengthsMap = null;
 
-    static SortedSet<String> mopedIds;
-    static AtomicBoolean busyWithInit = new AtomicBoolean(false);
-    static AtomicBoolean initialized  = new AtomicBoolean(false);
+    private static SortedSet<String> mopedIds;
+    private static AtomicBoolean busyWithInit = new AtomicBoolean(false);
+    private static AtomicBoolean initialized  = new AtomicBoolean(false);
 
     public static final String MOPED_LOCATION = "http://www.proteinspire.org/MOPED/services/referencedata/proteinNames";
 
@@ -136,7 +134,7 @@ public class UniprotDAOImpl implements UniprotDAO {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
 
-                e.printStackTrace();
+                logger.error(e.getMessage(),e);
 
             }
             return;
@@ -228,9 +226,10 @@ public class UniprotDAOImpl implements UniprotDAO {
         long timeS = System.currentTimeMillis();
         allUniprotIDs = new ArrayList<String>();
         List<String> ups = new ArrayList<String>();
-        Session sess = null;
+        EntityManager entityManager = null;
+
         try {
-            EntityManager entityManager = JpaUtilsUniProt.getEntityManager();
+            entityManager = JpaUtilsUniProt.getEntityManager();
             String sql = "select distinct(HJVALUE) from entry_accession";
             Query q = entityManager.createNativeQuery(sql);
             List l = q.getResultList();
@@ -245,8 +244,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             logger.error(e.getMessage(),e);
 
         } finally {
-            if (sess != null)
-                sess.close();
+            if (entityManager !=null) entityManager.close();
         }
         allUniprotIDs = ups;
 
@@ -257,7 +255,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     }
 
     private static void initMoped() {
-        mopedIds = new TreeSet<String>();
+        mopedIds = new TreeSet<>();
 
         // fetch the list of supported Uniprot IDs from
         //http://www.proteinspire.org/MOPED/services/referencedata/proteinNames
@@ -537,7 +535,6 @@ public class UniprotDAOImpl implements UniprotDAO {
 //      System.out.println(uniprotNameMap.get("ELNE_HUMAN"));
 //      System.out.println(uniprotNameMap.get("P08246"));
 
-        return;
 
     }
 
@@ -553,8 +550,11 @@ public class UniprotDAOImpl implements UniprotDAO {
                 " where ot.name__organism_type_hjid = e.organism_entry_hjid and e.HJID = ea.HJID";
 
         long timeS = System.currentTimeMillis();
+
+        EntityManager emf = null;
+
         try {
-            EntityManager emf = JpaUtilsUniProt.getEntityManager();
+             emf = JpaUtilsUniProt.getEntityManager();
 
             Query q = emf.createNativeQuery(sql);
 
@@ -597,11 +597,13 @@ public class UniprotDAOImpl implements UniprotDAO {
 
             }
 
-            emf.close();
+
         } catch (Exception e) {
             logger.error("Could not initialise the organism map. Error: {}", e.getMessage());
 
 
+        } finally {
+            if (emf!=null) emf.close();
         }
         long timeE = System.currentTimeMillis();
 
@@ -645,7 +647,7 @@ public class UniprotDAOImpl implements UniprotDAO {
            logger.error("Could not initialise the disease map. Error: {}", e.getMessage());
 
         }finally{
-            emf.close();
+            if (emf!=null) emf.close();
         }
         long timeE = System.currentTimeMillis();
 
@@ -696,7 +698,7 @@ public class UniprotDAOImpl implements UniprotDAO {
             logger.error("Could not initialise the sequence lengths map. Error: {}", e.getMessage());
 
         }finally{
-            emf.close();
+            if (emf!=null) emf.close();
         }
         long timeE = System.currentTimeMillis();
 
@@ -726,8 +728,10 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         //System.out.println(sql);
 
+        EntityManager emf = null;
+
         try {
-            EntityManager emf = JpaUtilsUniProt.getEntityManager();
+             emf = JpaUtilsUniProt.getEntityManager();
 
             Query q = emf.createNativeQuery(sql);
 
@@ -774,11 +778,12 @@ public class UniprotDAOImpl implements UniprotDAO {
 
             }
 
-            emf.close();
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
 
 
+        } finally {
+            if (emf!=null) emf.close();
         }
         long timeE = System.currentTimeMillis();
 
@@ -797,9 +802,10 @@ public class UniprotDAOImpl implements UniprotDAO {
                 " gnt.NAME__GENE_TYPE_HJID = gt.HJID and " +
                 " ea.HJID = e.HJID and ea.hjindex = 0 ";
 
+        EntityManager emf = null;
 
         try {
-            EntityManager emf = JpaUtilsUniProt.getEntityManager();
+            emf = JpaUtilsUniProt.getEntityManager();
 
             Query q = emf.createNativeQuery(sql);
 
@@ -829,11 +835,12 @@ public class UniprotDAOImpl implements UniprotDAO {
 
             }
 
-            emf.close();
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
 
 
+        } finally {
+            if (emf!=null) emf.close();
         }
         long timeE = System.currentTimeMillis();
 
@@ -932,6 +939,8 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         int length = -1;
 
+        EntityManager em = null;
+
         try {
 //            EntityManager emf = JpaUtilsUniProt.getEntityManager();
 //
@@ -949,7 +958,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 //
 //            }
 
-            EntityManager em = JpaUtilsUniProt.getEntityManager();
+            em = JpaUtilsUniProt.getEntityManager();
 
             Uniprot up = getUniProt(em, uniprotAccession);
             if ( up == null) {
@@ -958,12 +967,13 @@ public class UniprotDAOImpl implements UniprotDAO {
                 length = up.getEntry().get(0).getSequence().getLength();
             }
 
-            em.close();
 
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
 
 
+        } finally {
+            if (em!=null) em.close();
         }
 
         return length;
@@ -978,7 +988,7 @@ public class UniprotDAOImpl implements UniprotDAO {
     }
 
 
-    static SoftHashMap<String,Uniprot> softCache = new SoftHashMap<String,Uniprot>();
+    private static SoftHashMap<String,Uniprot> softCache = new SoftHashMap<String,Uniprot>();
     public  synchronized Uniprot getUniProt(EntityManager em,String uniprotID) {
 
         if (uniprotID==null) return null;
@@ -1064,17 +1074,20 @@ public class UniprotDAOImpl implements UniprotDAO {
         long timeS = System.currentTimeMillis();
 
         Uniprot up = null;
+        EntityManager em = null;
+
         try {
-            EntityManager em = JpaUtilsUniProt.getEntityManager();
+            em = JpaUtilsUniProt.getEntityManager();
 
 
             up = getUniProt(em, uniprotID);
 
-            em.close();
 
         } catch (Exception e) {
             logger.error("Could not get UP information from database for UniProt id {}. Error: {}",uniprotID, e.getMessage());
 
+        } finally {
+            if (em!=null) em.close();
         }
 
 
@@ -1170,8 +1183,11 @@ public class UniprotDAOImpl implements UniprotDAO {
         Integer version = null;
         List<String> accList = null;
         Iterator<String> it2 = null;
+
+        EntityManager em = null;
+
         try {
-            EntityManager em = JpaUtilsUniProt.getEntityManager();
+            em = JpaUtilsUniProt.getEntityManager();
 
             @SuppressWarnings("JpaQlInspection")
 //            Query q = em.createQuery("from org.rcsb.uniprot.auto.uniprot.Entry");
@@ -1193,10 +1209,11 @@ public class UniprotDAOImpl implements UniprotDAO {
 //                    }
 //                }
             }
-            em.close();
 
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
+        } finally {
+            if (em!=null) em.close();
         }
         return ans;
     }
@@ -1479,6 +1496,8 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     public Map<String, String> getAC2NameMap(Set<String> aaccessions ){
 
+        if (aaccessions.isEmpty()) return new HashMap<>();
+
         String sql = "select a.HJID from entry_accession a where a.HJVALUE in ('"
                 + StringUtils.join(aaccessions, "','") + "')";
 
@@ -1490,8 +1509,6 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         Query entryNamesHJID = em.createNativeQuery(accSql);
         List<Object[]> results = entryNamesHJID.getResultList();
-
-        String puniprotEntryObjId = "";
 
         Map<String, String> uniProtPrimaryAccessions = new HashMap<String, String>();
 
