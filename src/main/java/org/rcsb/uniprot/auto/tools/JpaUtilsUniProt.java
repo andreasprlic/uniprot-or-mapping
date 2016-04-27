@@ -10,6 +10,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.Map;
@@ -27,6 +30,11 @@ import java.util.regex.Pattern;
 public class JpaUtilsUniProt {
 
     private static final Logger logger = LoggerFactory.getLogger(JpaUtilsUniProt.class );
+
+    /**
+     * The properties file with db connectoin settings in home directory. This will override the file on classpath
+     */
+    public static final File PROPERTIES_FILE_HOME = new File(System.getProperty("user.home"), "uniprot.database.properties");
 
     private static EntityManagerFactory entityManagerFactory;
 
@@ -84,9 +92,8 @@ public class JpaUtilsUniProt {
         try {
             dbproperties.load(propstream);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            // use log4j for logging
+        } catch (IOException e) {
+           logger.error("Could not read uniprot jpa properties from input stream. Error: {}", e.getMessage());
         }
 
         logger.info("create EMF...");
@@ -105,6 +112,15 @@ public class JpaUtilsUniProt {
         InputStream propstream = cloader.getResourceAsStream("database.properties");
         if (propstream == null) {
             logger.error("Could not get file database.properties from class context!");
+        }
+
+        // if a properties file is present in home it will override the classpath one
+        if (PROPERTIES_FILE_HOME.exists()) {
+            try {
+                propstream = new FileInputStream(PROPERTIES_FILE_HOME);
+            } catch (IOException e) {
+                logger.error("Properties file {} could not be read. Error: {} ", PROPERTIES_FILE_HOME, e.getMessage());
+            }
         }
 
         return createEntityManagerFactory(propstream);
