@@ -118,6 +118,7 @@ public class JpaUtilsUniProt {
         if (PROPERTIES_FILE_HOME.exists()) {
             try {
                 propstream = new FileInputStream(PROPERTIES_FILE_HOME);
+                logger.warn("Reading UniProt db connection properties from home dir file {}. If a properties file was present in classpath, it will be ignored", PROPERTIES_FILE_HOME);
             } catch (IOException e) {
                 logger.error("Properties file {} could not be read. Error: {} ", PROPERTIES_FILE_HOME, e.getMessage());
             }
