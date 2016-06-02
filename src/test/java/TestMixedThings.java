@@ -1,11 +1,13 @@
 import junit.framework.TestCase;
-import org.rcsb.uniprot.auto.Uniprot;
+import org.junit.After;
+import org.junit.Before;
 import org.rcsb.uniprot.auto.dao.UniprotDAO;
 import org.rcsb.uniprot.auto.dao.UniprotDAOImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
@@ -13,9 +15,22 @@ import java.util.TreeSet;
  */
 public class TestMixedThings  extends TestCase{
 
-    public void testUniProtNameMap(){
+    private static final Logger logger = LoggerFactory.getLogger(TestMixedThings.class);
 
-        UniprotDAO dao = new UniprotDAOImpl();
+    private UniprotDAO dao;
+
+    @Before
+    public void setUp() {
+        dao = new UniprotDAOImpl();
+
+    }
+
+    @After
+    public void tearDown() {
+
+    }
+
+    public void testUniProtNameMap(){
 
         String[] ids = new String[]{"P00123","P50225","Q92818"};
 
@@ -29,13 +44,12 @@ public class TestMixedThings  extends TestCase{
         System.out.println(nameMap);
 
         assertTrue(nameMap.keySet().size()==2);
-
         assertTrue(! nameMap.keySet().contains("Q92818"));
+        logger.info("completed testUniProtNameMap ");
 
     }
 
     public void testUniprotRecNames(){
-        UniprotDAO dao = new UniprotDAOImpl();
 
         String[] ids = new String[]{"P00123","P50225","Q92818"};
 
@@ -44,9 +58,9 @@ public class TestMixedThings  extends TestCase{
         for (String s : ids){
             myIds.add(s);
         }
-        Map<String,String> nameMap = dao.getRecommendedNameMap(myIds);
 
-        assertTrue(nameMap.keySet().size()>1);
+        assertTrue(dao.getRecommendedNameMap(myIds).keySet().size()>1);
+        logger.info("completed testUniprotRecNames ");
     }
 
     public void testUniprotSubmittedNames(){
@@ -54,7 +68,6 @@ public class TestMixedThings  extends TestCase{
         // this test will only work if Trembl entries have been loaded into the DB....
         // since we only load SWISSPROT entries by default, this test is mainly here for demonstration purposes.
 
-        UniprotDAO dao = new UniprotDAOImpl();
 
         String[] ids = new String[]{"O28736","Q70KP4","O28875","A8B2I4","C6LVW8","Q04822"};
 
@@ -63,14 +76,31 @@ public class TestMixedThings  extends TestCase{
         for (String s : ids){
             myIds.add(s);
         }
-        Map<String,String> nameMap = dao.getSubmittedNameMap(myIds);
 
-        System.out.println(nameMap);
+        assertTrue(dao.getSubmittedNameMap(myIds).size() > 0);
+        logger.info("completed testUniprotSubmittedNames ");
+    }
+
+    public void testUniprotAlternateNames(){
+
+        // this test will only work if Trembl entries have been loaded into the DB....
+        // since we only load SWISSPROT entries by default, this test is mainly here for demonstration purposes.
+
+
+        String[] ids = new String[]{"O28736","Q70KP4","O28875","A8B2I4","C6LVW8","Q04822"};
+
+        Set<String> myIds = new TreeSet<String>();
+
+        for (String s : ids){
+            myIds.add(s);
+        }
+
+        assertTrue(dao.getAlternativeNameMap(myIds).size() > 0);
+        logger.info("completed testUniprotAlternateNames ");
     }
 
     public void testAccessMethods(){
 
-        UniprotDAO dao = new UniprotDAOImpl();
 
         dao.getAllGeneNames();
 
@@ -86,4 +116,5 @@ public class TestMixedThings  extends TestCase{
 
 
     }
+
 }

@@ -39,6 +39,8 @@ public interface UniprotDAO {
 
     public String getDescription(String uniprotID);
 
+    public Map<String,String> getDisplayNameMap();
+
     public int getLength(String uniprotID);
 
     public  String checkForPrimaryAccession(String uniprotAccession);
@@ -182,6 +184,12 @@ public interface UniprotDAO {
 
     /** returns a map that contains a mapping of uniprot accessions to submitted names
      *
+     * @return
+     */
+    public Map<String, String> getSubmittedNameMap();
+
+    /** returns a map that contains a mapping of uniprot accessions to submitted names
+     *
      * @param aaccessions
      * @return
      */
@@ -197,6 +205,7 @@ public interface UniprotDAO {
 
     /** get a Map of all alternative names for UniProt IDs
      *
+      * @param aaccessions
      * @return
      */
     public Map<String,List<String>> getAlternativeNameMap(Set<String> aaccessions);
