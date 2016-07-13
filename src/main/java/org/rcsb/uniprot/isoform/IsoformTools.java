@@ -516,4 +516,44 @@ public class IsoformTools {
 
     }
 
+    public static synchronized ProteinSequence getUniprotIsoformByLength( ProteinSequence[] isoforms, int desiredIsoformLength) throws Exception {
+        ProteinSequence match = null;
+        for (ProteinSequence isoform : isoforms) {
+            if (isoform == null)
+                continue;
+            ;
+
+            if (isoform.getLength() == desiredIsoformLength) {
+                // we are simply taking the first isoform of correct length.
+//                if (match != null) {
+//                    System.err.println("More than one isoform has the same length! implement sequence comparison...");
+//                    System.exit(1);
+//                }
+                match = isoform;
+                break;
+            }
+        }
+        return match;
+    }
+
+    public static synchronized int getUniprotIsoformPositionByLength( ProteinSequence[] isoforms, int desiredIsoformLength) throws Exception {
+        int pos = -1;
+        for (ProteinSequence isoform : isoforms) {
+            pos++;
+            if (isoform == null)
+                continue;
+            ;
+
+            if (isoform.getLength() == desiredIsoformLength) {
+                // we are simply taking the first isoform of correct length.
+//                if (match != null) {
+//                    System.err.println("More than one isoform has the same length! implement sequence comparison...");
+//                    System.exit(1);
+//                }
+                return pos;
+            }
+        }
+        return -1;
+    }
+
 }
