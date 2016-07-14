@@ -32,7 +32,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(UniprotDAOImpl.class);
 
-   private  static List<String> allUniprotIDs;
+    private  static List<String> allUniprotIDs;
 
     private static Map<String, String> uniprotNameMap = null;
     private static SortedSet<String> geneNames = null;
@@ -52,10 +52,8 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     public static final String MOPED_LOCATION = "http://www.proteinspire.org/MOPED/services/referencedata/proteinNames";
 
-
-
     public UniprotDAOImpl (){
-        init();
+        UniprotDAOImpl.init();
     }
 
     public static void main(String[] args) {
@@ -118,7 +116,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     }
 
-    public void init() {
+    public static void init() {
 
         if ( initialized.get()){
             return;
@@ -149,6 +147,8 @@ public class UniprotDAOImpl implements UniprotDAO {
 
         logger.debug("Time to initAllUniprotIDs " + (time1 - timeS));
 
+
+        // new
         initDisplayNameMap();
 
         initOrganisms();
@@ -708,7 +708,7 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     }
 
-    private void initDisplayNameMap(){
+    private static void initDisplayNameMap(){
 
         long timeS = System.currentTimeMillis();
         displayNameMap = new HashMap<String,String>();
@@ -722,7 +722,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         }
 
         //first: check recommended names
-        Map<String,String> recommendedNameMap = getRecommendedNameMap();
+        Map<String,String> recommendedNameMap = UniProtDAOUtil.getRecommendedNameMap(null);
 
         for(String uniProtId : uniProtIdSet){
             if(recommendedNameMap.containsKey(uniProtId)) {
@@ -733,7 +733,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         }
 
         //second: check alternative names
-        Map<String,List<String>> alternativeNamesMap = getAlternativeNameMap();
+        Map<String,List<String>> alternativeNamesMap = UniProtDAOUtil.getAlternativeNameMap(null);
 
 
         if(missingNamesSet != null && missingNamesSet.size() > 0){
@@ -750,7 +750,7 @@ public class UniprotDAOImpl implements UniprotDAO {
         }
 
         //third: check submitted names
-        Map<String,String> submittedNamesMap = this.getSubmittedNameMap();
+        Map<String,String> submittedNamesMap = UniProtDAOUtil.getSubmittedNameMap(null);
 
         if(missingNamesSet != null && missingNamesSet.size() > 0){
             for (Iterator<String> i = missingNamesSet.iterator(); i.hasNext();) {
@@ -1446,11 +1446,11 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     }
 
-    public Map<String,List<String>> getAlternativeNameMap(){
+    public  Map<String,List<String>> getAlternativeNameMap(){
         return getAlternativeNameMap(null);
     }
 
-    public Map<String,List<String>> getAlternativeNameMap(Set<String> accessions){
+    public  Map<String,List<String>> getAlternativeNameMap(Set<String> accessions){
 
         StringBuffer sb = new StringBuffer("select a.hjvalue, est.value_ ");
         sb.append(" from entry_accession as a ");
@@ -1542,40 +1542,14 @@ public class UniprotDAOImpl implements UniprotDAO {
 
     }
 
-    public Map<String,String> getRecommendedNameMap(){
+    public  Map<String,String> getRecommendedNameMap(){
 
         return getRecommendedNameMap(null);
     }
 
-    public Map<String, String> getRecommendedNameMap(Set<String> accessions ){
+    public  Map<String, String> getRecommendedNameMap(Set<String> accessions ){
 
-        // this provides access to the recommended short name:
-
-        StringBuffer sb = new StringBuffer("select a.hjvalue, est.value_ ");
-        sb.append(" from entry_accession as a ");
-        sb.append(" join entry as en on a.hjid = en.hjid ");
-        sb.append(" join protein_type as p on en.protein_entry_hjid = p.hjid ");
-        sb.append(" join recommended_name as r on p.recommended_name_protein_typ_0 = r.hjid ");
-        sb.append(" join evidenced_string_type est on r.full_name_recommended_name_h_0 = est.hjid ");
-        if(accessions != null && accessions.size() > 0) {
-            sb.append(" where a.hjvalue in ( '" + StringUtils.join(accessions, "','")+ "') ");
-        }
-        sb.append(" group by a.hjvalue, est.value_ ");
-
-        String sql = sb.toString();
-
-        EntityManager em = JpaUtilsUniProt.getEntityManager();
-        Query q = em.createNativeQuery(sql);
-        List<Object[]> data = q.getResultList();
-
-        Map<String,String> results = new HashMap<String,String>();
-        for ( Object[] d : data){
-            String ac = d[0].toString();
-            String recname = d[1].toString();
-            results.put(ac,recname);
-        }
-        em.close();
-        return results;
+       return UniProtDAOUtil.getRecommendedNameMap(accessions);
 
     }
 
@@ -1594,31 +1568,7 @@ public class UniprotDAOImpl implements UniprotDAO {
      */
     public Map<String, String> getSubmittedNameMap(Set<String> accessions ){
 
-        StringBuffer sb = new StringBuffer("select a.hjvalue, est.value_  ");
-        sb.append(" from entry_accession as a ");
-        sb.append(" join entry as en on a.hjid = en.hjid ");
-        sb.append(" join protein_type as p on en.protein_entry_hjid = p.hjid ");
-        sb.append(" join submitted_name as s on p.HJID = s.SUBMITTED_NAME_PROTEIN_TYPE__0 ");
-        sb.append(" join evidenced_string_type est on s.FULL_NAME_SUBMITTED_NAME_HJID = est.HJID  ");
-        if(accessions != null && accessions.size() > 0) {
-            sb.append(" where a.hjvalue in ( '" + StringUtils.join(accessions, "','")+ "') ");
-        }
-        sb.append(" group by a.hjvalue, est.value_ having count(*) > 0");
-
-        String sql = sb.toString();
-
-        EntityManager em = JpaUtilsUniProt.getEntityManager();
-        Query q = em.createNativeQuery(sql);
-        List<Object[]> data = q.getResultList();
-
-        Map<String,String> results = new HashMap<String,String>();
-        for ( Object[] d : data){
-            String ac = d[0].toString();
-            String recname = d[1].toString();
-            results.put(ac,recname);
-        }
-        em.close();
-        return results;
+        return UniProtDAOUtil.getSubmittedNameMap(accessions);
 
     }
 
