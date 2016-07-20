@@ -1,12 +1,5 @@
 package org.rcsb.uniprot.auto.dao;
 
-import java.io.*;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.util.*;
-import java.util.zip.GZIPInputStream;
-
 import com.google.common.collect.Range;
 import org.biojava.nbio.genome.parsers.genename.GeneChromosomePosition;
 import org.biojava.nbio.genome.parsers.genename.GeneChromosomePositionParser;
@@ -14,6 +7,13 @@ import org.biojava.nbio.genome.parsers.genename.GeneName;
 import org.biojava.nbio.genome.parsers.genename.GeneNamesParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.util.*;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Created by ap3 on 03/02/2016.
@@ -220,13 +220,13 @@ public class GeneNameDAOImpl implements GeneNameDAO{
 
 
             if ( geneChromosomePositionsResource37 == null || ! geneChromosomePositionsResource37.exists() ) {
-                URL chromoUrl37 = new URL("http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/refFlat.txt.gz");
+                URL chromoUrl37 = new URL("http://cdn.rcsb.org/gene/hg37/geneChromosome37.tsf.gz");
 
                 geneChromosomePositionsResource37 = downloadFile(chromoUrl37,geneChromosomeFile37);
             }
 
             if ( geneChromosomePositionsResource38 == null || ! geneChromosomePositionsResource38.exists() ) {
-                URL chromoUrl38 = new URL("http://hgdownload.cse.ucsc.edu/goldenPath/hg38/database/refFlat.txt.gz");
+                URL chromoUrl38 = new URL("http://cdn.rcsb.org/gene/hg38/geneChromosome38.tsf.gz");
 
                 geneChromosomePositionsResource38 = downloadFile(chromoUrl38,geneChromosomeFile38);
             }
