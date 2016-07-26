@@ -54,7 +54,7 @@ public class RCSBUniProtMirror {
 
     }
 
-    private static File getLocalFileLocation(String accession) {
+    public static File getLocalFileLocation(String accession) {
         String xmlFile = accession + ".xml";
 
         File localFile = new File(System.getProperty("java.io.tmpdir")+"/"+xmlFile);

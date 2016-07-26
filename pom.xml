@@ -6,7 +6,9 @@
 
     <groupId>org.rcsb.uniprot</groupId>
     <artifactId>uniprot</artifactId>
-    <version>2016.03.11.01</version>
+
+    <version>2016.06.01.02</version>
+
     <packaging>jar</packaging>
 
     <properties>
@@ -27,11 +29,13 @@
         <hibernate.tools.version>4.3.1.CR1</hibernate.tools.version>
         <ehcache.version>2.4.3</ehcache.version>
         <lucene.version>3.6.2</lucene.version>
-        <biojava.version>4.2.0</biojava.version>
+        <biojava.version>999-SNAPSHOT</biojava.version>
         <hyperjaxb3.version>0.6.0</hyperjaxb3.version>
     </properties>
 
     <!-- where Maven deploy will deploy project jars/wars -->
+
+    <!-- TODO: migrate this to OSS Sonatype -->
     <distributionManagement>
         <downloadUrl>http://nexus.rcsb.org/nexus/content/repositories/releases/</downloadUrl>
         <repository>
@@ -112,9 +116,9 @@
         </dependency>
 
         <dependency>
-        <groupId>net.sf.ehcache</groupId>
-        <artifactId>ehcache-core</artifactId>
-        <version>${ehcache.version}</version>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-core</artifactId>
+            <version>${ehcache.version}</version>
         </dependency>
 
 
@@ -251,9 +255,9 @@
 
         <resources>
 
-                <resource>
-                    <directory>src/main/resources</directory>
-                </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
             <resource>
                 <!--will be added as a Source folder-->
                 <directory>target/generated-sources/xjc/</directory>
@@ -403,39 +407,39 @@
             </plugin>
 
 
-                <!--<plugin>-->
-                    <!--<groupId>org.apache.maven.plugins</groupId>-->
-                    <!--<artifactId>maven-assembly-plugin</artifactId>-->
-                    <!--<configuration>-->
-                        <!--<finalName>uniprot</finalName>-->
-                        <!--<archive>-->
-                            <!--<manifest>-->
-                                <!--<addClasspath>true</addClasspath>-->
-                                <!--<mainClass>org.rcsb.uniprot.auto.load.LoadMissing</mainClass>-->
-                            <!--</manifest>-->
-                        <!--</archive>-->
-                        <!--<descriptorRefs>-->
-                            <!--<descriptorRef>jar-with-dependencies</descriptorRef>-->
-                        <!--</descriptorRefs>-->
-                        <!--<fileSets>-->
-                            <!--<fileSet>-->
-                                <!--&lt;!&ndash; TODO: use expresssions instead: ${project.build.sourceDirectory},-->
-                                    <!--etc &ndash;&gt;-->
-                                <!--<directory>${project.basedir}/src</directory>-->
-                                <!--<useDefaultExcludes>true</useDefaultExcludes>-->
-                            <!--</fileSet>-->
-                        <!--</fileSets>-->
-                    <!--</configuration>-->
-                    <!--<executions>-->
-                        <!--<execution>-->
-                            <!--<id>make-assembly</id> &lt;!&ndash; this is used for inheritance merges &ndash;&gt;-->
-                            <!--<phase>package</phase> &lt;!&ndash; bind to the packaging phase &ndash;&gt;-->
-                            <!--<goals>-->
-                                <!--<goal>single</goal>-->
-                            <!--</goals>-->
-                        <!--</execution>-->
-                    <!--</executions>-->
-                <!--</plugin>-->
+            <!--<plugin>-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-assembly-plugin</artifactId>-->
+            <!--<configuration>-->
+            <!--<finalName>uniprot</finalName>-->
+            <!--<archive>-->
+            <!--<manifest>-->
+            <!--<addClasspath>true</addClasspath>-->
+            <!--<mainClass>org.rcsb.uniprot.auto.load.LoadMissing</mainClass>-->
+            <!--</manifest>-->
+            <!--</archive>-->
+            <!--<descriptorRefs>-->
+            <!--<descriptorRef>jar-with-dependencies</descriptorRef>-->
+            <!--</descriptorRefs>-->
+            <!--<fileSets>-->
+            <!--<fileSet>-->
+            <!--&lt;!&ndash; TODO: use expresssions instead: ${project.build.sourceDirectory},-->
+            <!--etc &ndash;&gt;-->
+            <!--<directory>${project.basedir}/src</directory>-->
+            <!--<useDefaultExcludes>true</useDefaultExcludes>-->
+            <!--</fileSet>-->
+            <!--</fileSets>-->
+            <!--</configuration>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<id>make-assembly</id> &lt;!&ndash; this is used for inheritance merges &ndash;&gt;-->
+            <!--<phase>package</phase> &lt;!&ndash; bind to the packaging phase &ndash;&gt;-->
+            <!--<goals>-->
+            <!--<goal>single</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
+            <!--</plugin>-->
 
 
 

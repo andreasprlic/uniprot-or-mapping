@@ -10,6 +10,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.Map;
@@ -19,12 +22,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by ap3 on 18/08/2014.
+/** JPA tools for when dealing with a UniProt installation. Also contains some hacks to modifiy the DB schema, to work
+ *  around some hyperjaxb shortcomings.
+ *
+ * Created by Andreas Prlic on 18/08/2014.
  */
 public class JpaUtilsUniProt {
 
     private static final Logger logger = LoggerFactory.getLogger(JpaUtilsUniProt.class );
+
+    /**
+     * The properties file with db connectoin settings in home directory. This will override the file on classpath
+     */
+    public static final File PROPERTIES_FILE_HOME = new File(System.getProperty("user.home"), "uniprot.database.properties");
 
     private static EntityManagerFactory entityManagerFactory;
 
@@ -46,7 +56,7 @@ public class JpaUtilsUniProt {
                 logger.error(e.getMessage(),e);
             }
             if ( entityManagerFactory != null);
-                return;
+            return;
         }
 
         busy.set(true);
@@ -82,9 +92,8 @@ public class JpaUtilsUniProt {
         try {
             dbproperties.load(propstream);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            // use log4j for logging
+        } catch (IOException e) {
+            logger.error("Could not read uniprot jpa properties from input stream. Error: {}", e.getMessage());
         }
 
         logger.info("create EMF...");
@@ -103,6 +112,16 @@ public class JpaUtilsUniProt {
         InputStream propstream = cloader.getResourceAsStream("database.properties");
         if (propstream == null) {
             logger.error("Could not get file database.properties from class context!");
+        }
+
+        // if a properties file is present in home it will override the classpath one
+        if (PROPERTIES_FILE_HOME.exists()) {
+            try {
+                propstream = new FileInputStream(PROPERTIES_FILE_HOME);
+                logger.warn("Reading UniProt db connection properties from home dir file {}. If a properties file was present in classpath, it will be ignored", PROPERTIES_FILE_HOME);
+            } catch (IOException e) {
+                logger.error("Properties file {} could not be read. Error: {} ", PROPERTIES_FILE_HOME, e.getMessage());
+            }
         }
 
         return createEntityManagerFactory(propstream);
@@ -189,11 +208,11 @@ public class JpaUtilsUniProt {
         logger.info("using DB name :" + databaseName);
 
         String sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS " +
-        " WHERE TABLE_SCHEMA='"+ databaseName+"' " +
-        " AND TABLE_NAME='required_ids' ";
+                " WHERE TABLE_SCHEMA='"+ databaseName+"' " +
+                " AND TABLE_NAME='required_ids' ";
 
 
-         EntityManager em = getEntityManager();
+        EntityManager em = getEntityManager();
         Query q = em.createNativeQuery(sql);
         boolean hasTable = q.getResultList().size()>0;
 

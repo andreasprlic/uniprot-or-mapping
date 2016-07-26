@@ -15,7 +15,7 @@ import java.sql.Connection;
 
 
 /**
- * Created by ap3 on 14/08/2014.
+ * Created by Andreas Prlic on 14/08/2014.
  */
 public class HibernateUtilsUniprot {
 
@@ -72,40 +72,6 @@ public class HibernateUtilsUniprot {
         } catch (Exception e){
             logger.error(e.getMessage(),e);
         }
-
-    }
-
-
-
-
-    public  void addDefaultUniprotDbConfig(Configuration cfg) throws NamingException
-    {
-
-        logger.info("setting default UniprotDb config...");
-
-
-        cfg.setProperty("hibernate.connection.datasource","java:/comp/env/jdbc/UniProtDb");
-        cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");
-        cfg.setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
-        cfg.setProperty("hibernate.connection.username", "developer");
-        cfg.setProperty("hibernate.connection.password", "SuperSecure!");
-        cfg.setProperty("hibernate.connection.url",
-                "jdbc:mysql://db-developer1.rcsb.org:8888/uniprot?autoReconnect=true&max_allowed_packet=2048000");
-        cfg.setProperty("hibernate.show_sql", "true");
-        cfg.setProperty("hibernate.use_outer_join", "true");
-        cfg.setProperty("hibernate.jdbc.batch_size", "500");
-        cfg.setProperty("hibernate.connection.isolation", "2"); // TRANSACTION_READ_COMMITTED
-        cfg.setProperty("hibernate.c3p0.min_size", "5");
-        cfg.setProperty("hibernate.c3p0.max_size", "25");
-        cfg.setProperty("hibernate.c3p0.timeout", "1800");
-        cfg.setProperty("hibernate.cache.provider_class", "org.hibernate.cache.NoCacheProvider");
-        cfg.setProperty("hibernate.cache.use_query_cache", "false");
-        cfg.setProperty("hibernate.cache.use_minimal_puts", "false");
-        cfg.setProperty("hibernate.max_fetch_depth", "3");
-        cfg.setProperty("hibernate.hbm2ddl.auto", "update");
-
-        logger.info("using default uniprotDB database connection: " + cfg.getProperty("hibernate.connection.url"));
-
 
     }
 

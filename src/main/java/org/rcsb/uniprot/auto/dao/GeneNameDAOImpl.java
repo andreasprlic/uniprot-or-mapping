@@ -24,9 +24,9 @@ public class GeneNameDAOImpl implements GeneNameDAO{
 
     public static final String DEFAULT_ASSEMBLY_VERSION="hg37";
 
-    static Map<String, GeneName> geneNamesMap = null;
-    static Map<String, List<GeneChromosomePosition>> geneChromosomePositionMap37 = null;
-    static Map<String, List<GeneChromosomePosition>> geneChromosomePositionMap38 = null;
+    private static Map<String, GeneName> geneNamesMap = null;
+    private static Map<String, List<GeneChromosomePosition>> geneChromosomePositionMap37 = null;
+    private static Map<String, List<GeneChromosomePosition>> geneChromosomePositionMap38 = null;
 
 
     public static final String COLLECTION_NAME = "geneNames";
@@ -39,9 +39,9 @@ public class GeneNameDAOImpl implements GeneNameDAO{
     private static final String geneChromosomeFile38 = "geneChromosome38.tsf.gz";
 
 
-    static File geneNamesFileResource ;
-    static File geneChromosomePositionsResource37;
-    static File geneChromosomePositionsResource38;
+    private static File geneNamesFileResource ;
+    private static File geneChromosomePositionsResource37;
+    private static File geneChromosomePositionsResource38;
 
 
 
@@ -157,10 +157,12 @@ public class GeneNameDAOImpl implements GeneNameDAO{
         if (f37!=null)
             PdbLogger.info(f37.toString());
 
+        InputStream instream = null;
+
         try {
 
             //File f = new File("/Users/ap3/Downloads/genenames.txt");
-            InputStream instream = new FileInputStream(f);
+            instream = new FileInputStream(f);
             List<GeneName> geneNames = GeneNamesParser.getGeneNames(instream);
 
             geneNamesMap = new HashMap<String, GeneName>();
@@ -177,6 +179,14 @@ public class GeneNameDAOImpl implements GeneNameDAO{
 
         } catch (IOException e) {
             PdbLogger.error("Caught IOException while reading resource file {}. Error: {} ", f , e.getMessage());
+        } finally {
+            if (instream!=null) {
+                try {
+                    instream.close();
+                } catch (IOException e) {
+                    PdbLogger.error("Could not close stream opened from file {}. Error: {}", f, e.getMessage());
+                }
+            }
         }
     }
 
@@ -186,7 +196,7 @@ public class GeneNameDAOImpl implements GeneNameDAO{
             downloadRequiredExternalResources();
 
 
-        List<File> answer = new ArrayList();
+        List<File> answer = new ArrayList<>();
 
 
         answer.add(geneNamesFileResource);
@@ -197,8 +207,6 @@ public class GeneNameDAOImpl implements GeneNameDAO{
 
     public boolean downloadRequiredExternalResources() {
 
-        boolean goodGeneNameXfer = false;
-        boolean goodGeneChromoXfer = false;
 
         try {
             URL geneNameURL = new URL(GeneNamesParser.DEFAULT_GENENAMES_URL);
@@ -256,7 +264,7 @@ public class GeneNameDAOImpl implements GeneNameDAO{
         GeneChromosomePositionParser gp = new GeneChromosomePositionParser();
 
 
-        genePositions = gp.getChromosomeMappings(instream2);
+        genePositions = GeneChromosomePositionParser.getChromosomeMappings(instream2);
 
         for (GeneChromosomePosition pos : genePositions) {
 

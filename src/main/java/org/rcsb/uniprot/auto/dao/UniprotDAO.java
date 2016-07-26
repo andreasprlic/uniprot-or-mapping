@@ -30,7 +30,7 @@ public interface UniprotDAO {
 
     /**Get the recommended names for components and their sequence positions
 
-      */
+     */
     public List<Object[]> getRecommendedNames4Components();
 
     public List<String> getAllUniProtIDs();
@@ -38,6 +38,8 @@ public interface UniprotDAO {
     public List<String> getGeneNames(String uniprotID);
 
     public String getDescription(String uniprotID);
+
+    public Map<String,String> getDisplayNameMap();
 
     public int getLength(String uniprotID);
 
@@ -86,6 +88,13 @@ public interface UniprotDAO {
      * @return
      */
     public List<String> getUniProtACsByGeneName(String gn);
+
+    /** Get uniprot primary accesion codes that match a specific gene name
+     *
+     * @param gn
+     * @return
+     */
+    public List<String> getUniProtPrimaryACsByGeneName(String gn);
 
     /** Clear all PDB to uniprot mappings
      *
@@ -175,6 +184,12 @@ public interface UniprotDAO {
 
     /** returns a map that contains a mapping of uniprot accessions to submitted names
      *
+     * @return
+     */
+    public Map<String, String> getSubmittedNameMap();
+
+    /** returns a map that contains a mapping of uniprot accessions to submitted names
+     *
      * @param aaccessions
      * @return
      */
@@ -190,6 +205,7 @@ public interface UniprotDAO {
 
     /** get a Map of all alternative names for UniProt IDs
      *
+     * @param aaccessions
      * @return
      */
     public Map<String,List<String>> getAlternativeNameMap(Set<String> aaccessions);
