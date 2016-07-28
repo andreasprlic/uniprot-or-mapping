@@ -8,6 +8,7 @@ This gene/protein is a nice test case for mapping alternative transcripts to Uni
 
 Below is how to do this mapping. The code assumes that there are a local copy of the human genome in a 2bit file and a refFlat.txt file, as it is available from the UCSC genome browser. They can be also downloaded from http://cdn.rcsb.org/gene/hg38/hg38.2bit and http://cdn.rcsb.org/gene/hg38/geneChromosome38.tsf.gz (contains the content of refFlat.txt for assembly 38).
 
+For the full code for this example, please see [here](https://github.com/rcsb/uniprot-or-mapping/blob/master/src/test/java/TestGenomeMapping.java)
 
 ```java
 
