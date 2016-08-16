@@ -30,7 +30,7 @@
         <hibernate.tools.version>4.3.1.CR1</hibernate.tools.version>
         <ehcache.version>2.4.3</ehcache.version>
         <lucene.version>3.6.2</lucene.version>
-        <biojava.version>999-SNAPSHOT</biojava.version>
+        <biojava.version>4.2.4</biojava.version>
         <hyperjaxb3.version>0.6.0</hyperjaxb3.version>
     </properties>
 

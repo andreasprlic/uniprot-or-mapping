@@ -146,15 +146,27 @@ public class IsoformTools {
                             data[isopos] = originalSequence;
                             data[isopos].setAccession(id);
 
-                        } else {
+                        } else if ( seqType.equals("external")) {
+                            if ( debug)
+                                System.out.println("can't create sequence for " + id);
+                            ProteinSequence ps =new ProteinSequence("");
+                            ps.setAccession(id);
+                            data[isopos] = ps;
+
+
+                        } else if (seqType.equals("described")){
                             // seqtype: described
                             // we need to infer the isoform. That's a painful business
                             ProteinSequence ps = buildIsoform(originalSequence, id, features, iso.getSequence().getRef());
-                            if (debug)
+                            if (debug) {
+                                System.out.println("created sequence : " + id);
                                 UniProtTools.prettyPrint(ps);
+                            }
                             //ProteinSequence ps = new ProteinSequence("A", AminoAcidCompoundSet.getAminoAcidCompoundSet());
                             ps.setAccession(id);
                             data[isopos] = ps;
+                        } else {
+                            System.out.println("unknown sequence type " + seqType);
                         }
                         isopos++;
 
@@ -197,6 +209,7 @@ public class IsoformTools {
         ProteinSequence isoform = new ProteinSequence(orig.getSequenceAsString(), AminoAcidCompoundSet.getAminoAcidCompoundSet());
         isoform.setAccession(id);
 
+
         for (FeatureType f : features) {
 
             if (!f.getType().equals("splice variant"))
@@ -212,7 +225,7 @@ public class IsoformTools {
             if (!found)
                 continue;
             if (debug)
-                System.out.println(" Variant:  " + f.getId() + " " + f.getDescription());
+                System.out.println(" Variant:  " + f.getId() + " " + f.getDescription() + " | " + id);
 
             // let's find the correct feature for this ref.
             // System.out.println("\tVariant:" + isoformpos + " " + f.getId() + " " + f.getType() + " " + f.getDescription());
@@ -227,9 +240,9 @@ public class IsoformTools {
 
             if (debug) {
                 if (variations.size() > 0)
-                    System.out.println("\tV: variations: " + variations);
+                    System.out.println("\tV: variations: " + variations + " original: " + original);
                 else
-                    System.out.println("\tV: deletion");
+                    System.out.println("\tV: deletion" + " original: " + original);
             }
             PositionType begin = loc.getBegin();
             PositionType end = loc.getEnd();
@@ -335,8 +348,6 @@ public class IsoformTools {
         int endOffset = offset.getOffset(end.getPosition().intValue() - 1);
 
 
-//        if ( endOffset > isoform.getLength())
-//            endOffset = isoform.getLength()-1;
         if (debug)
             System.out.println("   R : " + beginOffset + " " + endOffset + " (orig: " + begin.getPosition() + " - " + end.getPosition() + ")");
 
@@ -364,6 +375,8 @@ public class IsoformTools {
         if (endOffset == beginOffset)
             modifier++;
 
+        if ( debug )
+            System.out.println("   R : offset: " + beginOffset + " - " + endOffset);
 
         String old = isoform.getSubSequence(beginOffset + 1, endOffset + 1).getSequenceAsString();
 
@@ -376,6 +389,14 @@ public class IsoformTools {
             System.out.println("   R : diff(" + insertDiff + ")");
         }
         if (!original.equals(old)) {
+
+
+            System.out.println("ISOFORM SEQUENCE:");
+            UniProtTools.prettyPrint(isoform);
+
+
+
+
             logger.error("The extracted sequence does not match the info in UniProt! ");
             logger.error("original should be:" + original);
             logger.error("but it was        :" + old);
