@@ -13,6 +13,7 @@ import org.biojava.nbio.core.sequence.template.CompoundSet;
 import org.biojava.nbio.core.sequence.template.Sequence;
 import org.biojava.nbio.core.sequence.transcription.Frame;
 import org.biojava.nbio.core.sequence.transcription.TranscriptionEngine;
+import org.biojava.nbio.core.util.InputStreamProvider;
 import org.biojava.nbio.genome.parsers.genename.GeneChromosomePosition;
 import org.biojava.nbio.genome.parsers.genename.GeneChromosomePositionParser;
 import org.biojava.nbio.genome.parsers.twobit.TwoBitParser;
@@ -23,10 +24,11 @@ import org.rcsb.uniprot.auto.tools.UniProtTools;
 import org.rcsb.uniprot.config.RCSBUniProtMirror;
 import org.rcsb.uniprot.isoform.IsoformTools;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,8 +38,22 @@ import java.util.Map;
  */
 public class TestGenomeMapping extends TestCase {
 
+    static String userHome = System.getProperty("user.home");
+
+    static  String twoBitLocation = userHome + "/mmtf/hg38.2bit";
+
+    static String geneRefLocation = userHome + "/mmtf/refFlat.txt.gz";
+
     @Test
     public void testP21802(){
+
+        try {
+            checkInstallFiles();
+        } catch (IOException e){
+
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
 
 
         // a reverse strand example
@@ -48,9 +64,7 @@ public class TestGenomeMapping extends TestCase {
         String geneName = "FGFR2";
         String uniProtID = "P21802";
 
-        String twoBitLocation = "/Users/andreas/mmtf/hg38.2bit";
 
-        String geneRefLocation = "/Users/andreas/mmtf/refFlat.txt";
 
         int altTranscriptCount = 0;
         try {
@@ -61,7 +75,9 @@ public class TestGenomeMapping extends TestCase {
 
             System.out.println("Parsed 2 bit file");
 
-            List<GeneChromosomePosition> gcps =  GeneChromosomePositionParser.getChromosomeMappings(new FileInputStream(new File(geneRefLocation)));
+            InputStreamProvider prov = new InputStreamProvider();
+
+            List<GeneChromosomePosition> gcps =  GeneChromosomePositionParser.getChromosomeMappings(prov.getInputStream(geneRefLocation));
 
             System.out.println("fetching uniprot file");
             File localFile = RCSBUniProtMirror.getLocalFileLocation(uniProtID);
@@ -86,7 +102,7 @@ public class TestGenomeMapping extends TestCase {
 
                 System.out.println(altTranscriptCount + " " + pos);
 
-                List<Range> exons = ChromosomeMappingTools.getChromosomalRangesForCDS(pos);
+                List<Range<Integer>> exons = ChromosomeMappingTools.getChromosomalRangesForCDS(pos);
 
                 String cds = getCDS(parser,pos,exons);
 
@@ -122,8 +138,40 @@ public class TestGenomeMapping extends TestCase {
         //RCSBUniProtMirror.delete(uniProtID);
     }
 
+    private void checkInstallFiles() throws IOException {
 
-    private String getCDS( TwoBitParser parser,GeneChromosomePosition pos, List<Range> exons) throws Exception {
+        File mmtf = new File(userHome +"/mmtf");
+        if ( ! mmtf.exists()){
+            mmtf.mkdir();
+        }
+
+        File twoBit = new File(twoBitLocation);
+        if ( ! twoBit.exists()){
+            download("http://cdn.rcsb.org//gene/hg38/hg38.2bit",twoBitLocation);
+        }
+
+        File refFlat = new File(geneRefLocation);
+        if ( ! refFlat.exists()){
+            download("http://hgdownload.cse.ucsc.edu/goldenPath/hg38/database/refFlat.txt.gz", geneRefLocation);
+        }
+
+    }
+
+    private void download(String url, String localLocation) throws IOException {
+
+        URL website = new URL(url);
+
+        File localFile = new File(localLocation);
+
+        ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+        FileOutputStream fos = new FileOutputStream(localFile);
+        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+
+
+    }
+
+
+    private String getCDS( TwoBitParser parser,GeneChromosomePosition pos, List<Range<Integer>> exons) throws Exception {
 
         StringBuffer dna = new StringBuffer();
 
@@ -150,7 +198,7 @@ public class TestGenomeMapping extends TestCase {
                  d = dnas.getReverseComplement().getSequenceAsString();
 
             }
-            
+
             dna.append(d);
 
 
