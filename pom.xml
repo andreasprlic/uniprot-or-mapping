@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.rcsb.uniprot</groupId>
     <artifactId>uniprot</artifactId>
-    <version>2016.08.16.01</version>
+    <version>2016.08.17.01</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -29,7 +29,6 @@
     </properties>
 
     <!-- where Maven deploy will deploy project jars/wars -->
-
     <!-- TODO: migrate this to OSS Sonatype -->
     <distributionManagement>
         <downloadUrl>http://nexus.rcsb.org/nexus/content/repositories/releases/</downloadUrl>
