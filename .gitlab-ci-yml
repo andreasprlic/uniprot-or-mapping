@@ -1,0 +1,15 @@
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+#    Handy for debugging
+    - whoami
+    - hostname
+    - pwd
+    - mvn -v
+#    Build via maven
+    - mvn --batch-mode --errors -U -DskipTests=true clean deploy
+  tags:
+    - Java
