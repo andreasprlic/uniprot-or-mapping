@@ -16,34 +16,20 @@ This projects uses the [UniProt XML schema](http://www.uniprot.org/docs/uniprot.
 
 
 
-## Populate the database and load UniProt data.
-
-Once the initial code/database have been created any UniProt-XML file can get parsed and loaded into a database (however the code also works without a database by just reading UniProt XML files). 
-
-## Default: Load all of Swiss-Prot
-
-The default functionality provided here is to load all [Swiss-Prot](http://web.expasy.org/docs/swiss-prot_guideline.html) entries into the database (see the ``LoadMissing.java`` class).
-Currently these includes about 550k UniProt entries. The process to load all these files takes about 8 hours on a typical database server.
-
-
 ## Get Started
 
   1. Check out the code
   2. After running ```mvn install``` you can immediately parse UniProt XML files.
 
 ## Load into a database
-  (optionally), you can load UniProt also in a database. This has the advantage that queries can be formulated across all of UniProt.
-  1. Make sure you have access to a MySQL installation, create an empty new database there, make sure you have write permissions
-  2. Update the configuration in ```src/main/resources/database.properties``` to match your configuration
-  3. Run ```LoadMissing.java``` (ideally over-night, by next morning you will have a populated database)
+Once the initial code/database have been created any UniProt-XML file can get parsed and loaded into a database (however the code also works without a database by just reading UniProt XML files). 
 
-Alternative, if you compile the code with ```mvn package```, you will get an executable jar file. You can run this jar file and pass in the DB configuration as a command line parameter (see ```LoadMissing.java``` as the main class).   
-
+See [here](loaddatabase.md) for how to load into a database.
+ 
+ 
 ## Isoform mapping to alternative transcripts
 
 This project can map UniProt isoforms to alternative transcripts using BioJava. For an example see [isoforms.md](isoforms.md)
-
-
 
 ## Use Case
 
