@@ -1,7 +1,6 @@
 # Load into a database
 
-It is not necessary to load UniProt into a database (the code works also when just using UniProt XML files). However it is possible to  
-load UniProt in a database. This has the advantage that queries can be formulated across all of UniProt.
+It is not necessary to load UniProt into a database (the code works also when just using UniProt XML files). However it is a possibility provided by this project. This has the advantage that queries can be formulated across all of UniProt.
 
 There are two possibilities how to load into a database.
  1) from the IDE,
