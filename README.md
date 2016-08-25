@@ -18,7 +18,7 @@ This projects uses the [UniProt XML schema](http://www.uniprot.org/docs/uniprot.
 
 ## Populate the database and load UniProt data.
 
-Once the initial code/database have been created any UniProt-XML file can get parsed and loaded into the database.
+Once the initial code/database have been created any UniProt-XML file can get parsed and loaded into a database (however the code also works stand-alone off UniProt XML files). 
 
 ## Default: Load all of Swiss-Prot
 
