@@ -1,9 +1,20 @@
 # UniProt-Or-Mapping
-An *object relational* mapping of **UniProtKB** to a database (and Java objects) using Hibernate.
+An *object relational* mapping of **UniProtKB** to a database and/or Java objects using Hibernate.
 
-## Auto-generate Java code and a relational database to manage UniProt data.
+## Auto-generate Java code and (optionally) to a relational database to manage UniProt data.
 
 This projects uses the [UniProt XML schema](http://www.uniprot.org/docs/uniprot.xsd) to auto-generate Java code as well as a relational database mapping.
+
+## How to parse a UniProt XML file into a Java data structure:
+
+```java
+
+            URL u = UniProtTools.getURLforXML(accession);
+            InputStream inStream = u.openStream();
+            Uniprot up = UniProtTools.readUniProtFromInputStream(inStream);
+```
+
+
 
 ## Populate the database and load UniProt data.
 
